@@ -1,0 +1,13 @@
+Switch between background and foreground:
+
+& (in the end)		Bring to the background
+fg (job id)		Bring to the foreground
+jobs		Find job id
+bg (job id)		Bring to the backgroud
+nohup		no longer needed in RHEL 8
+
+Ctrl - Z 	When the process takes too long, use it to pause the process in the foreground, later bring it to the background by bg.
+Ctrl - C 	Cancel the process
+Ctrl - D	Send End Of File(EOF) char, the proces stops waiting for further input 
+
+top		type k 		 to kill the process from top command

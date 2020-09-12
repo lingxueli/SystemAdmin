@@ -1,0 +1,12 @@
+Parent and child relations of process
+
+If the shell stops, all the processes are killed, exception is the backgroud process.
+The background process becomes the child of systemd, when its parent process is killed.
+To kill the background process, use kill command.
+
+In RHEL 8, nohup is no longer needed because background is immune from the interuption.
+In the old version, background process is terminated when shell is stopped. We use nohup to protect them from being terminated here.
+In the current version, background process is alive when shell is stopped.
+
+----------------------------------------------------------------
+
