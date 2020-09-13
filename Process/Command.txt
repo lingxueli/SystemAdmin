@@ -83,3 +83,11 @@ Use top to manage process
 
 	top 	type k 		send signal to the process. Select PID and signal id. Default PID is the first process. Default signal is 15 SIGTERM (ask to stop, not force to stop).
 	top 	type r 		renice process. Select PID and niceness value.
+---------------------------------------------------------------------------------------        
+load average
+
+	number of processes in running(R) + blocked state(D, waiting for I/O)
+
+	It's represented on the top right corner of top, and also represented by uptime. Format: 1min 5min 15min
+
+	Keep load average < number of CPU cores most of the time, otherwise you have performance issue. Use lscup to find out the number of CPU cores.    

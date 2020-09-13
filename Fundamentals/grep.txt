@@ -1,0 +1,1 @@
+	ps fax | grep -B5 dd	to observe the matching line and 5(or any) lines before that, in order to get the parent process

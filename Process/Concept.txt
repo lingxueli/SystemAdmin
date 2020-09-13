@@ -33,3 +33,7 @@ Adjust niceness/priority
 	Niceness range from - ? to + ? Default is 0. Priority ranges from ? -20 to 19 Default?
 
 	Only root can increase priority other uses cannot.
+    
+---------------------------------------------------------------------------------------
+Tuned profile
+	Use a profile can boost system performance based on your use case, such as desktop, network performance, throughput performance, powersaving etc. Installing software may bring in new profile.
