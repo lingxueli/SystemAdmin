@@ -84,10 +84,26 @@ Use top to manage process
 	top 	type k 		send signal to the process. Select PID and signal id. Default PID is the first process. Default signal is 15 SIGTERM (ask to stop, not force to stop).
 	top 	type r 		renice process. Select PID and niceness value.
 ---------------------------------------------------------------------------------------        
-load average
+Load average
 
 	number of processes in running(R) + blocked state(D, waiting for I/O)
 
 	It's represented on the top right corner of top, and also represented by uptime. Format: 1min 5min 15min
 
-	Keep load average < number of CPU cores most of the time, otherwise you have performance issue. Use lscup to find out the number of CPU cores.    
+	Keep load average < number of CPU cores most of the time, otherwise you have performance issue. Use lscup to find out the number of CPU cores.
+    
+---------------------------------------------------------------------------------------
+Tuned profile
+
+	Use a profile can boost system performance based on your use case, such as desktop, network performance, throughput performance, powersaving etc. Installing software may bring in new profile.
+
+	yum -y install tuned 			
+	systemctl enable --now tuned 	start tuned profile
+	systemctl status tuned 			check whether tuned is running
+
+	tuned-adm	the interface to manage tuned deamon
+
+	tuned-adm active					find which profile is currently selected
+	tuned-adm list						list available profile
+	tuned-adm profile profile-name		select the profile
+	tuned-adm recommend 				see which profile is recommended
