@@ -50,6 +50,8 @@ Signals
 	SIGHUP 1		hang up. The process will reread the configuration file. 
 					Use it after making modificaitons to a process configuration file.
 
+	kill			send singal to the process
+
 	kill PID		defaul is stop SIGTERM 15
 					The process will cease activities and close open files. Sometimes process ignores it. That's why to use force stop.
 	kill -9	PID		force stop
@@ -62,3 +64,22 @@ Signals
 	killall	name	kill multiple processes using the same name
 
 	killall is convinient in multiprocessing environment (not multithread). In multiprocessing environment, a server starts serveral commands all with the same name. Rather than kill each one by PID, use killall. It happens in multithread environment too but less common. e.g. you can start "dd if=/dev/zero of=/dev/null &"" three times 
+    
+---------------------------------------------------------------------------------------    
+Use top to manage process
+
+	top lists the most active processes
+
+	from the output, it doesn't have nicecess/priority value. It has state value.
+
+	States values
+		R	runnning	either running in CPU, or in the queue waiting to get a slot in CPU
+		S 	sleeping	waiting for an event to complete
+		D 	uninterruptable sleep 		waiting for I/O, sleeping cannot be stopped
+		T 	stopped 	this happens when you use Ctrl-Z (pause) sequence to an interactive shell process
+		Z	Zombie		process has been stopped, but cannot be removed by its parent. Unmanageble.
+
+	top can do the job of kill and renice
+
+	top 	type k 		send signal to the process. Select PID and signal id. Default PID is the first process. Default signal is 15 SIGTERM (ask to stop, not force to stop).
+	top 	type r 		renice process. Select PID and niceness value.
