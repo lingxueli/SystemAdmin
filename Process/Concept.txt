@@ -1,14 +1,16 @@
 Parent and child relations of process
 
 	If the shell stops, all the processes are killed, exception is the backgroud process.
-	The background process becomes the child of systemd, when its parent process is killed.
+	The background process become the child of systemd, when its parent process is killed.
 	To kill the background process, use kill command.
+
+	All process become the child of systemd when its parent process is killed.    
 
 	In RHEL 8, nohup is no longer needed because background is immune from the interuption.
 	In the old version, background process is terminated when shell is stopped. We use nohup to protect them from being terminated here.
 	In the current version, background process is alive when shell is stopped.
 
-----------------------------------------------------------------
+---------------------------------------------------------------------------------------
 Process management
 
 	System admin manage process, not the thread. It's up to app developers to manage the thread.
@@ -23,11 +25,11 @@ Adjust niceness/priority
 	backup job needs lower priority
 	important calculation job needs higher priority
 
-	It's no risk for kernel process getting blocked because: 
+	It's less risky that kernel process getting blocked because: 
 	1. Morden system differentiate the kernel process from user process.
 	2. multiple core CPU.
 
 	Use increment of 5 when adjust the niceness value and watch. Do not use extreme value without observance.
-	Niceness range from - ? to + ? Priority ranges from ? -20 to 19
+	Niceness range from - ? to + ? Default is 0. Priority ranges from ? -20 to 19 Default?
 
 	Only root can increase priority other uses cannot.

@@ -1,0 +1,1 @@
+	man 7 signals	available signals could be sent to the process

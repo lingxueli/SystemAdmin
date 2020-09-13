@@ -19,4 +19,46 @@ Process management
 	ps -ef 		shows the command that start the process, while ps aux shows only the name of the process
 	ps fax 		shows hierarchical relationship between parent and child process
 
+	ps fax | grep -B5 dd	to observe the matching line and 5(or any) lines before that, in order to get the parent process
+
 	in ps command, some option use hypen some do not. Because in history it comes from different system flavor.
+    
+    PID is the important part from ps output
+	ps aux | grep dd	You can the PID process whose names contains dd
+	pgrep dd	it does the same thing
+
+---------------------------------------------------------------------------------------
+Adjust niceness/priority
+
+	nice	start a process with a niceness value
+	nice -n 5 dd  if=/dev/zero of=/dev/null &
+			start dd command with niceness = 5 (lower priority)
+
+	renice	adjust the niceness of active process
+	ps aux | grep dd 	get the PID for renice, PID = 1234
+	renice -n 10 -p 1234	renice for PID 1234
+		
+	top		type r 		change the niceness as well
+    
+---------------------------------------------------------------------------------------
+Signals
+
+	man 7 signals	available signals could be sent to the process
+
+	SIGTERM 15		stop
+	SIGKILL	9	force to stop
+	SIGHUP 1		hang up. The process will reread the configuration file. 
+					Use it after making modificaitons to a process configuration file.
+
+	kill PID		defaul is stop SIGTERM 15
+					The process will cease activities and close open files. Sometimes process ignores it. That's why to use force stop.
+	kill -9	PID		force stop
+					risk losing data
+					system might become unstable if other processes depend on it
+
+	kill -l 	show a list of available signals
+
+	pkill name		kill by name instead of PID		
+	killall	name	kill multiple processes using the same name
+
+	killall is convinient in multiprocessing environment (not multithread). In multiprocessing environment, a server starts serveral commands all with the same name. Rather than kill each one by PID, use killall. It happens in multithread environment too but less common. e.g. you can start "dd if=/dev/zero of=/dev/null &"" three times 
