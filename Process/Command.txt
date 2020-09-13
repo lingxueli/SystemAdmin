@@ -1,13 +1,39 @@
 Switch between background and foreground:
 
-& (in the end)		Bring to the background
-fg (job id)		Bring to the foreground
-jobs		Find job id
-bg (job id)		Bring to the backgroud
-nohup		no longer needed in RHEL 8
+	& (in the end)		Bring to the background
+	fg (job id)		Bring to the foreground
+	jobs		Find job id
+	bg (job id)		Bring to the backgroud
+	nohup		no longer needed in RHEL 8
 
-Ctrl - Z 	When the process takes too long, use it to pause the process in the foreground, later bring it to the background by bg.
-Ctrl - C 	Cancel the process
-Ctrl - D	Send End Of File(EOF) char, the proces stops waiting for further input 
+	Ctrl - Z 	When the process takes too long, use it to pause the process in the foreground, later bring it to the background by bg.
+	Ctrl - C 	Cancel the process
+	Ctrl - D	Send End Of File(EOF) char, the proces stops waiting for further input 
 
-top		type k 		 to kill the process from top command
+	top		type k 		 to kill the process from top command
+
+---------------------------------------------------------------------------------------
+Process management
+	ps 			shows process started by current user
+	ps aux		shows summary of active process
+	ps -ef 		shows the command that start the process, while ps aux shows only the name of the process
+	ps fax 		shows hierarchical relationship between parent and child process
+
+	in ps command, some option use hypen some do not. Because in history it comes from different system flavor.
+    
+    PID is the important part from ps output
+	ps aux | grep dd	You can the PID process whose names contains dd
+	pgrep dd	it does the same thing
+    
+---------------------------------------------------------------------------------------
+Adjust niceness/priority
+
+	nice	start a process with a niceness value
+	nice -n 5 dd  if=/dev/zero of=/dev/null &
+			start dd command with niceness =5 (lower priority)
+
+	renice	adjust the niceness of active process
+	ps aux | grep dd 	get the PID for renice, PID = 1234
+	renice -n 10 -p 1234	renice for PID 1234
+		
+	top		type r 		change the niceness as well

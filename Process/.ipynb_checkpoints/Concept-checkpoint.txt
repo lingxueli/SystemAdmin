@@ -1,12 +1,18 @@
 Parent and child relations of process
 
-If the shell stops, all the processes are killed, exception is the backgroud process.
-The background process becomes the child of systemd, when its parent process is killed.
-To kill the background process, use kill command.
+	If the shell stops, all the processes are killed, exception is the backgroud process.
+	The background process becomes the child of systemd, when its parent process is killed.
+	To kill the background process, use kill command.
 
-In RHEL 8, nohup is no longer needed because background is immune from the interuption.
-In the old version, background process is terminated when shell is stopped. We use nohup to protect them from being terminated here.
-In the current version, background process is alive when shell is stopped.
+	In RHEL 8, nohup is no longer needed because background is immune from the interuption.
+	In the old version, background process is terminated when shell is stopped. We use nohup to protect them from being terminated here.
+	In the current version, background process is alive when shell is stopped.
 
 ----------------------------------------------------------------
+Process management
 
+	System admin manage process, not the thread. It's up to app developers to manage the thread.
+
+	Two types of background process are: kernel threads and daemon process.
+	Kernal threads is part of the linux kernel. It's not manageable. You won't be able to kill them unless the entire machine is down.
+	Kernal threads has [] around name from ps aux
