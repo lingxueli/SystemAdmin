@@ -95,7 +95,7 @@ Load average
 ---------------------------------------------------------------------------------------
 Tuned profile
 
-	Use a profile can boost system performance based on your use case, such as desktop, network performance, throughput performance, powersaving etc. Installing software may bring in new profile.
+	Use a profile can boost system performance based on your use case, such as desktop, virtual machine, KVM(Kernal based virtual machine, it's a hypervisor/virtual host), network performance, throughput performance, powersaving etc. Installing software may bring in new profile.
 
 	yum -y install tuned 			
 	systemctl enable --now tuned 	start tuned profile
