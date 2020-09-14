@@ -1,0 +1,34 @@
+install bash-completion package and use Tab on the systemctl command, you don't need to remember everything here.
+
+Example 1:
+yum -y install vsftpd 		i.e. Very Secure FTP service
+
+systemctl start vsftpd		
+
+systemctl status vsftpd
+	
+	output:
+        loaded: disabled; vendor preset: disabled
+
+        disabled 	service will not be activated on a system restart
+        vendor preset, disabled		by default after installation, it's dsiabled
+
+systemctl enable vsftpd
+
+----------------------------------------------------------------------------
+Systemd status from systemctl status servicename
+
+	Loaded				unit file is processed and the unit is active
+
+	Active(running)		
+	Active(exited)		one-time run finished
+	Active(waiting)		waiting for an event
+	Inactive(dead)
+
+	Enabled				system restart behavior
+	Disabled
+
+	Static				this unit cannot be enabled. But it's possible to be started by another unit AUTOMATICALLY.
+
+----------------------------------------------------------------------------
+
