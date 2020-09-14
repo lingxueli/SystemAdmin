@@ -1,0 +1,23 @@
+Linux Filesystem Hierarchy Standard
+
+/bin: binary files of executables such as ls, cp
+/dev: binary device file
+/etc: core config file
+/home: user directories
+
+/lib: shell scripts for executables (library)
+/lib/modules: loadable kernel modules. These modules can be loaded and unloaded on demand during the course of normal operation.
+/proc: file system of process and kernel information
+
+/sys: similar to /proc, because of its directroy and file structure. info contains devices, drivers, and some kernel features
+/sbin: system executables in binary, commands for system management
+/tmp: temporary files, shared worksapce of all users
+/var: variable directory for log, tracking, caches etc.
+/boot: boot loader files
+/media: mount points for removable media such as flash drive
+/opt: thrid party (optional) software
+
+/usr: it's not user files. It is where user-space programs and data resides. The structures looks like the majority of the root directory, and they hold the same type of file. These files are here but not under root directory to keep the space requirments low for the root.
+/usr/include: header files
+/usr/local: this is where the adminstrator installs their own software
+/usr/share: contains file that can work on other kinds of Unix machines
