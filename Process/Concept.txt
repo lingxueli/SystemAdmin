@@ -1,3 +1,10 @@
+Three types of process
+
+	Shell jobs			interactive processes. Associated with shell where the process was started
+	Daemon 				often started when a computer is booted and run with root priviledges.
+	kernal threads 		they are not managable. but it's important to monitor them.
+
+---------------------------------------------------------------------------------------
 Parent and child relations of process
 
 	If the shell stops, all the processes are killed, exception is the backgroud process.
