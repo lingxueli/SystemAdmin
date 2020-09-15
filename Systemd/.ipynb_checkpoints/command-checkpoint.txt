@@ -16,7 +16,7 @@ systemctl status vsftpd
 systemctl enable vsftpd
 
 ----------------------------------------------------------------------------
-Systemd status from systemctl status servicename
+Systemd status from "systemctl status servicename"
 
 	Loaded				unit file is processed and the unit is active
 
@@ -31,4 +31,51 @@ Systemd status from systemctl status servicename
 	Static				this unit cannot be enabled. But it's possible to be started by another unit AUTOMATICALLY.
 
 ----------------------------------------------------------------------------
+Manage Unit files
 
+	systemctl --type=service					show active service unites
+	systemctl list-units --type=service 		same
+	systemctl list-units --type=service --all	show inactive and active service units
+	systemctl --failed --type=service 			show all services that have failed
+	systemctl status -l your.service 			show detailed status info about your.service
+
+----------------------------------------------------------------------------
+Manage Dependencies
+	Unit types such as socket and path are directly related to a service unit. access them will automatically trigger service unit.
+
+	Dependencies can be defined by keyword: Required, Requisit, Wants, After, Before.
+
+	systemctl list-dependencies vsftpd					find out which dependencies this unit has
+	systemctl list-dependencies --reverse vsftpd 		find out which units are dependents of this unit
+
+	Required: "a requires b" means 1. to load a, b must be loaded. 2. if b is deactivated, so will be a
+	Requisite: "a's requisite is b" means if b is not loaded, a will fail
+	Wants: "a wants b" means just that, but when b is not loaded, a will not fail.
+	Before: a start before b
+	After: a start after b
+    
+----------------------------------------------------------------------------
+Manage unit options
+
+	systemctl show sshd 		show all systemd options that can be configured in sshd.service unit
+	
+	when change option, you need to write to /etc/systemd/system
+
+	To do this, you can either:
+
+	1. use systemctl edit httpd.service to change the default configuration
+
+		it will create a file and directroy: /etc/systemd/system/sshd.service.d/override.conf
+		This file will overwrite the default config in /usr/lib/systemd/system
+
+		workflow:
+			yum install httpd
+			systemctl cat httpd.service		show current config of unit file
+			systemctl show httpd.service	show available config of unit file
+			systemctl edit httpd.service	write to /etc/systemd/system/httpd.service.d/override.conf, this file is appended to the default config
+			systemctl cat httpd.service 	you see default config + custom config, where custom overwrites the default config
+			systemctl daemon-reload			reload systemd to pick up the new configuration(reload: process the unit files) 
+			systemctl restart httpd			restart the service
+			systemctl status httpd			verify it's active	
+	or:
+	2. copy /usr/lib/systemd/system to /etc/systemd/system/, then make change
