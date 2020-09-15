@@ -1,19 +1,21 @@
-install bash-completion package and use Tab on the systemctl command, you don't need to remember everything here.
+General
 
-Example 1:
-yum -y install vsftpd 		i.e. Very Secure FTP service
+	Install bash-completion package and use Tab on the systemctl command, you don't need to remember everything here.
 
-systemctl start vsftpd		
+	Example
+	yum -y install vsftpd 		i.e. Very Secure FTP service
 
-systemctl status vsftpd
-	
-	output:
-        loaded: disabled; vendor preset: disabled
+	systemctl start vsftpd		
 
-        disabled 	service will not be activated on a system restart
-        vendor preset, disabled		by default after installation, it's dsiabled
+	systemctl status vsftpd
+		
+		output:
+	        loaded: disabled; vendor preset: disabled
 
-systemctl enable vsftpd
+	        disabled 	service will not be activated on a system restart
+	        vendor preset, disabled		by default after installation, it's dsiabled
+
+	systemctl enable vsftpd
 
 ----------------------------------------------------------------------------
 Systemd status from "systemctl status servicename"

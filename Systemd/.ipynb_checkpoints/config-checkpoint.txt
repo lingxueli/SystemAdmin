@@ -21,9 +21,9 @@ Systemd Service Unit
 
 	example: vsftpd.service
 
-	[Unit]
-	[Service]
-	[Install]
+	[Unit]			describe unit: description. it can define dependencies: after/before.
+	[Service]		define how service should be started and stopped. ExecStart: how to start. type=forking(daemon process) type=oneshot(any command) see for detail man 5 systemd.service
+	[Install]		define the target that needs this service to start. 
     
 ----------------------------------------------------
 Systemd Mount unit
@@ -89,7 +89,5 @@ Systemd Target Unit
 			service + target will be automatically started?
 
 			Terminology in systemd: multi-user.target "wants" the service.
-
-
-            
+  
 ----------------------------------------------------
