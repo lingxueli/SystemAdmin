@@ -1,0 +1,17 @@
+Why use partitions
+
+	Distinguish between different types of data, you can create backup strategy which treats each partitions differently
+	Avoid single point of failure(e.g. accidentally filled up on one partition)
+	Enhance security or performance from mounting options
+
+--------------------------------------------------------------------------------------------
+MBR partions(Master Boot Record)
+	It was invented first. Works with BIOS(Basic Input Output System). BIOS reads from the bootable device, on this bootable device, MBR was set. To boot the system, you'll need boot loader + a partition table. MBR contains both.
+
+	One of the partion is made active, the boot loader will read the code in the first sector of that partion. That code would load the rest of the OS.
+
+	MBR has size limit. 2TiB
+	Partioin limt. Only up to 4 partions is allowed. 
+	Or up to 15 partitions. To do this, you can create one partion as an extended partition. Multip logical partition can be created in extended partion. Other praritions are primary partions.  
+
+	Make sure you understand primary partions, extended partition, logical partition.
