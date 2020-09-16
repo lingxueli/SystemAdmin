@@ -83,3 +83,23 @@ rsyslogd Log rotation
 	/etc/logrotate.conf 	rotate weekly, keep 4 weeks => log file in the last 4 week are kept, rotated weekly
 	/etc/logroate.d 		you can configure logrotate for specific file with special cases
 	man logrotate			obtain info about parameters in this logrotate config file
+-----------------------------------------------------------    
+Understand journald
+	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
+
+	Because it works with systemd, it logs everything happening on the server but the log is not persistent between reboots. To keep them, you can forward the msg from journald to rsyslogd. rsyslogd will keep it in /var/log.
+
+	journalctl		show the log msg since your server starts. It uses less pager. You'll see the beginning of the journal.
+	journalctl -f   you'll see the end of the journal
+	journalctl	type G	move to the end of the journal as well
+
+	Get familiar with the filtering options of journalctl from Execercise 13-3
+
+	journalctl --no-pager	no pager, dump all the info
+	journalctl -f 			real time monitoring
+	journalctl _UID=100		show msg logged for user with uid 100
+	journalctl -n 20		display the last 20 lines
+	journalctl -p err		display err only
+	journalctl --since --until 		display log in this time period
+	journalctl -o verbose 			a lot of options are shown here. Maybe options from systemd, example: who triggers it, which user, which process, what type of log, what command triggers it etc.
+	
