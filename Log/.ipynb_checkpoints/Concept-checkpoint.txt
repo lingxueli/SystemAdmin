@@ -16,7 +16,7 @@ Auditd service
 	SELinux logs detailed messages to the auditd service
 
 Admin can access the log in three ways
-	1. monitor /var/log written by rsyslogd
+	1. monitor /var/log written mostly by rsyslogd, or by specific services
 	2. use journalctl to get info from journald
 	3. use systemctl status <unit> to get a short overview of the last significant events that have been logged. You'll see the last couple lines of the log there.
 

@@ -1,0 +1,19 @@
+Structure in log file directory
+
+	Page 290 Table 12-3 understand what type of log files are in /var/log
+
+----------------------------------------------------------
+Read log file
+
+	Page 291 Example 13-2 grab info from log file: tail -10 /var/log/messages
+    	notice how host and services, process id are represented
+    
+-----------------------------------------------------------
+Monitor log file
+
+	tail -10 /var/log/messages		read last 10 line (static)
+	tail -f /var/log/messages		read real time log
+
+	Open two terminals, on the first terminal you configure and test the service, on the second terminal, use tail -f to observe the log
+    
+-----------------------------------------------------------
