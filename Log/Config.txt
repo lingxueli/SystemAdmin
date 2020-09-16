@@ -17,3 +17,22 @@ Monitor log file
 	Open two terminals, on the first terminal you configure and test the service, on the second terminal, use tail -f to observe the log
     
 -----------------------------------------------------------
+Write to log file
+
+	use logger command, specify the facility and priority
+
+	logger -p kern.err hello	write hello to kernel facility, with priority == error
+
+	facility: log lines write to kernel facility will be stored in the specific log file, prob /var/log/dmesg (kernal log files)
+
+-----------------------------------------------------------
+Configuring rsyslogd
+
+	/etc/rsyslogd.conf file: main log config file
+	
+	/etc/rsyslogd.d directory: log config from installed services, populated by installing RPM packages on a server
+
+	/etc/sysconfig/rsyslog file: by default contains only one line
+		SYSLOGD_OPTIONS="" 	specify startup parameter here.... It's not recommended to modify it here because this opetion is included in Systemd confg file that starts rsyslogd
+
+-----------------------------------------------------------
