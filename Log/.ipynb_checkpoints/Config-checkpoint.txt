@@ -17,3 +17,60 @@ Monitor log file
 	Open two terminals, on the first terminal you configure and test the service, on the second terminal, use tail -f to observe the log
     
 -----------------------------------------------------------
+Write to log file
+
+	use logger command, specify the facility and priority
+
+	logger -p kern.err hello	write hello to kernel facility, with priority == error
+
+	facility: log lines write to kernel facility will be stored in the specific log file, prob /var/log/dmesg (kernal log files)
+
+-----------------------------------------------------------
+Configuring rsyslogd
+
+	/etc/rsyslogd.conf file: main log config file
+	
+	/etc/rsyslogd.d directory: log config from installed services, populated by installing RPM packages on a server
+
+	/etc/sysconfig/rsyslog file: by default contains only one line
+		SYSLOGD_OPTIONS="" 	specify startup parameter here.... It's not recommended to modify it here because this opetion is included in Systemd confg file that starts rsyslogd
+
+-----------------------------------------------------------
+Understand rsyslogd config file in /etc
+
+	Modules					rsyslogd is modular, add enhanced supported feature here	
+	GLOBAL DIRECTIVES		define global parameters
+	RULES					the most important part. It specify what should be logged to which destination.
+
+	In rules, you'll define
+
+	facility:
+		this is the category of information. Facilities' list is fixed for backward compatibility with legacy syslog service. Msg from one facility will be written to the corresponding log files in /var
+
+	priority:
+		all msg with that priority and all that with higher priorities are logged
+
+	destination:
+		usually it's file: /var or device file /dev
+		it could be rsyslogd modules, that way it will be further processed by rsyslogd modules
+
+	man 5 rsyslog.conf		contains rsyslogd facilities and priorities values
+-----------------------------------------------------------
+Understand rsyslogd facilites
+
+	Page 295 Table 13-3 Understand rsyslogd Facilities
+    
+	Fixed set of facilities here to work with legacy syslog service.
+
+	To support new services, you can use 
+		1. daemon facility of daemon services
+		2. local0-local7
+
+	The service writes msg to a facility, so the loggging service can collect the msg from a facility and write it to a specific file. i.e. Service -> facility -> log file
+    
+-----------------------------------------------------------
+Understand rysylogd priorities
+
+	Page 296 Table 13-4
+    
+	cron.=debug -/var/log/cron.debug 	 use ""=" only write the msg with priority === debug (not msg with higher priority) from cron facility; use "-" write to buffer not directly to the log file(this is more efficiently)
