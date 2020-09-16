@@ -74,3 +74,12 @@ Understand rysylogd priorities
 	Page 296 Table 13-4
     
 	cron.=debug -/var/log/cron.debug 	 use ""=" only write the msg with priority === debug (not msg with higher priority) from cron facility; use "-" write to buffer not directly to the log file(this is more efficiently)
+
+-----------------------------------------------------------
+rsyslogd Log rotation
+	Old log file will be removed from the system. To keep them, you can either back up the log file, or use a centralized log server to keep it for a significantly longer period
+
+
+	/etc/logrotate.conf 	rotate weekly, keep 4 weeks => log file in the last 4 week are kept, rotated weekly
+	/etc/logroate.d 		you can configure logrotate for specific file with special cases
+	man logrotate			obtain info about parameters in this logrotate config file
