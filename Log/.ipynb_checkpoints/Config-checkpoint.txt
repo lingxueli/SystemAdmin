@@ -84,7 +84,7 @@ rsyslogd Log rotation
 	/etc/logroate.d 		you can configure logrotate for specific file with special cases
 	man logrotate			obtain info about parameters in this logrotate config file
 -----------------------------------------------------------    
-Understand journald
+Use journald
 	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
 
 	Because it works with systemd, it logs everything happening on the server but the log is not persistent between reboots. To keep them, you can forward the msg from journald to rsyslogd. rsyslogd will keep it in /var/log.
@@ -102,4 +102,28 @@ Understand journald
 	journalctl -p err		display err only
 	journalctl --since --until 		display log in this time period
 	journalctl -o verbose 			a lot of options are shown here. Maybe options from systemd, example: who triggers it, which user, which process, what type of log, what command triggers it etc.
-	
+
+-----------------------------------------------------------
+Preserve the systemd journal
+	logs from journal are at /run/log/journal
+	Forward to rsyslogd, it writes to /var/log/journal
+
+	to perserve the journal:
+
+	1. make sure directory /var/log/journal exists
+
+	2. update the parameters in /etc/systemd/journal.conf
+		Storage=auto			preserved
+		Storage=persistent		preserved, create /var/log/journal if it doesn't exist
+		Storage=non				not preserved, no data is not stored, not even in /run/log/journal, but it's still forwarding to targets such as kernel log buffer or syslog
+		Storage=volatile 		not preserved, data is only stored in /run/log/journal
+        
+-----------------------------------------------------------
+Journal log rotation
+	built-in rotation, rotate monthly.
+	size limit, it will stop growing if it reaches 10% of the size of file system, if less than 15% of the file system are free. Old msg are dropped automatically.
+
+	To change the rotation setting, config it in /etc/systemd/journald.conf
+
+	Exercise 13-4 perserve the journal
+
