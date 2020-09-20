@@ -1,10 +1,20 @@
 Create MBR partiions with fdisk
 
-looks like failed. prob it reaches the limit of numbers of the partitions allowed.
-
 [root@ip-172-31-9-71 ec2-user]# blkid
 /dev/xvda1: PARTUUID="d00a186f-01"
 /dev/xvda2: UUID="3510a17e-27dc-4ae2-9243-d600c16f4106" TYPE="xfs" PARTUUID="d00a186f-02"
+
+[root@ip-172-31-9-71 ec2-user]# fdisk -l /dev/xvda
+Disk /dev/xvda: 10 GiB, 10737418240 bytes, 20971520 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xd00a186f
+
+Device     Boot Start      End  Sectors Size Id Type
+/dev/xvda1       2048     4095     2048   1M 83 Linux
+/dev/xvda2 *     4096 20971486 20967391  10G 83 Linux
 
 
 [root@ip-172-31-9-71 ec2-user]# dd if=/dev/xvda2 of=/root/diskfile bs=1M count=1
