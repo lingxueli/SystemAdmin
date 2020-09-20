@@ -1,0 +1,152 @@
+[root@ip-172-31-9-71 ec2-user]# gdisk /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: not present
+  BSD: not present
+  APM: not present
+  GPT: not present
+
+Creating new GPT entries.
+
+Command (? for help): ?
+b       back up GPT data to a file
+c       change a partition's name
+d       delete a partition
+i       show detailed information on a partition
+l       list known partition types
+n       add a new partition
+o       create a new empty GUID partition table (GPT)
+p       print the partition table
+q       quit without saving changes
+r       recovery and transformation options (experts only)
+s       sort partitions
+t       change a partition's type code
+v       verify disk
+w       write table to disk and exit
+x       extra functionality (experts only)
+?       print this menu
+
+
+Command (? for help): n
+Partition number (1-128, default 1):
+First sector (34-20967357, default = 2048) or {+-}size{KMGTP}:
+Last sector (2048-20967357, default = 20967357) or {+-}size{KMGTP}: +100M
+Current type is 'Linux filesystem'
+Hex code or GUID (L to show codes, Enter = 8300): l
+0700 Microsoft basic data  0c01 Microsoft reserved    2700 Windows RE
+3000 ONIE boot             3001 ONIE config           3900 Plan 9
+4100 PowerPC PReP boot     4200 Windows LDM data      4201 Windows LDM metadata
+4202 Windows Storage Spac  7501 IBM GPFS              7f00 ChromeOS kernel
+7f01 ChromeOS root         7f02 ChromeOS reserved     8200 Linux swap
+8300 Linux filesystem      8301 Linux reserved        8302 Linux /home
+8303 Linux x86 root (/)    8304 Linux x86-64 root (/  8305 Linux ARM64 root (/)
+8306 Linux /srv            8307 Linux ARM32 root (/)  8400 Intel Rapid Start
+8e00 Linux LVM             a000 Android bootloader    a001 Android bootloader 2
+a002 Android boot          a003 Android recovery      a004 Android misc
+a005 Android metadata      a006 Android system        a007 Android cache
+a008 Android data          a009 Android persistent    a00a Android factory
+a00b Android fastboot/ter  a00c Android OEM           a500 FreeBSD disklabel
+a501 FreeBSD boot          a502 FreeBSD swap          a503 FreeBSD UFS
+a504 FreeBSD ZFS           a505 FreeBSD Vinum/RAID    a580 Midnight BSD data
+a581 Midnight BSD boot     a582 Midnight BSD swap     a583 Midnight BSD UFS
+a584 Midnight BSD ZFS      a585 Midnight BSD Vinum    a600 OpenBSD disklabel
+a800 Apple UFS             a901 NetBSD swap           a902 NetBSD FFS
+a903 NetBSD LFS            a904 NetBSD concatenated   a905 NetBSD encrypted
+a906 NetBSD RAID           ab00 Recovery HD           af00 Apple HFS/HFS+
+af01 Apple RAID            af02 Apple RAID offline    af03 Apple label
+Press the <Enter> key to see more codes:
+af04 AppleTV recovery      af05 Apple Core Storage    af06 Apple SoftRAID Statu
+af07 Apple SoftRAID Scrat  af08 Apple SoftRAID Volum  af09 Apple SoftRAID Cache
+b300 QNX6 Power-Safe       bc00 Acronis Secure Zone   be00 Solaris boot
+bf00 Solaris root          bf01 Solaris /usr & Mac Z  bf02 Solaris swap
+bf03 Solaris backup        bf04 Solaris /var          bf05 Solaris /home
+bf06 Solaris alternate se  bf07 Solaris Reserved 1    bf08 Solaris Reserved 2
+bf09 Solaris Reserved 3    bf0a Solaris Reserved 4    bf0b Solaris Reserved 5
+c001 HP-UX data            c002 HP-UX service         e100 ONIE boot
+e101 ONIE config           ea00 Freedesktop $BOOT     eb00 Haiku BFS
+ed00 Sony system partitio  ed01 Lenovo system partit  ef00 EFI System
+ef01 MBR partition scheme  ef02 BIOS boot partition   f800 Ceph OSD
+f801 Ceph dm-crypt OSD     f802 Ceph journal          f803 Ceph dm-crypt journa
+f804 Ceph disk in creatio  f805 Ceph dm-crypt disk i  fb00 VMWare VMFS
+fb01 VMWare reserved       fc00 VMWare kcore crash p  fd00 Linux RAID
+Hex code or GUID (L to show codes, Enter = 8300):
+Changed type of partition to 'Linux filesystem'
+
+
+Command (? for help): p
+Disk /dev/xvda2: 20967391 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 965E49E0-EC69-4F6F-A7B6-D7D014D1EED0
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20967357
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 20762524 sectors (9.9 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048          206847   100.0 MiB   8300  Linux filesystem
+
+Command (? for help): w
+
+Final checks complete. About to write GPT data. THIS WILL OVERWRITE EXISTING
+PARTITIONS!!
+
+Do you want to proceed? (Y/N): Y
+OK; writing new GUID partition table (GPT) to /dev/xvda2.
+Warning: The kernel is still using the old partition table.
+The new table will be used at the next reboot or after you
+run partprobe(8) or kpartx(8)
+The operation has completed successfully.
+[root@ip-172-31-9-71 ec2-user]# partprobe
+[root@ip-172-31-9-71 ec2-user]# blkid
+/dev/xvda2: UUID="3510a17e-27dc-4ae2-9243-d600c16f4106" TYPE="xfs" PTUUID="965e49e0-ec69-4f6f-a7b6-d7d014d1eed0" PTTYPE="gpt" PARTUUID="d00a186f-02"
+/dev/xvda1: PARTUUID="d00a186f-01"
+[root@ip-172-31-9-71 ec2-user]# gdisk -l  /dev/xvda
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: MBR only
+  BSD: not present
+  APM: not present
+  GPT: not present
+
+
+***************************************************************
+Found invalid GPT and valid MBR; converting MBR to GPT format
+in memory.
+***************************************************************
+
+Disk /dev/xvda: 20971520 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 87F263FA-A4CB-4FF7-9EC6-201D4281FA8C
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20971486
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 2014 sectors (1007.0 KiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048            4095   1024.0 KiB  8300  Linux filesystem
+   2            4096        20971486   10.0 GiB    8300  Linux filesystem
+[root@ip-172-31-9-71 ec2-user]# gdisk -l  /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+Disk /dev/xvda2: 20967391 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 965E49E0-EC69-4F6F-A7B6-D7D014D1EED0
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20967357
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 20762524 sectors (9.9 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048          206847   100.0 MiB   8300  Linux filesystem
