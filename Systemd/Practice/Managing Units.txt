@@ -1,0 +1,114 @@
+[root@ip-172-31-9-71 /]# systemctl -t help
+Available unit types:
+service
+socket
+target
+device
+mount
+automount
+swap
+timer
+path
+slice
+scope
+[root@ip-172-31-9-71 ~]# yum -y install vsftpd
+[root@ip-172-31-9-71 ~]# systemctl start vsftpd
+[root@ip-172-31-9-71 ~]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; disabled; vendor preset: disabled)
+   Active: active (running) since Tue 2020-09-22 01:56:47 UTC; 16s ago
+  Process: 13815 ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf (code=exited, status=0/SUCCESS)
+ Main PID: 13816 (vsftpd)
+    Tasks: 1 (limit: 4936)
+   Memory: 540.0K
+   CGroup: /system.slice/vsftpd.service
+           └─13816 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
+
+[root@ip-172-31-9-71 ~]# systemctl enable vsftpd
+Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /usr/lib/systemd/system/vsftpd.service.
+[root@ip-172-31-9-71 ~]# systemctl enable vsftpd
+Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /usr/lib/systemd/system/vsftpd.service.
+[root@ip-172-31-9-71 ~]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2020-09-22 01:56:47 UTC; 1min 34s ago
+ Main PID: 13816 (vsftpd)
+    Tasks: 1 (limit: 4936)
+   Memory: 540.0K
+   CGroup: /system.slice/vsftpd.service
+           └─13816 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
+
+
+[root@ip-172-31-9-71 ~]# systemctl --type=service
+UNIT                               LOAD   ACTIVE SUB     DESCRIPTION
+auditd.service                     loaded active running Security Auditing Service
+choose_repo.service                loaded active exited  LSB: Initializes the correct repo depending on the region.
+chronyd.service                    loaded active running NTP client/server
+cloud-config.service               loaded active exited  Apply the settings specified in cloud-config
+cloud-final.service                loaded active exited  Execute cloud user/final scripts
+cloud-init-local.service           loaded active exited  Initial cloud-init job (pre-networking)
+cloud-init.service                 loaded active exited  Initial cloud-init job (metadata service crawler)
+crond.service                      loaded active running Command Scheduler
+dbus.service                       loaded active running D-Bus System Message Bus
+dracut-shutdown.service            loaded active exited  Restore /run/initramfs on shutdown
+getty@tty1.service                 loaded active running Getty on tty1
+import-state.service               loaded active exited  Import network configuration from initramfs
+kdump.service                      loaded active exited  Crash recovery kernel arming
+kmod-static-nodes.service          loaded active exited  Create list of required static device nodes for the current kernel
+NetworkManager-wait-online.service loaded active exited  Network Manager Wait Online
+NetworkManager.service             loaded active running Network Manager
+nis-domainname.service             loaded active exited  Read and set NIS domainname from /etc/sysconfig/network
+polkit.service                     loaded active running Authorization Manager
+rngd-wake-threshold.service        loaded active exited  Hardware RNG Entropy Gatherer Wake threshold service
+rngd.service                       loaded active running Hardware RNG Entropy Gatherer Daemon
+rsyslog.service                    loaded active running System Logging Service
+serial-getty@ttyS0.service         loaded active running Serial Getty on ttyS0
+sshd.service                       loaded active running OpenSSH server daemon
+sssd.service                       loaded active running System Security Services Daemon
+systemd-journal-flush.service      loaded active exited  Flush Journal to Persistent Storage
+systemd-journald.service           loaded active running Journal Service
+systemd-logind.service             loaded active running Login Service
+systemd-random-seed.service        loaded active exited  Load/Save Random Seed
+systemd-remount-fs.service         loaded active exited  Remount Root and Kernel File Systems
+systemd-sysctl.service             loaded active exited  Apply Kernel Variables
+systemd-tmpfiles-setup-dev.service loaded active exited  Create Static Device Nodes in /dev
+systemd-tmpfiles-setup.service     loaded active exited  Create Volatile Files and Directories
+systemd-udev-trigger.service       loaded active exited  udev Coldplug all Devices
+systemd-udevd.service              loaded active running udev Kernel Device Manager
+systemd-update-utmp.service        loaded active exited  Update UTMP about System Boot/Shutdown
+systemd-user-sessions.service      loaded active exited  Permit User Sessions
+tuned.service                      loaded active running Dynamic System Tuning Daemon
+user-runtime-dir@1000.service      loaded active exited  /run/user/1000 mount wrapper
+user@1000.service                  loaded active running User Manager for UID 1000
+vsftpd.service                     loaded active running Vsftpd ftp daemon
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+40 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@ip-172-31-9-71 ~]# systemctl list-units --type=service
+[root@ip-172-31-9-71 ~]# systemctl list-units --type=service --all
+[root@ip-172-31-9-71 ~]# systemctl --failed --type=service
+0 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+[root@ip-172-31-9-71 ~]# systemctl status -l vsftpd.service
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Tue 2020-09-22 01:56:47 UTC; 13min ago
+ Main PID: 13816 (vsftpd)
+    Tasks: 1 (limit: 4936)
+   Memory: 540.0K
+   CGroup: /system.slice/vsftpd.service
+           └─13816 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
+Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
+
