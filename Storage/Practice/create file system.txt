@@ -1,0 +1,150 @@
+[root@ip-172-31-9-71 ec2-user]# gdisk -l /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+Disk /dev/xvda2: 20967391 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 48F6A61C-8AF6-4870-B243-55FAFFFEB8D0
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20967357
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 18872220 sectors (9.0 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048         2097151   1023.0 MiB  8300  part1
+[root@ip-172-31-9-71 ec2-user]# fdisk -l /dev/xvda2
+Disk /dev/xvda2: 10 GiB, 10735304192 bytes, 20967391 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: 48F6A61C-8AF6-4870-B243-55FAFFFEB8D0
+
+Device       Start     End Sectors  Size Type
+/dev/xvda2p1  2048 2097151 2095104 1023M Linux filesystem
+
+
+[root@ip-172-31-9-71 ec2-user]# mkfs -t xfs [root@ip-172-31-9-71 ec2-user]# mkfs -t xfs /dev/xvda2
+mkfs.xfs: /dev/xvda2 contains a mounted filesystem
+Usage: mkfs.xfs
+/* blocksize */         [-b size=num]
+/* metadata */          [-m crc=0|1,finobt=0|1,uuid=xxx,rmapbt=0|1,reflink=0|1]
+/* data subvol */       [-d agcount=n,agsize=n,file,name=xxx,size=num,
+                            (sunit=value,swidth=value|su=num,sw=num|noalign),
+                            sectsize=num
+/* force overwrite */   [-f]
+/* inode size */        [-i log=n|perblock=n|size=num,maxpct=n,attr=0|1|2,
+                            projid32bit=0|1,sparse=0|1]
+/* no discard */        [-K]
+/* log subvol */        [-l agnum=n,internal,size=num,logdev=xxx,version=n
+                            sunit=value|su=num,sectsize=num,lazy-count=0|1]
+/* label */             [-L label (maximum 12 characters)]
+/* naming */            [-n size=num,version=2|ci,ftype=0|1]
+/* no-op info only */   [-N]
+/* prototype file */    [-p fname]
+/* quiet */             [-q]
+/* realtime subvol */   [-r extsize=num,size=num,rtdev=xxx]
+/* sectorsize */        [-s size=num]
+/* version */           [-V]
+                        devicename
+<devicename> is required unless -d name=xxx is given.
+<num> is xxx (bytes), xxxs (sectors), xxxb (fs blocks), xxxk (xxx KiB),
+      xxxm (xxx MiB), xxxg (xxx GiB), xxxt (xxx TiB) or xxxp (xxx PiB).
+<value> is xxx (512 byte blocks).
+[root@ip-172-31-9-71 ec2-user]# mkfs.xfs /dev/xvda2
+mkfs.xfs: /dev/xvda2 contains a mounted filesystem
+Usage: mkfs.xfs
+/* blocksize */         [-b size=num]
+/* metadata */          [-m crc=0|1,finobt=0|1,uuid=xxx,rmapbt=0|1,reflink=0|1]
+/* data subvol */       [-d agcount=n,agsize=n,file,name=xxx,size=num,
+                            (sunit=value,swidth=value|su=num,sw=num|noalign),
+                            sectsize=num
+/* force overwrite */   [-f]
+/* inode size */        [-i log=n|perblock=n|size=num,maxpct=n,attr=0|1|2,
+                            projid32bit=0|1,sparse=0|1]
+/* no discard */        [-K]
+/* log subvol */        [-l agnum=n,internal,size=num,logdev=xxx,version=n
+                            sunit=value|su=num,sectsize=num,lazy-count=0|1]
+/* label */             [-L label (maximum 12 characters)]
+/* naming */            [-n size=num,version=2|ci,ftype=0|1]
+/* no-op info only */   [-N]
+/* prototype file */    [-p fname]
+/* quiet */             [-q]
+/* realtime subvol */   [-r extsize=num,size=num,rtdev=xxx]
+/* sectorsize */        [-s size=num]
+/* version */           [-V]
+                        devicename
+<devicename> is required unless -d name=xxx is given.
+<num> is xxx (bytes), xxxs (sectors), xxxb (fs blocks), xxxk (xxx KiB),
+      xxxm (xxx MiB), xxxg (xxx GiB), xxxt (xxx TiB) or xxxp (xxx PiB).
+<value> is xxx (512 byte blocks).
+
+mkfs.xfs: /dev/xvda2 contains a mounted filesystem
+Usage: mkfs.xfs
+/* blocksize */         [-b size=num]
+/* metadata */          [-m crc=0|1,finobt=0|1,uuid=xxx,rmapbt=0|1,reflink=0|1]
+/* data subvol */       [-d agcount=n,agsize=n,file,name=xxx,size=num,
+                            (sunit=value,swidth=value|su=num,sw=num|noalign),
+                            sectsize=num
+/* force overwrite */   [-f]
+/* inode size */        [-i log=n|perblock=n|size=num,maxpct=n,attr=0|1|2,
+                            projid32bit=0|1,sparse=0|1]
+/* no discard */        [-K]
+/* log subvol */        [-l agnum=n,internal,size=num,logdev=xxx,version=n
+                            sunit=value|su=num,sectsize=num,lazy-count=0|1]
+/* label */             [-L label (maximum 12 characters)]
+/* naming */            [-n size=num,version=2|ci,ftype=0|1]
+/* no-op info only */   [-N]
+/* prototype file */    [-p fname]
+/* quiet */             [-q]
+/* realtime subvol */   [-r extsize=num,size=num,rtdev=xxx]
+/* sectorsize */        [-s size=num]
+/* version */           [-V]
+                        devicename
+<devicename> is required unless -d name=xxx is given.
+<num> is xxx (bytes), xxxs (sectors), xxxb (fs blocks), xxxk (xxx KiB),
+      xxxm (xxx MiB), xxxg (xxx GiB), xxxt (xxx TiB) or xxxp (xxx PiB).
+<value> is xxx (512 byte blocks).
+[root@ip-172-31-9-71 ec2-user]# mkfs.xfs /dev/xvda2
+mkfs.xfs: /dev/xvda2 contains a mounted filesystem
+Usage: mkfs.xfs
+/* blocksize */         [-b size=num]
+/* metadata */          [-m crc=0|1,finobt=0|1,uuid=xxx,rmapbt=0|1,reflink=0|1]
+/* data subvol */       [-d agcount=n,agsize=n,file,name=xxx,size=num,
+                            (sunit=value,swidth=value|su=num,sw=num|noalign),
+                            sectsize=num
+/* force overwrite */   [-f]
+/* inode size */        [-i log=n|perblock=n|size=num,maxpct=n,attr=0|1|2,
+                            projid32bit=0|1,sparse=0|1]
+/* no discard */        [-K]
+/* log subvol */        [-l agnum=n,internal,size=num,logdev=xxx,version=n
+                            sunit=value|su=num,sectsize=num,lazy-count=0|1]
+/* label */             [-L label (maximum 12 characters)]
+/* naming */            [-n size=num,version=2|ci,ftype=0|1]
+/* no-op info only */   [-N]
+/* prototype file */    [-p fname]
+/* quiet */             [-q]
+/* realtime subvol */   [-r extsize=num,size=num,rtdev=xxx]
+/* sectorsize */        [-s size=num]
+/* version */           [-V]
+                        devicename
+<devicename> is required unless -d name=xxx is given.
+<num> is xxx (bytes), xxxs (sectors), xxxb (fs blocks), xxxk (xxx KiB),
+      xxxm (xxx MiB), xxxg (xxx GiB), xxxt (xxx TiB) or xxxp (xxx PiB).
+<value> is xxx (512 byte blocks).
+
+[root@ip-172-31-9-71 ec2-user]# tune2fs -l /dev/xvda2
+tune2fs 1.45.4 (23-Sep-2019)
+tune2fs: Bad magic number in super-block while trying to open /dev/xvda2
+Found a gpt partition table in /dev/xvda2
+[root@ip-172-31-9-71 ec2-user]#
+[root@ip-172-31-9-71 ec2-user]# xfs_admin -l /dev/xvda2
+xfs_admin: /dev/xvda2 is not a valid XFS filesystem (unexpected SB magic number 0x00000000)
+Use -F to force a read attempt.

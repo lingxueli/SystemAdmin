@@ -1,0 +1,101 @@
+[root@ip-172-31-9-71 ec2-user]# gdisk -l  /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+Disk /dev/xvda2: 20967391 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 48F6A61C-8AF6-4870-B243-55FAFFFEB8D0
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20967357
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 18872220 sectors (9.0 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048         2097151   1023.0 MiB  8300  part1
+[root@ip-172-31-9-71 ec2-user]# gdisk  /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+
+
+Command (? for help): n
+Partition number (2-128, default 2):
+First sector (34-20967357, default = 2097152) or {+-}size{KMGTP}:
+Last sector (2097152-20967357, default = 20967357) or {+-}size{KMGTP}: +500MiB
+Current type is 'Linux filesystem'
+Hex code or GUID (L to show codes, Enter = 8300): 8200
+Changed type of partition to 'Linux swap'
+Command (? for help): w
+
+Final checks complete. About to write GPT data. THIS WILL OVERWRITE EXISTING
+PARTITIONS!!
+Do you want to proceed? (Y/N): Y
+OK; writing new GUID partition table (GPT) to /dev/xvda2.
+Warning: The kernel is still using the old partition table.
+The new table will be used at the next reboot or after you
+run partprobe(8) or kpartx(8)
+The operation has completed successfully.
+[root@ip-172-31-9-71 ec2-user]# gdisk  -l /dev/xvda2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+Disk /dev/xvda2: 20967391 sectors, 10.0 GiB
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 48F6A61C-8AF6-4870-B243-55FAFFFEB8D0
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 20967357
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 17848220 sectors (8.5 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048         2097151   1023.0 MiB  8300  part1
+   2         2097152         3121151   500.0 MiB   8200  Linux swap
+[root@ip-172-31-9-71 ec2-user]# mkswap /dev/xvda2p2
+mkswap: cannot open /dev/xvda2p2: No such file or directory
+[root@ip-172-31-9-71 ec2-user]# mkswap /dev/xvda22
+mkswap: cannot open /dev/xvda22: No such file or directory
+[root@ip-172-31-9-71 ec2-user]# gdisk
+GPT fdisk (gdisk) version 1.0.3
+
+Type device filename, or press <Enter> to exit:
+[root@ip-172-31-9-71 ec2-user]# mkswap /dev/xvda2
+mkswap: error: /dev/xvda2 is mounted; will not make swapspace
+[root@ip-172-31-9-71 ec2-user]#
+[root@ip-172-31-9-71 ec2-user]# free -m
+              total        used        free      shared  buff/cache   available
+Mem:            815         137         375          22         302         533
+Swap:             0           0           0
+[root@ip-172-31-9-71 ec2-user]# dd if=/dev/zero of=/swapfile bs=1M count=100
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 0.0419012 s, 2.5 GB/s
+[root@ip-172-31-9-71 ec2-user]# mkswap /swapfile
+mkswap: /swapfile: insecure permissions 0644, 0600 suggested.
+Setting up swapspace version 1, size = 100 MiB (104853504 bytes)
+no label, UUID=00f39609-ae1f-4b7d-a797-eac238f7f153
+[root@ip-172-31-9-71 ec2-user]# swapon /swapfile
+swapon: /swapfile: insecure permissions 0644, 0600 suggested.
+[root@ip-172-31-9-71 ec2-user]# free -m
+              total        used        free      shared  buff/cache   available
+Mem:            815         137         274          22         403         533
+Swap:            99           0          99
