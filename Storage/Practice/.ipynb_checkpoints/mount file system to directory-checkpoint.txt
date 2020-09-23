@@ -1,0 +1,56 @@
+[root@localhost ~]# mount /dev/nvme0n1p5 /mnt
+
+[root@localhost mnt]# mount LABEL="xfs_disk1" /mnt       # these are preferred because dev name can be changed after the next reboot
+mount: /mnt: /dev/nvme0n1p5 already mounted on /mnt.
+[root@localhost mnt]# mount UUID="9d2fd572-f810-481a-a737-1d90c25d1141" /mnt
+mount: /mnt: /dev/nvme0n1p5 already mounted on /mnt.
+
+[root@localhost /]# umount /mnt
+
+[root@localhost /]# blkid
+/dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
+/dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
+/dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
+/dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
+/dev/nvme0n1p5: LABEL="xfs_disk1" UUID="9d2fd572-f810-481a-a737-1d90c25d1141" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="39947a2a-05"
+/dev/nvme0n2p1: UUID="ec04a5aa-2f37-4c0e-a36b-3365862aae7c" TYPE="swap" PARTLABEL="Linux filesystem" PARTUUID="41038610-06aa-4a59-a384-7d4f83c04b5d"
+/dev/nvme0n1: PTUUID="39947a2a" PTTYPE="dos"
+/dev/nvme0n2: PTUUID="8d6c58a6-05ee-4241-b406-5e95d6df368e" PTTYPE="gpt"
+[root@localhost /]# mkdir -p /mounts/data
+[root@localhost /]# vi /etc/fstab
+[root@localhost /]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Tue Sep 22 05:12:05 2020
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/rhel-root   /                       xfs     defaults        0 0
+UUID=5c786174-e864-4c37-a912-b92b4a4b138e /boot                   ext4    defaults        1 2
+UUID=5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d none                    swap    defaults        0 0
+UUID="9d2fd572-f810-481a-a737-1d90c25d1141"	/mounts/data	xfs	defaults	1	2
+
+[root@localhost /]# mount -a
+
+[root@localhost mounts]# df -h
+Filesystem             Size  Used Avail Use% Mounted on
+devtmpfs               1.8G     0  1.8G   0% /dev
+tmpfs                  1.9G     0  1.9G   0% /dev/shm
+tmpfs                  1.9G   18M  1.8G   1% /run
+tmpfs                  1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root   10G  4.6G  5.4G  46% /
+/dev/nvme0n1p1         488M  162M  291M  36% /boot
+tmpfs                  371M  1.2M  370M   1% /run/user/42
+tmpfs                  371M  4.6M  367M   2% /run/user/1000
+/dev/sr0               8.5G  8.5G     0 100% /run/media/lisa/RHEL-8-3-0-BaseOS-x86_64
+/dev/nvme0n1p5          95M  6.0M   89M   7% /mounts/data
+
+
+
+

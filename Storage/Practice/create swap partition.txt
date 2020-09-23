@@ -114,7 +114,7 @@ NAME           TYPE       SIZE USED PRIO
 Mem:           3709        1479        1504          27         725        1967
 Swap:          1122           0        1122
 
-#####different session: add swap space from a swap file### 
+#####        different session: add swap space from a swap file  ### 
 [root@ip-172-31-9-71 ec2-user]# free -m
               total        used        free      shared  buff/cache   available
 Mem:            815         137         375          22         302         533
