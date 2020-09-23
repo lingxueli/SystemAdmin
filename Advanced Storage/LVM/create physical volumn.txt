@@ -1,0 +1,128 @@
+[root@localhost ~]# pv
+pvchange   pvck       pvcreate   pvdisplay  pvmove     pvremove   pvresize   pvs        pvscan     
+
+[root@localhost ~]# pvcreate --help
+  pvcreate - Initialize physical volume(s) for use by LVM
+
+  pvcreate PV ...
+	[ -f|--force ]
+	[ -M|--metadatatype lvm2 ]
+	[ -u|--uuid String ]
+	[ -Z|--zero y|n ]
+	[    --dataalignment Size[k|UNIT] ]
+	[    --dataalignmentoffset Size[k|UNIT] ]
+	[    --bootloaderareasize Size[m|UNIT] ]
+	[    --labelsector Number ]
+	[    --pvmetadatacopies 0|1|2 ]
+	[    --metadatasize Size[m|UNIT] ]
+	[    --metadataignore y|n ]
+	[    --norestorefile ]
+	[    --setphysicalvolumesize Size[m|UNIT] ]
+	[    --reportformat basic|json ]
+	[    --restorefile String ]
+	[ COMMON_OPTIONS ]
+
+  Common options for lvm:
+	[ -d|--debug ]
+	[ -h|--help ]
+	[ -q|--quiet ]
+	[ -v|--verbose ]
+	[ -y|--yes ]
+	[ -t|--test ]
+	[    --commandprofile String ]
+	[    --config String ]
+	[    --driverloaded y|n ]
+	[    --nolocking ]
+	[    --lockopt String ]
+	[    --longhelp ]
+	[    --profile String ]
+	[    --version ]
+
+  Use --longhelp to show all options and advanced commands.
+
+[root@localhost ~]# parted /dev/nvme0n2
+GNU Parted 3.2
+Using /dev/nvme0n2
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system     Flags
+ 1      1049kB  105MB  104MB  primary  linux-swap(v1)
+
+(parted) mklabel msdos                                                    
+Warning: Partition(s) on /dev/nvme0n2 are being used.
+Ignore/Cancel? Ignore                                                     
+Warning: The existing disk label on /dev/nvme0n2 will be destroyed and all data on this disk will be lost. Do you want to continue?
+Yes/No? Yes                                                               
+Error: Partition(s) 1 on /dev/nvme0n2 have been written, but we have been unable to inform the kernel of the change, probably because it/they are in use.  As a result, the
+old partition(s) will remain in use.  You should reboot now before making further changes.
+Ignore/Cancel? Ignore                                                     
+(parted) mkpart
+Partition type?  primary/extended? primary
+File system type?  [ext2]? xfs                                            
+Start? 1MiB                                                               
+End? 200MiB                                                               
+
+....
+
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system  Flags
+ 1      1049kB  210MB  209MB  primary  xfs          lba
+ 2      210MB   419MB  210MB  primary  xfs          lba
+ 3      419MB   629MB  210MB  primary  ext4         lba
+ 4      629MB   839MB  210MB  primary  ext4         lba
+
+(parted) set 4 lvm on
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system  Flags
+ 1      1049kB  210MB  209MB  primary  xfs          lba
+ 2      210MB   419MB  210MB  primary  xfs          lba
+ 3      419MB   629MB  210MB  primary  ext4         lba
+ 4      629MB   839MB  210MB  primary  ext4         lvm, lba
+
+(parted) set 3 lvm on                                                     
+(parted) set 2 lvm on                                                     
+(parted) set 1 lvm on                                                     
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End    Size   Type     File system  Flags
+ 1      1049kB  210MB  209MB  primary  xfs          lvm, lba
+ 2      210MB   419MB  210MB  primary  xfs          lvm, lba
+ 3      419MB   629MB  210MB  primary  ext4         lvm, lba
+ 4      629MB   839MB  210MB  primary  ext4         lvm, lba
+ 
+ [root@localhost ~]# blkid                                                 
+/dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
+/dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
+/dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
+/dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
+/dev/nvme0n1p5: LABEL="xfs_disk1" UUID="9d2fd572-f810-481a-a737-1d90c25d1141" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="39947a2a-05"
+/dev/nvme0n2p1: UUID="ec04a5aa-2f37-4c0e-a36b-3365862aae7c" TYPE="swap" PARTUUID="51aef3bd-01"
+/dev/nvme0n1: PTUUID="39947a2a" PTTYPE="dos"
+/dev/nvme0n2: PTUUID="51aef3bd" PTTYPE="dos"
+/dev/nvme0n2p2: PARTUUID="51aef3bd-02"
+/dev/nvme0n2p3: PTTYPE="dos" PARTUUID="51aef3bd-03"
+/dev/nvme0n2p4: PARTUUID="51aef3bd-04"
