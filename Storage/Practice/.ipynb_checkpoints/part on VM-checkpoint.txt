@@ -1,0 +1,116 @@
+Add new virtual hard disk to VM: https://docs.vmware.com/en/VMware-Workstation-Player-for-Windows/15.0/com.vmware.player.win.using.doc/GUID-FB6F0D1B-6517-4F27-9AB5-93BF834D684D.html
+
+[root@localhost lisa]# cat /proc/partitions 
+major minor  #blocks  name
+
+ 259        0   20971520 nvme0n1
+ 259        1     524288 nvme0n1p1
+ 259        2   10489856 nvme0n1p2
+ 259        3    1048576 nvme0n1p3
+ 259        4          1 nvme0n1p4
+ 259        5     102400 nvme0n1p5
+ 259        6    1048576 nvme0n2
+  11        0    8901632 sr0
+ 253        0   10485760 dm-0
+
+[root@localhost lisa]# blkid
+/dev/nvme0n1: PTUUID="39947a2a" PTTYPE="dos"
+/dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
+/dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
+/dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
+/dev/nvme0n1p5: PARTUUID="39947a2a-05"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
+/dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n2
+Disk /dev/nvme0n2: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@localhost lisa]# gdisk -l /dev/nvme0n2
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: not present
+  BSD: not present
+  APM: not present
+  GPT: not present
+
+Creating new GPT entries.
+Disk /dev/nvme0n2: 2097152 sectors, 1024.0 MiB
+Model: VMware Virtual NVMe Disk
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 6C3BB5B8-C40C-49B2-A8D1-6D614F7635D7
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 2097118
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 2097085 sectors (1024.0 MiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+
+[root@localhost lisa]# parted /dev/nvme0n2
+GNU Parted 3.2
+Using /dev/nvme0n2
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) help                                                             
+  align-check TYPE N                        check partition N for TYPE(min|opt)
+        alignment
+  help [COMMAND]                           print general help, or help on
+        COMMAND
+  mklabel,mktable LABEL-TYPE               create a new disklabel (partition
+        table)
+  mkpart PART-TYPE [FS-TYPE] START END     make a partition
+  name NUMBER NAME                         name partition NUMBER as NAME
+  print [devices|free|list,all|NUMBER]     display the partition table,
+        available devices, free space, all found partitions, or a particular
+        partition
+  quit                                     exit program
+  rescue START END                         rescue a lost partition near START
+        and END
+  resizepart NUMBER END                    resize partition NUMBER
+  rm NUMBER                                delete partition NUMBER
+  select DEVICE                            choose the device to edit
+  disk_set FLAG STATE                      change the FLAG on selected device
+  disk_toggle [FLAG]                       toggle the state of FLAG on selected
+        device
+  set NUMBER FLAG STATE                    change the FLAG on partition NUMBER
+  toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition
+        NUMBER
+  unit UNIT                                set the default unit to UNIT
+  version                                  display the version number and
+        copyright information of GNU Parted
+
+(parted) print
+Error: /dev/nvme0n2: unrecognised disk label
+Model: NVMe Device (nvme)                                                 
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: unknown
+Disk Flags: 
+
+(parted) mklabel
+New disk label type?            ## press tab twice                                          
+aix    amiga  atari  bsd    dvh    gpt    loop   mac    msdos  pc98   sun    
+New disk label type? gpt
+
+(parted) mkpart                                                           
+Partition name?  []? part1                                                
+File system type?  [ext2]? xfs                                            
+Start?                       ## no default value here, have to type in your value
+Start? 1M                                                                 
+End? 1074M
+
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 1074MB
+Sector size (logical/physical): 512B/512B
+Partition Table: gpt
+Disk Flags: 
+
+Number  Start   End     Size    File system  Name   Flags
+ 1      1049kB  1074MB  1073MB  xfs          part1
+
+(parted) quit                                                             
+Information: You may need to update /etc/fstab.
