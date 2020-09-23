@@ -1,0 +1,171 @@
+[root@localhost lisa]# blkid
+/dev/nvme0n1: PTUUID="39947a2a" PTTYPE="dos"
+/dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
+/dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
+/dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
+/dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1
+Disk /dev/nvme0n1: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x39947a2a
+
+Device         Boot    Start      End  Sectors  Size Id Type
+/dev/nvme0n1p1 *        2048  1050623  1048576  512M 83 Linux
+/dev/nvme0n1p2       1050624 22030335 20979712   10G 8e Linux LVM
+/dev/nvme0n1p3      22030336 24127487  2097152    1G 82 Linux swap / Solaris
+
+[root@localhost lisa]# gdisk -l /dev/nvme0n1
+GPT fdisk (gdisk) version 1.0.3
+
+Partition table scan:
+  MBR: MBR only
+  BSD: not present
+  APM: not present
+  GPT: not present
+
+
+***************************************************************
+Found invalid GPT and valid MBR; converting MBR to GPT format
+in memory. 
+***************************************************************
+
+Disk /dev/nvme0n1: 41943040 sectors, 20.0 GiB
+Model: VMware Virtual NVMe Disk
+Sector size (logical/physical): 512/512 bytes
+Disk identifier (GUID): 2A091258-36DC-4D1B-9B51-A1173C30EB77
+Partition table holds up to 128 entries
+Main partition table begins at sector 2 and ends at sector 33
+First usable sector is 34, last usable sector is 41943006
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 17817533 sectors (8.5 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048         1050623   512.0 MiB   8300  Linux filesystem
+   2         1050624        22030335   10.0 GiB    8E00  Linux LVM
+   3        22030336        24127487   1024.0 MiB  8200  Linux swap
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1p1
+Disk /dev/nvme0n1p1: 512 MiB, 536870912 bytes, 1048576 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1p2
+Disk /dev/nvme0n1p2: 10 GiB, 10741612544 bytes, 20979712 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1p3
+Disk /dev/nvme0n1p3: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@localhost lisa]# fdisk -l /dev/sr0
+Disk /dev/sr0: 8.5 GiB, 9115271168 bytes, 4450816 sectors
+Units: sectors of 1 * 2048 = 2048 bytes
+Sector size (logical/physical): 2048 bytes / 2048 bytes
+I/O size (minimum/optimal): 2048 bytes / 2048 bytes
+Disklabel type: dos
+Disk identifier: 0x304890b8
+
+Device     Boot Start      End  Sectors  Size Id Type
+/dev/sr0p1 *        0 17803263 17803264   34G  0 Empty
+/dev/sr0p2      24236    44635    20400 39.9M ef EFI (FAT-12/16/32)
+
+[root@localhost lisa]# fdisk -l /dev/mapper/rhel-root
+Disk /dev/mapper/rhel-root: 10 GiB, 10737418240 bytes, 20971520 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+[root@localhost lisa]# dd if=/dev/nvme0n1 of=/root/diskfile bs=1M count=1
+1+0 records in
+1+0 records out
+1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00155231 s, 675 MB/s
+
+[root@localhost lisa]# cp /etc/fstab /root/fstab
+
+[root@localhost lisa]# fdisk /dev/nvme0n1
+
+Welcome to fdisk (util-linux 2.32.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): p
+Disk /dev/nvme0n1: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x39947a2a
+
+Device         Boot    Start      End  Sectors  Size Id Type
+/dev/nvme0n1p1 *        2048  1050623  1048576  512M 83 Linux
+/dev/nvme0n1p2       1050624 22030335 20979712   10G 8e Linux LVM
+/dev/nvme0n1p3      22030336 24127487  2097152    1G 82 Linux swap / Solaris
+
+Command (m for help): n
+Partition type
+   p   primary (3 primary, 0 extended, 1 free)
+   e   extended (container for logical partitions)
+Select (default e): e
+
+Selected partition 4
+First sector (24127488-41943039, default 24127488): 
+Last sector, +sectors or +size{K,M,G,T,P} (24127488-41943039, default 41943039): 
+
+Created a new partition 4 of type 'Extended' and of size 8.5 GiB.
+
+Command (m for help): n
+All primary partitions are in use.
+Adding logical partition 5
+First sector (24129536-41943039, default 24129536): 
+Last sector, +sectors or +size{K,M,G,T,P} (24129536-41943039, default 41943039): +100M
+
+Created a new partition 5 of type 'Linux' and of size 100 MiB.
+
+Command (m for help): w
+The partition table has been altered.
+Failed to add partition 5 to system: Device or resource busy
+
+The kernel still uses the old partitions. The new table will be used at the next reboot. 
+Syncing disks.
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1
+Disk /dev/nvme0n1: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x39947a2a
+
+Device         Boot    Start      End  Sectors  Size Id Type
+/dev/nvme0n1p1 *        2048  1050623  1048576  512M 83 Linux
+/dev/nvme0n1p2       1050624 22030335 20979712   10G 8e Linux LVM
+/dev/nvme0n1p3      22030336 24127487  2097152    1G 82 Linux swap / Solaris
+/dev/nvme0n1p4      24127488 41943039 17815552  8.5G  5 Extended
+/dev/nvme0n1p5      24129536 24334335   204800  100M 83 Linux
+
+[root@localhost lisa]# cat /proc/partitions
+major minor  #blocks  name
+
+ 259        0   20971520 nvme0n1
+ 259        1     524288 nvme0n1p1
+ 259        2   10489856 nvme0n1p2
+ 259        3    1048576 nvme0n1p3
+ 259        4    8907776 nvme0n1p4
+  11        0    8901632 sr0
+ 253        0   10485760 dm-0
+
+[root@localhost lisa]# partprobe /dev/nvme0n1
+Error: Partition(s) 5 on /dev/nvme0n1 have been written, but we have been unable to inform the kernel of the change, probably because it/they are in use.  As a result, the old partition(s) will remain in use.  You should reboot now before making further changes.
+
+[root@localhost lisa]# reboot

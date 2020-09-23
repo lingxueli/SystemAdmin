@@ -111,4 +111,3 @@ To show all installed unit files use 'systemctl list-unit-files'.
 
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
-
