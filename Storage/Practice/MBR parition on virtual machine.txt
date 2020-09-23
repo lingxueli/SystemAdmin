@@ -169,3 +169,15 @@ major minor  #blocks  name
 Error: Partition(s) 5 on /dev/nvme0n1 have been written, but we have been unable to inform the kernel of the change, probably because it/they are in use.  As a result, the old partition(s) will remain in use.  You should reboot now before making further changes.
 
 [root@localhost lisa]# reboot
+
+[root@localhost lisa]# cat /proc/partitions
+major minor  #blocks  name
+
+ 259        0   20971520 nvme0n1
+ 259        1     524288 nvme0n1p1
+ 259        2   10489856 nvme0n1p2
+ 259        3    1048576 nvme0n1p3
+ 259        4          1 nvme0n1p4
+ 259        5     102400 nvme0n1p5
+  11        0    8901632 sr0
+ 253        0   10485760 dm-0
