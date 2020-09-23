@@ -114,3 +114,17 @@ Number  Start   End     Size    File system  Name   Flags
 
 (parted) quit                                                             
 Information: You may need to update /etc/fstab.
+
+
+[root@localhost lisa]# blkid
+/dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
+/dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
+/dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
+/dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
+/dev/nvme0n1: PTUUID="39947a2a" PTTYPE="dos"
+/dev/nvme0n1p5: PARTUUID="39947a2a-05"
+/dev/nvme0n2: PTUUID="8d6c58a6-05ee-4241-b406-5e95d6df368e" PTTYPE="gpt"
+/dev/nvme0n2p1: PARTLABEL="part1" PARTUUID="22f65af7-45e4-4561-ae7f-ec7c8095474a"
+
+
