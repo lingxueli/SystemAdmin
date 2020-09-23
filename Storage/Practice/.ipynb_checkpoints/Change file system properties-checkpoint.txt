@@ -1,0 +1,70 @@
+[root@localhost lisa]# blkid
+/dev/nvme0n1p5: UUID="9d2fd572-f810-481a-a737-1d90c25d1141" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="39947a2a-05"
+/dev/nvme0n2p1: UUID="21ff5b69-ca81-4399-ad85-e49ab628b02a" BLOCK_SIZE="4096" TYPE="ext4" PARTLABEL="part1" PARTUUID="22f65af7-45e4-4561-ae7f-ec7c8095474a"
+
+[root@localhost lisa]# tune2fs -l /dev/nvme0n2p1
+tune2fs 1.45.6 (20-Mar-2020)
+Filesystem volume name:   <none>
+Last mounted on:          <not available>
+Filesystem UUID:          21ff5b69-ca81-4399-ad85-e49ab628b02a
+Filesystem magic number:  0xEF53
+Filesystem revision #:    1 (dynamic)
+Filesystem features:      has_journal ext_attr resize_inode dir_index filetype extent 64bit flex_bg sparse_super large_file huge_file dir_nlink extra_isize metadata_csum
+Filesystem flags:         signed_directory_hash 
+Default mount options:    user_xattr acl
+Filesystem state:         clean
+Errors behavior:          Continue
+Filesystem OS type:       Linux
+Inode count:              65536
+Block count:              261883
+Reserved block count:     13094
+Free blocks:              253024
+Free inodes:              65525
+First block:              0
+Block size:               4096
+Fragment size:            4096
+Group descriptor size:    64
+Reserved GDT blocks:      127
+Blocks per group:         32768
+Fragments per group:      32768
+Inodes per group:         8192
+Inode blocks per group:   512
+Flex block group size:    16
+Filesystem created:       Tue Sep 22 20:57:33 2020
+Last mount time:          n/a
+Last write time:          Tue Sep 22 20:57:33 2020
+Mount count:              0
+Maximum mount count:      -1
+Last checked:             Tue Sep 22 20:57:33 2020
+Check interval:           0 (<none>)
+Lifetime writes:          533 kB
+Reserved blocks uid:      0 (user root)
+Reserved blocks gid:      0 (group root)
+First inode:              11
+Inode size:	          256
+Required extra isize:     32
+Desired extra isize:      32
+Journal inode:            8
+Default directory hash:   half_md4
+Directory Hash Seed:      65244d9a-7d08-4570-9547-1f2619c86b86
+Journal backup:           inode blocks
+Checksum type:            crc32c
+Checksum:                 0x677189f2
+
+[root@localhost lisa]# tune2fs -L ext4_disk2 /dev/nvme0n2p1
+tune2fs 1.45.6 (20-Mar-2020)
+
+[root@localhost lisa]# tune2fs -o ^user_xattr,acl /dev/nvme0n2p1    # These mount options would be switched off
+tune2fs 1.45.6 (20-Mar-2020)
+[root@localhost lisa]# tune2fs -o user_xattr,acl /dev/nvme0n2p1     # These mount options would be switched on
+tune2fs 1.45.6 (20-Mar-2020)
+
+[root@localhost lisa]# tune2fs -O ^has_journal /dev/nvme0n2p1               # turn off file system features
+tune2fs 1.45.6 (20-Mar-2020)
+[root@localhost lisa]# tune2fs -O has_journal /dev/nvme0n2p1
+tune2fs 1.45.6 (20-Mar-2020)
+Creating journal inode: done
+
+[root@localhost lisa]# xfs_admin -L xfs_disk1 /dev/nvme0n1p5
+writing all SBs
+new label = "xfs_disk1"
