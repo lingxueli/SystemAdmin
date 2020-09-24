@@ -1,0 +1,90 @@
+[root@localhost ~]# pvs
+  PV             VG     Fmt  Attr PSize    PFree  
+  /dev/nvme0n1p2 rhel   lvm2 a--    10.00g      0 
+  /dev/nvme0n2p1 vgdata lvm2 a--  1020.00m 512.00m
+[root@localhost ~]# vgs
+  VG     #PV #LV #SN Attr   VSize    VFree  
+  rhel     1   1   0 wz--n-   10.00g      0 
+  vgdata   1   1   0 wz--n- 1020.00m 512.00m
+
+
+[root@localhost ~]# parted /dev/nvme0n2
+GNU Parted 3.2
+Using /dev/nvme0n2
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) print                                                            
+Model: NVMe Device (nvme)
+Disk /dev/nvme0n2: 8590MB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  1074MB  1073MB  primary               lvm
+ 2      1074MB  2147MB  1074MB  primary               lvm
+
+(parted) quit                                                             
+
+[root@localhost ~]# vgextend vgdata /dev/nvme0n2p2
+  Physical volume "/dev/nvme0n2p2" successfully created.
+  Volume group "vgdata" successfully extended
+[root@localhost ~]# vgs
+  VG     #PV #LV #SN Attr   VSize  VFree 
+  rhel     1   1   0 wz--n- 10.00g     0 
+  vgdata   2   1   0 wz--n-  1.99g <1.50g
+  
+[root@localhost ~]# lvs
+  LV     VG     Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root   rhel   -wi-ao----  10.00g                                                    
+  lvdata vgdata -wi-ao---- 508.00m                                                    
+[root@localhost ~]# df -h
+Filesystem                 Size  Used Avail Use% Mounted on
+devtmpfs                   1.8G     0  1.8G   0% /dev
+tmpfs                      1.9G     0  1.9G   0% /dev/shm
+tmpfs                      1.9G   18M  1.8G   1% /run
+tmpfs                      1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root       10G  4.6G  5.5G  46% /
+/dev/nvme0n1p5              95M  6.0M   89M   7% /mounts/data
+/dev/nvme0n1p1             488M  162M  291M  36% /boot
+tmpfs                      371M  1.2M  370M   1% /run/user/42
+tmpfs                      371M  4.6M  367M   2% /run/user/1000
+/dev/sr0                   8.5G  8.5G     0 100% /run/media/lisa/RHEL-8-3-0-BaseOS-x86_64
+/dev/mapper/vgdata-lvdata  484M  2.3M  453M   1% /files
+
+[root@localhost ~]# lvextend -r -l +50%FREE /dev/vgdata/lvdata
+  Size of logical volume vgdata/lvdata changed from 508.00 MiB (127 extents) to <1.25 GiB (319 extents).
+  Logical volume vgdata/lvdata successfully resized.
+resize2fs 1.45.6 (20-Mar-2020)
+Filesystem at /dev/mapper/vgdata-lvdata is mounted on /files; on-line resizing required
+old_desc_blocks = 4, new_desc_blocks = 10
+The filesystem on /dev/mapper/vgdata-lvdata is now 1306624 (1k) blocks long.
+[root@localhost ~]# lvs
+  LV     VG     Attr       LSize  Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root   rhel   -wi-ao---- 10.00g                                                    
+  lvdata vgdata -wi-ao---- <1.25g                                                    
+[root@localhost ~]# df -h
+Filesystem                 Size  Used Avail Use% Mounted on
+devtmpfs                   1.8G     0  1.8G   0% /dev
+tmpfs                      1.9G     0  1.9G   0% /dev/shm
+tmpfs                      1.9G   18M  1.8G   1% /run
+tmpfs                      1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/rhel-root       10G  4.6G  5.4G  46% /
+/dev/nvme0n1p5              95M  6.0M   89M   7% /mounts/data
+/dev/nvme0n1p1             488M  162M  291M  36% /boot
+tmpfs                      371M  1.2M  370M   1% /run/user/42
+tmpfs                      371M  4.6M  367M   2% /run/user/1000
+/dev/sr0                   8.5G  8.5G     0 100% /run/media/lisa/RHEL-8-3-0-BaseOS-x86_64
+/dev/mapper/vgdata-lvdata  1.2G  2.7M  1.2G   1% /files
+
+[root@localhost ~]# lvreduce -r -L -50M /dev/vgdata/lvdata
+  Rounding size to boundary between physical extents: 48.00 MiB.
+Do you want to unmount "/files" ? [Y|n] y
+fsck from util-linux 2.32.1
+/dev/mapper/vgdata-lvdata: 11/325120 files (0.0% non-contiguous), 52038/1306624 blocks
+resize2fs 1.45.6 (20-Mar-2020)
+Resizing the filesystem on /dev/mapper/vgdata-lvdata to 1257472 (1k) blocks.
+The filesystem on /dev/mapper/vgdata-lvdata is now 1257472 (1k) blocks long.
+
+  Size of logical volume vgdata/lvdata changed from <1.25 GiB (319 extents) to <1.20 GiB (307 extents).
+  Logical volume vgdata/lvdata successfully resized.
+[root@localhost ~]# mount -a
