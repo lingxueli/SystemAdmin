@@ -1,0 +1,84 @@
+Basic Network troubleshooting: https://access.redhat.com/solutions/518893
+
+
+[root@localhost ~]$ ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:0c:29:ab:0a:d6 brd ff:ff:ff:ff:ff:ff
+3: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:b4:aa:9c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.122.1/24 brd 192.168.122.255 scope global virbr0
+       valid_lft forever preferred_lft forever
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
+    link/ether 52:54:00:b4:aa:9c brd ff:ff:ff:ff:ff:ff
+
+[root@localhost network-scripts]# pwd
+/etc/sysconfig/network-scripts
+[root@localhost network-scripts]# cat ifcfg-ens160 
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens160
+UUID=ed5497da-a323-4814-9f23-e94c6a33a46c
+DEVICE=ens160
+ONBOOT=no
+
+C:\Users\lingx>ipconfig
+
+Windows IP Configuration
+
+Ethernet adapter vEthernet (Default Switch):
+
+   Connection-specific DNS Suffix  . :
+   Link-local IPv6 Address . . . . . : fe80::3d3c:c2fa:5b3b:212f%31
+   IPv4 Address. . . . . . . . . . . : 172.31.32.1
+   Subnet Mask . . . . . . . . . . . : 255.255.240.0
+   
+[root@localhost network-scripts]# ip address add 172.31.32.2/20 dev ens160
+[root@localhost network-scripts]# ip addr show dev ens160 
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:0c:29:ab:0a:d6 brd ff:ff:ff:ff:ff:ff
+    inet 172.31.32.2/20 scope global ens160
+       valid_lft forever preferred_lft forever
+       
+[root@localhost network-scripts]# ifup ens160
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/4)
+
+[root@localhost network-scripts]# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
+    link/ether 00:0c:29:ab:0a:d6 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.219.128/24 brd 192.168.219.255 scope global dynamic noprefixroute ens160
+       valid_lft 1763sec preferred_lft 1763sec
+    inet6 fe80::7b02:ddcc:b07d:bceb/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: virbr0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:b4:aa:9c brd ff:ff:ff:ff:ff:ff
+    inet 192.168.122.1/24 brd 192.168.122.255 scope global virbr0
+       valid_lft forever preferred_lft forever
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
+    link/ether 52:54:00:b4:aa:9c brd ff:ff:ff:ff:ff:ff
+
+[root@localhost network-scripts]# ip route show | grep default
+default via 192.168.219.2 dev ens160 proto dhcp metric 100 
+
+
+
