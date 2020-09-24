@@ -1,0 +1,233 @@
+[root@localhost ~]# yum install stratis-cli
+Updating Subscription Management repositories.
+Error: There are no enabled repositories in "/etc/yum.repos.d", "/etc/yum/repos.d", "/etc/distro.repos.d".
+
+https://access.redhat.com/discussions/3066851
+
+[root@localhost ~]# cd /etc/yum.repos.d
+[root@localhost yum.repos.d]# ls
+redhat.repo
+[root@localhost yum.repos.d]# cd /etc/yum/repos.d
+bash: cd: /etc/yum/repos.d: No such file or directory
+[root@localhost yum.repos.d]# cd /etc/distro.repos.d
+bash: cd: /etc/distro.repos.d: No such file or directory
+
+[root@localhost yum.repos.d]# subscription-manager status
++-------------------------------------------+
+   System Status Details
++-------------------------------------------+
+Overall Status: Invalid
+
+Red Hat Enterprise Linux for x86_64 Beta:
+- Not supported by a valid subscription.
+
+System Purpose Status: Not Specified
+
+[root@localhost yum.repos.d]# yum repolist
+Updating Subscription Management repositories.
+
+[root@localhost yum.repos.d]# sudo subscription-manager repos --enable redhat.repo
+Error: 'redhat.repo' does not match a valid repository ID. Use "subscription-manager repos --list" to see valid repositories.
+
+[root@localhost yum.repos.d]# subscription-manager repos --list
++----------------------------------------------------------+
+    Available Repositories in /etc/yum.repos.d/redhat.repo
++----------------------------------------------------------+
+Repo ID:   rhel-atomic-7-cdk-3.5-source-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.6-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/os
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-source-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.5-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-debug-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.13-rpms
+Repo Name: Red Hat Container Development Kit 3.13 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.13/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.11-rpms
+Repo Name: Red Hat Container Development Kit 3.11 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.11/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.9-rpms
+Repo Name: Red Hat Container Development Kit 3.9 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.9/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-source-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-debug-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/debug
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-debug-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.6-source-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.5-rpms
+Repo Name: Red Hat Container Development Kit 3.5 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.5/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.8-rpms
+Repo Name: Red Hat Container Development Kit 3.8 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.8/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-beta-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.0 Beta /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/rhel/atomic/7/$basearch/cdk/3.0/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-source-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.7-rpms
+Repo Name: Red Hat Container Development Kit 3.7 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.7/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.6-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.6 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.6/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.10-rpms
+Repo Name: Red Hat Container Development Kit 3.10 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.10/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-rpms
+Repo Name: Red Hat Container Development Kit 3.0 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.0/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.2-source-rpms
+Repo Name: Red Hat Container Development Kit 3.2 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.2/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-source-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.12-rpms
+Repo Name: Red Hat Container Development Kit 3.12 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.12/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.4-rpms
+Repo Name: Red Hat Container Development Kit 3.4 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.4/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.3-source-rpms
+Repo Name: Red Hat Container Development Kit 2.3 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-2.4-rpms
+Repo Name: Red Hat Container Development Kit 2.4 /(RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/2.4/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.0-beta-source-rpms
+Repo Name: Red Hat Container Development Kit 3.0 Beta /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/rhel/atomic/7/$basearch/cdk/3.0/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhv-4-tools-beta-for-rhel-8-x86_64-rpms
+Repo Name: Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (RPMs)
+Repo URL:  https://cdn.redhat.com/content/beta/layered/rhel8/x86_64/rhv-tools/4/os
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-debug-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(Debug RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/debug
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.3-source-rpms
+Repo Name: Red Hat Container Development Kit 3.3 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.3/source/SRPMS
+Enabled:   0
+
+Repo ID:   rhel-atomic-7-cdk-3.1-source-rpms
+Repo Name: Red Hat Container Development Kit 3.1 /(Source RPMs)
+Repo URL:  https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/$basearch/cdk/3.1/source/SRPMS
+Enabled:   0
+
+[root@localhost yum.repos.d]# subscription-manager repos --enable rhel-atomic-7-cdk-3.5-source-rpms
+Repository 'rhel-atomic-7-cdk-3.5-source-rpms' is enabled for this system.
+
