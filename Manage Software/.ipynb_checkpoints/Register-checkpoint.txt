@@ -24,3 +24,77 @@ Product Name: Red Hat Enterprise Linux for x86_64 Beta
 Status:       Not Subscribed
 
 Unable to find available subscriptions for all your installed products.
+
+[root@localhost ~]# subscription-manager list --available
++-------------------------------------------+
+    Available Subscriptions
++-------------------------------------------+
+Subscription Name:   Red Hat Developer Subscription
+Provides:            dotNET on RHEL Beta (for RHEL Server)
+                     Red Hat CodeReady Linux Builder for x86_64
+                     Red Hat Enterprise Linux for SAP HANA for x86_64
+                     Red Hat Ansible Engine
+                     RHEL for SAP HANA - Update Services for SAP Solutions
+                     Red Hat Enterprise Linux Scalable File System (for RHEL Server) - Extended Update Support
+                     RHEL for SAP HANA - Extended Update Support
+                     Red Hat Container Images Beta
+                     Red Hat Enterprise Linux Atomic Host Beta
+                     Red Hat Container Images
+                     Red Hat Enterprise Linux Load Balancer (for RHEL Server)
+                     Red Hat Container Development Kit
+                     Red Hat Beta
+                     Red Hat EUCJP Support (for RHEL Server) - Extended Update Support
+                     RHEL for SAP (for IBM Power LE) - Update Services for SAP Solutions
+                     Red Hat Enterprise Linux High Availability for x86_64
+                     MRG Realtime
+                     Red Hat Enterprise Linux Load Balancer (for RHEL Server) - Extended Update Support
+                     dotNET on RHEL (for RHEL Server)
+                     Red Hat CodeReady Linux Builder for x86_64 - Extended Update Support
+                     Red Hat Enterprise Linux High Availability - Update Services for SAP Solutions
+                     Red Hat Enterprise Linux Resilient Storage for x86_64 - Extended Update Support
+                     Red Hat Enterprise Linux High Availability for x86_64 - Extended Update Support
+                     Oracle Java (for RHEL Server)
+                     Red Hat Enterprise Linux Resilient Storage for x86_64
+                     Red Hat Enterprise Linux Server - Update Services for SAP Solutions
+                     Red Hat Software Collections (for RHEL Server)
+                     Red Hat Enterprise Linux for ARM 64
+                     Red Hat Enterprise Linux High Performance Networking (for RHEL Server)
+                     Red Hat Enterprise Linux Scalable File System (for RHEL Server)
+                     Red Hat Enterprise Linux for Real Time
+                     Red Hat Enterprise Linux High Performance Networking (for RHEL Server) - Extended Update Support
+                     RHEL for SAP - Update Services for SAP Solutions
+                     Oracle Java (for RHEL Server) - Extended Update Support
+                     Red Hat Enterprise Linux Atomic Host
+                     Red Hat CodeReady Linux Builder for ARM 64
+                     Red Hat Developer Tools (for RHEL Server)
+                     Red Hat Software Collections Beta (for RHEL Server)
+                     Red Hat Enterprise Linux Server
+                     Red Hat Enterprise Linux for SAP Applications for x86_64
+                     Red Hat Developer Tools Beta (for RHEL Server)
+                     Red Hat Enterprise Linux for x86_64
+                     Red Hat Enterprise Linux for x86_64 - Extended Update Support
+                     RHEL for SAP - Extended Update Support
+                     Red Hat Developer Toolset (for RHEL Server)
+                     Red Hat Enterprise Linux High Performance Networking (for RHEL Compute Node)
+                     Red Hat S-JIS Support (for RHEL Server) - Extended Update Support
+SKU:                 RH00798
+Contract:            
+Pool ID:             8a85f999710f3aea01711d9148017bd8
+Provides Management: No
+Available:           16
+Suggested:           1
+Service Type:        
+Roles:               
+Service Level:       Self-Support
+Usage:               
+Add-ons:             
+Subscription Type:   Standard
+Starts:              03/26/2020
+Ends:                03/26/2021
+Entitlement Type:    Physical
+
+Unable to find available subscriptions for all your installed products.
+https://access.redhat.com/discussions/4627751
+
+[root@localhost ~]# sudo subscription-manager attach --pool=8a85f999710f3aea01711d9148017bd8
+Successfully attached a subscription for: Red Hat Developer Subscription
