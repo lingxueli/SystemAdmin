@@ -231,3 +231,82 @@ Enabled:   0
 [root@localhost yum.repos.d]# subscription-manager repos --enable rhel-atomic-7-cdk-3.5-source-rpms
 Repository 'rhel-atomic-7-cdk-3.5-source-rpms' is enabled for this system.
 
+[root@localhost ~]# yum -y install stratis-cli
+Updating Subscription Management repositories.
+Red Hat Container Development Kit 3.5 /(Source RPMs)                                    11  B/s |  10  B     00:00    
+Errors during downloading metadata for repository 'rhel-atomic-7-cdk-3.5-source-rpms':
+  - Status code: 404 for https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/x86_64/cdk/3.5/source/SRPMS/repodata/repomd.xml (IP: 184.51.36.251)
+Error: Failed to download metadata for repo 'rhel-atomic-7-cdk-3.5-source-rpms': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
+
+[root@localhost ~]# subscription-manager list
++-------------------------------------------+
+    Installed Product Status
++-------------------------------------------+
+Product Name:   Red Hat Enterprise Linux for x86_64 Beta
+Product ID:     486
+Version:        8.3 Beta
+Arch:           x86_64
+Status:         Not Subscribed
+Status Details: Not supported by a valid subscription.
+Starts:         
+Ends:           
+
+https://linuxconfig.org/enable-subscription-management-repositories-on-redhat-8-linux
+
+[root@localhost ~]# subscription-manager repos --enable=*
+Repository 'rhel-atomic-7-cdk-2.3-rpms' is enabled for this system.
+Repository 'rhv-4-tools-beta-for-rhel-8-x86_64-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-2.4-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.11-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.5-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.6-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.9-rpms' is enabled for this system.
+Repository 'rhv-4-tools-beta-for-rhel-8-x86_64-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-2.4-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.2-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.7-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.0-beta-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.12-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.5-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.4-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.10-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.1-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-2.3-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.2-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.0-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.4-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.0-beta-debug-rpms' is enabled for this system.
+Repository 'rhv-4-tools-beta-for-rhel-8-x86_64-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.5-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.2-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.1-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.3-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.1-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.6-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.3-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.0-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.6-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.3-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-2.3-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.0-source-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.4-debug-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.8-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-2.4-rpms' is enabled for this system.
+Repository 'rhel-atomic-7-cdk-3.13-rpms' is enabled for this system.
+
+[root@localhost ~]# yum -y install stratis-cli
+Updating Subscription Management repositories.
+Red Hat Container Development Kit 3.5 /(Debug RPMs)                                     13  B/s |  10  B     00:00    
+Errors during downloading metadata for repository 'rhel-atomic-7-cdk-3.5-debug-rpms':
+  - Status code: 404 for https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/x86_64/cdk/3.5/debug/repodata/repomd.xml (IP: 184.51.36.251)
+Error: Failed to download metadata for repo 'rhel-atomic-7-cdk-3.5-debug-rpms': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
+[root@localhost ~]# ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=15.2 ms
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=128 time=17.10 ms
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=128 time=12.1 ms
+64 bytes from 8.8.8.8: icmp_seq=4 ttl=128 time=12.1 ms
+^C
+--- 8.8.8.8 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 14ms
+rtt min/avg/max/mdev = 12.054/14.334/17.951/2.451 ms
