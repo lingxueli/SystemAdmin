@@ -8,7 +8,10 @@ Error: There are no enabled repositories in "/etc/yum.repos.d", "/etc/yum/repos.
 
 
 How to register and subscribe a system to the Red Hat Customer Portal using Red Hat Subscription-Manager: https://access.redhat.com/solutions/253273
-
+If you have issue registering, follow this
+https://access.redhat.com/discussions/3312101
+https://developers.redhat.com/articles/renew-your-red-hat-developer-program-subscription
+https://access.redhat.com/discussions/4019751
 [root@localhost ~]# subscription-manager register
 Registering to: subscription.rhsm.redhat.com:443/subscription
 Username: lingxue.li1203
@@ -114,8 +117,6 @@ Ends:
 
 [root@localhost ~]# subscription-manager list --available
 No available subscription pools to list
-[root@localhost ~]# subscription-manager attach --pool=8a85f999710f3aea01711d9148017bd8
-This unit has already had the subscription matching pool ID "8a85f999710f3aea01711d9148017bd8" attached.
 [root@localhost ~]# subscription-manager list
 +-------------------------------------------+
     Installed Product Status
@@ -128,3 +129,27 @@ Status:         Not Subscribed
 Status Details: Not supported by a valid subscription.
 Starts:         
 Ends:           
+
+[root@localhost ~]# subscription-manager remove --all
+1 local certificate has been deleted.
+1 subscription removed at the server.
+[root@localhost ~]# subscription-manager unregister
+Unregistering from: subscription.rhsm.redhat.com:443/subscription
+System has been unregistered.
+[root@localhost ~]# subscription-manager clean
+All local data removed
+[root@localhost ~]# subscription-manager register
+Registering to: subscription.rhsm.redhat.com:443/subscription
+Username: lingxue.li1203
+Password: 
+The system has been registered with ID: 0b76d1a2-5aff-41f1-9e42-d7683b5dfe08
+The registered system name is: localhost.localdomain
+[root@localhost ~]# subscription-manager refresh
+All local data refreshed
+[root@localhost ~]# subscription-manager attach --auto
+Installed Product Current Status:
+Product Name: Red Hat Enterprise Linux for x86_64 Beta
+Status:       Not Subscribed
+
+Unable to find available subscriptions for all your installed products.
+[root@localhost ~]# 

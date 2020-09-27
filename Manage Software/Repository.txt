@@ -238,18 +238,6 @@ Errors during downloading metadata for repository 'rhel-atomic-7-cdk-3.5-source-
   - Status code: 404 for https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/x86_64/cdk/3.5/source/SRPMS/repodata/repomd.xml (IP: 184.51.36.251)
 Error: Failed to download metadata for repo 'rhel-atomic-7-cdk-3.5-source-rpms': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
 
-[root@localhost ~]# subscription-manager list
-+-------------------------------------------+
-    Installed Product Status
-+-------------------------------------------+
-Product Name:   Red Hat Enterprise Linux for x86_64 Beta
-Product ID:     486
-Version:        8.3 Beta
-Arch:           x86_64
-Status:         Not Subscribed
-Status Details: Not supported by a valid subscription.
-Starts:         
-Ends:           
 
 https://linuxconfig.org/enable-subscription-management-repositories-on-redhat-8-linux
 
@@ -300,13 +288,60 @@ Red Hat Container Development Kit 3.5 /(Debug RPMs)                             
 Errors during downloading metadata for repository 'rhel-atomic-7-cdk-3.5-debug-rpms':
   - Status code: 404 for https://cdn.redhat.com/content/dist/rhel/atomic/7/7Server/x86_64/cdk/3.5/debug/repodata/repomd.xml (IP: 184.51.36.251)
 Error: Failed to download metadata for repo 'rhel-atomic-7-cdk-3.5-debug-rpms': Cannot download repomd.xml: Cannot download repodata/repomd.xml: All mirrors were tried
-[root@localhost ~]# ping 8.8.8.8
-PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
-64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=15.2 ms
-64 bytes from 8.8.8.8: icmp_seq=2 ttl=128 time=17.10 ms
-64 bytes from 8.8.8.8: icmp_seq=3 ttl=128 time=12.1 ms
-64 bytes from 8.8.8.8: icmp_seq=4 ttl=128 time=12.1 ms
-^C
---- 8.8.8.8 ping statistics ---
-4 packets transmitted, 4 received, 0% packet loss, time 14ms
-rtt min/avg/max/mdev = 12.054/14.334/17.951/2.451 ms
+
+https://access.redhat.com/discussions/4656371
+
+[root@localhost ~]# subscription-manager repos --disable rhel-atomic-7-cdk-3.14-rpms
+Repository 'rhel-atomic-7-cdk-3.14-rpms' is disabled for this system.
+[root@localhost ~]# subscription-manager repos --enable rhel-atomic-7-cdk-3.14-rpms
+Repository 'rhel-atomic-7-cdk-3.14-rpms' is enabled for this system.
+
+[root@localhost ~]# subscription-manager refresh
+All local data refreshed
+[root@localhost ~]# yum clean all
+Updating Subscription Management repositories.
+88 files removed
+[root@localhost ~]# yum repolist
+
+Updating Subscription Management repositories.
+repo id                                                                                     repo name
+rhel-atomic-7-cdk-2.3-debug-rpms                                                            Red Hat Container Development Kit 2.3 /(Debug RPMs)
+rhel-atomic-7-cdk-2.3-rpms                                                                  Red Hat Container Development Kit 2.3 /(RPMs)
+rhel-atomic-7-cdk-2.3-source-rpms                                                           Red Hat Container Development Kit 2.3 /(Source RPMs)
+rhel-atomic-7-cdk-2.4-debug-rpms                                                            Red Hat Container Development Kit 2.4 /(Debug RPMs)
+rhel-atomic-7-cdk-2.4-rpms                                                                  Red Hat Container Development Kit 2.4 /(RPMs)
+rhel-atomic-7-cdk-2.4-source-rpms                                                           Red Hat Container Development Kit 2.4 /(Source RPMs)
+rhel-atomic-7-cdk-3.0-beta-debug-rpms                                                       Red Hat Container Development Kit 3.0 Beta /(Debug RPMs)
+rhel-atomic-7-cdk-3.0-beta-source-rpms                                                      Red Hat Container Development Kit 3.0 Beta /(Source RPMs)
+rhel-atomic-7-cdk-3.0-debug-rpms                                                            Red Hat Container Development Kit 3.0 /(Debug RPMs)
+rhel-atomic-7-cdk-3.0-rpms                                                                  Red Hat Container Development Kit 3.0 /(RPMs)
+rhel-atomic-7-cdk-3.0-source-rpms                                                           Red Hat Container Development Kit 3.0 /(Source RPMs)
+rhel-atomic-7-cdk-3.1-debug-rpms                                                            Red Hat Container Development Kit 3.1 /(Debug RPMs)
+rhel-atomic-7-cdk-3.1-rpms                                                                  Red Hat Container Development Kit 3.1 /(RPMs)
+rhel-atomic-7-cdk-3.1-source-rpms                                                           Red Hat Container Development Kit 3.1 /(Source RPMs)
+rhel-atomic-7-cdk-3.10-rpms                                                                 Red Hat Container Development Kit 3.10 /(RPMs)
+rhel-atomic-7-cdk-3.11-rpms                                                                 Red Hat Container Development Kit 3.11 /(RPMs)
+rhel-atomic-7-cdk-3.12-rpms                                                                 Red Hat Container Development Kit 3.12 /(RPMs)
+rhel-atomic-7-cdk-3.13-rpms                                                                 Red Hat Container Development Kit 3.13 /(RPMs)
+rhel-atomic-7-cdk-3.14-rpms                                                                 Red Hat Container Development Kit 3.14 /(RPMs)
+rhel-atomic-7-cdk-3.2-debug-rpms                                                            Red Hat Container Development Kit 3.2 /(Debug RPMs)
+rhel-atomic-7-cdk-3.2-rpms                                                                  Red Hat Container Development Kit 3.2 /(RPMs)
+rhel-atomic-7-cdk-3.2-source-rpms                                                           Red Hat Container Development Kit 3.2 /(Source RPMs)
+rhel-atomic-7-cdk-3.3-debug-rpms                                                            Red Hat Container Development Kit 3.3 /(Debug RPMs)
+rhel-atomic-7-cdk-3.3-rpms                                                                  Red Hat Container Development Kit 3.3 /(RPMs)
+rhel-atomic-7-cdk-3.3-source-rpms                                                           Red Hat Container Development Kit 3.3 /(Source RPMs)
+rhel-atomic-7-cdk-3.4-debug-rpms                                                            Red Hat Container Development Kit 3.4 /(Debug RPMs)
+rhel-atomic-7-cdk-3.4-rpms                                                                  Red Hat Container Development Kit 3.4 /(RPMs)
+rhel-atomic-7-cdk-3.4-source-rpms                                                           Red Hat Container Development Kit 3.4 /(Source RPMs)
+rhel-atomic-7-cdk-3.5-debug-rpms                                                            Red Hat Container Development Kit 3.5 /(Debug RPMs)
+rhel-atomic-7-cdk-3.5-rpms                                                                  Red Hat Container Development Kit 3.5 /(RPMs)
+rhel-atomic-7-cdk-3.5-source-rpms                                                           Red Hat Container Development Kit 3.5 /(Source RPMs)
+rhel-atomic-7-cdk-3.6-debug-rpms                                                            Red Hat Container Development Kit 3.6 /(Debug RPMs)
+rhel-atomic-7-cdk-3.6-rpms                                                                  Red Hat Container Development Kit 3.6 /(RPMs)
+rhel-atomic-7-cdk-3.6-source-rpms                                                           Red Hat Container Development Kit 3.6 /(Source RPMs)
+rhel-atomic-7-cdk-3.7-rpms                                                                  Red Hat Container Development Kit 3.7 /(RPMs)
+rhel-atomic-7-cdk-3.8-rpms                                                                  Red Hat Container Development Kit 3.8 /(RPMs)
+rhel-atomic-7-cdk-3.9-rpms                                                                  Red Hat Container Development Kit 3.9 /(RPMs)
+rhv-4-tools-beta-for-rhel-8-x86_64-debug-rpms                                               Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Debug RPMs)
+rhv-4-tools-beta-for-rhel-8-x86_64-rpms                                                     Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (RPMs)
+rhv-4-tools-beta-for-rhel-8-x86_64-source-rpms                                              Red Hat Virtualization 4 Tools Beta for RHEL 8 x86_64 (Source RPMs)
