@@ -24,3 +24,5 @@ Linux localhost.localdomain 4.18.0-193.el8.x86_64 #1 SMP Fri May 8 10:59:10 UTC 
        CPE OS Name: cpe:/o:centos:centos:8
             Kernel: Linux 4.18.0-193.el8.x86_64
       Architecture: x86-64
+[root@localhost /]# cat /etc/centos-release
+CentOS Linux release 8.2.2004 (Core) 

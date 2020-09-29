@@ -1,0 +1,30 @@
+[root@localhost lisa]# lsmod | less
+[root@localhost lisa]# modprobe ext4
+[root@localhost lisa]# lsmod | grep ext
+ext4                  749568  1
+mbcache                16384  1 ext4
+jbd2                  122880  1 ext4
+[root@localhost lisa]# modinfo ext4
+filename:       /lib/modules/4.18.0-193.el8.x86_64/kernel/fs/ext4/ext4.ko.xz
+softdep:        pre: crc32c
+license:        GPL
+description:    Fourth Extended Filesystem
+author:         Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theodore Ts'o and others
+alias:          fs-ext4
+alias:          ext3
+alias:          fs-ext3
+alias:          ext2
+alias:          fs-ext2
+rhelversion:    8.2
+srcversion:     408EBC8810B3BE8D2C737DF
+depends:        mbcache,jbd2
+intree:         Y
+name:           ext4
+vermagic:       4.18.0-193.el8.x86_64 SMP mod_unload modversions 
+sig_id:         PKCS#7
+signer:         CentOS Linux kernel signing key
+sig_key:        0F:9B:11:63:4F:D7:6A:FE:FC:95:25:93:39:ED:89:A1:C9:BA:3C:B2
+[root@localhost lisa]# modprobe -r ext4
+modprobe: FATAL: Module ext4 is in use.
+[root@localhost lisa]# modprobe -r xfs
+modprobe: FATAL: Module xfs is in use.
