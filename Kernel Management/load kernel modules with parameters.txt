@@ -1,0 +1,67 @@
+[root@localhost ~]# lsmod | grep cdrom
+cdrom                  65536  1 sr_mod
+[root@localhost ~]# modprobe -r cdrom
+modprobe: FATAL: Module cdrom is in use.
+[root@localhost ~]# modprobe -r sr_mod
+modprobe: FATAL: Module sr_mod is in use.
+[root@localhost ~]# modprobe -r sr_mod; modprobe -r cdrom
+modprobe: FATAL: Module sr_mod is in use.
+modprobe: FATAL: Module cdrom is in use.
+[root@localhost ~]# cd /dev
+[root@localhost dev]# ls -al | grep sr0 
+lrwxrwxrwx.  1 root root           3 Sep 28 21:07 cdrom -> sr0
+brw-rw----+  1 root cdrom    11,   0 Sep 28 21:07 sr0
+[root@localhost dev]# umount /dev/sr0
+[root@localhost dev]# modprobe -r sr_mod; modprobe -r cdrom
+[root@localhost dev]# modinfo cdrom
+filename:       /lib/modules/4.18.0-193.el8.x86_64/kernel/drivers/cdrom/cdrom.ko.xz
+license:        GPL
+rhelversion:    8.2
+srcversion:     E5A2049F635B552113240F5
+depends:        
+intree:         Y
+name:           cdrom
+vermagic:       4.18.0-193.el8.x86_64 SMP mod_unload modversions 
+sig_id:         PKCS#7
+signer:         CentOS Linux kernel signing key
+sig_key:        0F:9B:11:63:4F:D7:6A:FE:FC:95:25:93:39:ED:89:A1:C9:BA:3C:B2
+sig_hashalgo:   sha256
+signature:      84:B2:71:C0:E3:0C:96:6D:B5:95:A7:D2:8D:97:8E:78:70:C9:70:21:
+		C6:06:8E:73:16:32:01:B7:AF:4F:C9:F7:40:33:4A:09:77:95:03:9F:
+		0B:A7:A9:2B:E3:B7:6D:F1:30:E2:18:F6:61:91:5E:B9:AC:33:FE:ED:
+		37:D8:87:11:58:4C:F5:0C:9A:26:FE:8A:01:33:87:EA:D2:C3:8C:F5:
+		5F:46:A5:7D:0F:24:3E:DC:E4:86:3B:5D:4B:01:ED:FD:16:40:37:C4:
+		18:85:48:17:CF:D4:4F:92:AE:9F:14:61:B8:3A:54:EE:41:A5:E5:FE:
+		A0:FF:1C:36:8C:DF:6B:D6:34:2F:2C:90:A6:A9:E9:86:34:22:52:7D:
+		F0:98:27:B4:28:9B:CE:33:59:5B:4F:93:C9:0C:EB:38:66:30:9D:9E:
+		47:DE:3B:05:5D:AE:19:66:21:87:BA:93:47:B9:6F:61:C4:AA:7A:B6:
+		8A:85:A3:33:60:CA:8A:33:6B:AF:1C:6C:FA:6C:17:17:50:75:7E:EA:
+		BD:21:F9:9D:99:1E:A8:C2:2C:E3:1B:10:56:D8:F8:B8:F0:2F:4E:A9:
+		49:22:25:A5:B5:65:9D:31:0D:B3:EA:37:22:27:20:79:96:AD:BA:B3:
+		08:F6:BF:7D:DC:21:B7:04:FE:05:64:F5:A8:25:88:A3:2B:20:CC:D5:
+		32:20:2B:69:5D:9F:7C:52:FD:64:7B:BA:F3:7C:F9:29:29:25:47:92:
+		5B:C2:92:09:4C:A7:73:01:03:E0:90:FD:8D:31:D8:82:23:23:3E:EB:
+		7F:6A:DA:C8:84:F1:7F:7F:4F:23:EA:CA:84:D6:51:51:47:B9:DF:41:
+		91:4B:1D:6F:99:91:47:F1:71:FD:78:8B:09:5C:0F:A3:50:07:BD:A7:
+		6D:F9:41:F6:86:3D:1D:8B:D3:64:75:DF:6D:CE:45:A1:18:60:CD:DE:
+		CD:3D:1D:D0:07:E3:EF:E5:13:47:6C:F4:C1:D9:0C:34:4C:4A:41:76:
+		97:3F:10:6B
+parm:           debug:bool
+parm:           autoclose:bool
+parm:           autoeject:bool
+parm:           lockdoor:bool
+parm:           check_media_type:bool
+parm:           mrw_format_restart:bool
+[root@localhost ~]# modprobe cdrom debug=1
+[root@localhost ~]# dmesg | tail
+[   18.103217] virbr0: port 1(virbr0-nic) entered listening state
+[   18.365854] virbr0: port 1(virbr0-nic) entered disabled state
+[   48.368220] Bluetooth: RFCOMM TTY layer initialized
+[   48.368228] Bluetooth: RFCOMM socket layer initialized
+[   48.368327] Bluetooth: RFCOMM ver 1.11
+[   49.751203] fuse: init (API version 7.31)
+[   55.339434] rfkill: input handler disabled
+[   64.463585] ISO 9660 Extensions: Microsoft Joliet Level 3
+[   64.499565] ISO 9660 Extensions: RRIP_1991A
+[ 1874.909105] cdrom: Uniform CD-ROM driver unloaded
+
