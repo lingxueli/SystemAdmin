@@ -61,3 +61,22 @@ Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /
 
 [root@localhost ~]# ls -al /etc/systemd/system/multi-user.target.wants/ | grep vsftpd
 lrwxrwxrwx.  1 root root   38 Sep 28 22:39 vsftpd.service -> /usr/lib/systemd/system/vsftpd.service
+
+[root@localhost system]# pwd
+/usr/lib/systemd/system
+[root@localhost system]# cat vsftpd.service
+[Unit]
+Description=Vsftpd ftp daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+[Install]
+WantedBy=multi-user.target
+
+[root@localhost system]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
+   Active: inactive (dead)
