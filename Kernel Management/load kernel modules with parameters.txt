@@ -64,4 +64,9 @@ parm:           mrw_format_restart:bool
 [   64.463585] ISO 9660 Extensions: Microsoft Joliet Level 3
 [   64.499565] ISO 9660 Extensions: RRIP_1991A
 [ 1874.909105] cdrom: Uniform CD-ROM driver unloaded
-
+[root@localhost ~]# cd /etc/modprobe.d/
+[root@localhost modprobe.d]# ls
+firewalld-sysctls.conf  kvm.conf  lockd.conf  mlx4.conf  nvdimm-security.conf  truescale.conf  tuned.conf  vhost.conf
+[root@localhost modprobe.d]# vi cdrom.conf
+[root@localhost modprobe.d]# cat cdrom.conf 
+options cdrom debug=1
