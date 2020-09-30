@@ -1,0 +1,64 @@
+# GRUB 2 config file
+[root@localhost lisa]# cat /etc/default/grub 
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82f6b65 rd.lvm.lv=cl/sda2 rhgb quiet"
+GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=true
+
+# Shell scripts tells GRUB what to load and how to load it
+[root@localhost lisa]# cd /etc/grub.d
+[root@localhost grub.d]# ls
+00_header          01_users      20_ppc_terminfo   40_custom
+00_tuned           10_linux      30_os-prober      41_custom
+01_menu_auto_hide  20_linux_xen  30_uefi-firmware  README
+[root@localhost grub.d]# cat 01_users
+#!/bin/sh -e
+cat << EOF
+if [ -f \${prefix}/user.cfg ]; then
+  source \${prefix}/user.cfg
+  if [ -n "\${GRUB2_PASSWORD}" ]; then
+    set superusers="root"
+    export superusers
+    password_pbkdf2 root \${GRUB2_PASSWORD}
+  fi
+fi
+EOF
+
+# Boot config file: These are automatically generated from GRUB2 config file. Don't modify them.
+[root@localhost ~]# cd /boot/grub2
+[root@localhost grub2]# ls
+device.map  fonts  grub.cfg  grubenv  i386-pc
+[root@localhost grub2]# cat grub.cfg 
+
+[root@localhost centos]# pwd
+/boot/efi/EFI/centos
+[root@localhost centos]# ls
+
+# modify GRUB config file
+# Change boot arguments: remove rhgb quiet
+# Change boot menu timer
+[root@localhost grub.d]# vi /etc/default/grub
+[root@localhost grub.d]# cat /etc/default/grub 
+GRUB_TIMEOUT=10
+GRUB_DISTRIBUTOR="$(sed 's, release .*$,,g' /etc/system-release)"
+GRUB_DEFAULT=saved
+GRUB_DISABLE_SUBMENU=true
+GRUB_TERMINAL_OUTPUT="console"
+GRUB_CMDLINE_LINUX="crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82f6b65 rd.lvm.lv=cl/sda2"
+GRUB_DISABLE_RECOVERY="true"
+GRUB_ENABLE_BLSCFG=true
+
+# push GRUB config change to boot config file
+[root@localhost grub.d]# grub2-mkconfig -o /boot/grub2/grub.cfg
+Generating grub configuration file ...
+done
+
+[root@localhost grub.d]# man 7 bootparam
+BOOTPARAM(7)                            Linux Programmer's Manual                           BOOTPARAM(7)
+
+NAME
+       bootparam - introduction to boot time parameters of the Linux kernel

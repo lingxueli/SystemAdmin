@@ -1,0 +1,28 @@
+[root@localhost lisa]# systemctl get-default
+graphical.target
+
+[root@localhost lisa]# yum group list
+Last metadata expiration check: 1 day, 1:40:39 ago on Mon 28 Sep 2020 09:18:14 PM MDT.
+Available Environment Groups:
+   Server
+   Minimal Install
+   Workstation
+   Virtualization Host
+   Custom Operating System
+Installed Environment Groups:
+   Server with GUI
+Installed Groups:
+   Container Management
+   Headless Management
+Available Groups:
+   .NET Core Development
+   RPM Development Tools
+   Development Tools
+   Graphical Administration Tools
+   Legacy UNIX Compatibility
+   Network Servers
+   Scientific Support
+   Security Tools
+   Smart Card Support
+   System Tools
+[root@localhost lisa]# systemctl set-default graphical.target
