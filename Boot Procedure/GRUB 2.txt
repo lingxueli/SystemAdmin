@@ -39,7 +39,7 @@ device.map  fonts  grub.cfg  grubenv  i386-pc
 [root@localhost centos]# ls
 
 # modify GRUB config file
-# Change boot arguments: remove rhgb quiet
+# Change boot arguments: remove rhgb quiet. Debug info of the booting process will show up
 # Change boot menu timer
 [root@localhost grub.d]# vi /etc/default/grub
 [root@localhost grub.d]# cat /etc/default/grub 
@@ -51,6 +51,9 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82f6b65 rd.lvm.lv=cl/sda2"
 GRUB_DISABLE_RECOVERY="true"
 GRUB_ENABLE_BLSCFG=true
+
+# restart to verify the change
+[root@localhost grub.d]# systemctl isolate reboot.target
 
 # push GRUB config change to boot config file
 [root@localhost grub.d]# grub2-mkconfig -o /boot/grub2/grub.cfg
