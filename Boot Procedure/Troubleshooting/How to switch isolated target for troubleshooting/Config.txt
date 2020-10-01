@@ -1,0 +1,13 @@
+#at the end of booting parameters, add
+systemd.unit=rescue.target
+# more complete operational mode. more system units are loaded
+# root password is required
+
+# after entering the root shell
+systemctl list-units
+systemctl show-environment
+
+systemd.unit=emergency.target
+# minimuml operaltional mode. min # of systemd units are loaded
+
+repeat line 6-8
