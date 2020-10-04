@@ -1,7 +1,7 @@
 # Press e from GRUB 2 boot menu to get into edit mode
 1. Add rd.break to boot parameter, press Ctrl + X to boot with this option
 
-# Now you're at the end of the boot stage where initramfs is loaded, before a mount of the root file system on the directory /
+# Now you're at the end of the boot stage where initramfs is loaded, before a mount of the root file system on the directory /sysroot
 
 2. mount -o remount,rw /sysroot
 # mount the root file system at /sysroot with read/write access

@@ -26,7 +26,7 @@ All units from this target are executed. Root file system on disk is mounted on 
 
 At this point, you're prepared fro a minimal operating environment. Enough is loaded to pass the system installation.
 
-7. Swtich to root file system
+7. Switch to root file system
 
 System switches to the root file system and loads the Systemd process from disk as well.
 
