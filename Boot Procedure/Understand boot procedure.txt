@@ -1,0 +1,37 @@
+1. POST(power-on self-test)
+
+Execute POST check on firmware, which can be UEFI(Universal Extended Firmware Interface) or BIOS(Basic Input Output System)
+initialize the hardware
+
+2. Select the bootable device
+
+From UEFI boot firmware or BIOS, a bootable device is located.
+
+3. Load the boot loader
+
+From bootable device, a boot loader is located. on RHEL it's GRUB 2.
+
+4. Load the kernel
+
+On boot menu, you can choose the operating system to load. To load linux, kernel is loaded together with the initramfs into the memory. initramfs contains kernel modules for all hardware that is required to boot, as well as the initial scripts required for the next stage of booting. In RHEL 8, initframs = a complete operating system
+
+5. Start /sbin/init
+
+This is the first process loaded from initramfs. This process is linked to Systemd.
+udev deamon is loaded as well to take care of the hardware initialization.
+
+6. Process initrd.target
+
+All units from this target are executed. Root file system on disk is mounted on the /sysroot directory.
+
+At this point, you're prepared fro a minimal operating environment. Enough is loaded to pass the system installation.
+
+7. Swtich to root file system
+
+System switches to the root file system and loads the Systemd process from disk as well.
+
+8. Run the default target
+
+Systemd look for the default target to execute and runs all of its units. A login screen is presented, user can authenticate.
+
+Login prompt can be prompted before all systemd unit files have been loaded succesfully. Login promt != fully operational
