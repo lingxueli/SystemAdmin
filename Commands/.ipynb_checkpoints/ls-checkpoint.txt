@@ -1,0 +1,128 @@
+ls -l 
+# long format
+
+[root@localhost ~]# ls -l
+total 8
+-rw-------. 1 root root 1656 Sep 27 01:44 anaconda-ks.cfg
+-rw-r--r--. 1 root root 1766 Sep 27 01:47 initial-setup-ks.cfg
+
+ls -lh
+# long list, human readable format
+
+[root@localhost ~]# ls -lh
+total 8.0K
+-rw-------. 1 root root 1.7K Sep 27 01:44 anaconda-ks.cfg
+-rw-r--r--. 1 root root 1.8K Sep 27 01:47 initial-setup-ks.cfg
+
+ls -r
+# reverse order
+
+[root@localhost ~]# ls -r
+initial-setup-ks.cfg  anaconda-ks.cfg
+[root@localhost ~]# ls
+anaconda-ks.cfg  initial-setup-ks.cfg
+
+ls -a
+# list all
+[root@localhost ~]# ls -a
+.   anaconda-ks.cfg  .bash_logout   .bashrc  .config  .dbus                 .lesshst  .tcshrc
+..  .bash_history    .bash_profile  .cache   .cshrc   initial-setup-ks.cfg  .ssh
+
+ls -t
+# sort by modification time, newest first
+
+# newest first
+[root@localhost ~]# ls -lt
+total 8
+-rw-r--r--. 1 root root 1766 Sep 27 01:47 initial-setup-ks.cfg
+-rw-------. 1 root root 1656 Sep 27 01:44 anaconda-ks.cfg
+# oldest first
+[root@localhost ~]# ls -ltr
+total 8
+-rw-------. 1 root root 1656 Sep 27 01:44 anaconda-ks.cfg
+-rw-r--r--. 1 root root 1766 Sep 27 01:47 initial-setup-ks.cfg
+
+ls -F
+#-F, --classify, append indicator (one of */=>@|) to entrie
+[root@localhost /]# ls -F
+bin@  boot/  dev/  etc/  home/  lib@  lib64@  media/  mnt/  opt/  proc/  root/  run/  sbin@  srv/  sys/  tmp/  usr/  var/
+
+# Display a slash (`/') immediately after each pathname that is a
+#         directory, an asterisk (`*') after each that is executable, an at
+#         sign (`@') after each symbolic link, a percent sign (`%') after
+#         each whiteout, an equal sign (`=') after each socket, and a
+#         vertical bar (`|') after each that is a FIFO.
+
+[root@localhost /]# ls -l bin
+lrwxrwxrwx. 1 root root 7 May 10  2019 bin -> usr/bin
+
+ls -S (capitalized S)
+# sort by file size, largest first
+
+[root@localhost /]# ls -lS
+total 22
+drwxr-xr-x. 136 root root 8192 Nov 20 19:39 etc
+drwxrwxrwt.  14 root root 4096 Nov 20 20:42 tmp
+drwxr-xr-x.  21 root root 4096 Sep 27 01:46 var
+drwxr-xr-x.  20 root root 3280 Nov 20 19:39 dev
+drwxr-xr-x.  42 root root 1240 Nov 20 19:44 run
+dr-xr-xr-x.   6 root root 1024 Sep 27 01:46 boot
+dr-xr-x---.   6 root root  233 Nov 20 20:42 root
+drwxr-xr-x.  12 root root  144 Sep 27 01:28 usr
+drwxr-xr-x.   3 root root   18 Sep 27 01:43 home
+drwxr-xr-x.   3 root root   18 Sep 27 01:35 mnt
+lrwxrwxrwx.   1 root root    9 May 10  2019 lib64 -> usr/lib64
+lrwxrwxrwx.   1 root root    8 May 10  2019 sbin -> usr/sbin
+lrwxrwxrwx.   1 root root    7 May 10  2019 bin -> usr/bin
+lrwxrwxrwx.   1 root root    7 May 10  2019 lib -> usr/lib
+drwxr-xr-x.   2 root root    6 May 10  2019 media
+drwxr-xr-x.   2 root root    6 May 10  2019 opt
+drwxr-xr-x.   2 root root    6 May 10  2019 srv
+dr-xr-xr-x. 279 root root    0 Nov 20 19:38 proc
+dr-xr-xr-x.  13 root root    0 Nov 20 19:39 sys
+
+ls -R
+# recursive, list subdirectory recursively
+[root@localhost lisa]# ls -R
+.:
+Desktop    Downloads  Pictures  scripts    terraform                         terraform_0.13.4_linux_amd64.zip.1
+Documents  Music      Public    Templates  terraform_0.13.4_linux_amd64.zip  Videos
+
+./Desktop:
+
+./Documents:
+
+./Downloads:
+
+./Music:
+
+./Pictures:
+
+./Public:
+
+./scripts:
+forloop  for-one-liner  if-then
+
+./Templates:
+
+./Videos:
+
+ls -i
+# list inode number
+# inode: the index node that identifies a specific file
+# Some files have multiple hard links, however if the hard links of multiple files share an inode, they are equivalent
+[root@localhost /]# ls -i
+    4259 bin    8388737 etc        148 lib64  16820251 opt      12635 run          1 sys  25165953 var
+       2 boot  25169741 home       149 media         1 proc      4263 sbin       147 tmp
+    1025 dev        146 lib    8405744 mnt    16797825 root  25169742 srv   16797851 usr
+
+ls --verison
+# the version of the ls command
+[root@localhost lisa]# ls --version
+ls (GNU coreutils) 8.30
+Copyright (C) 2018 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by Richard M. Stallman and David MacKenzie.
