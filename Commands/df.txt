@@ -1,0 +1,55 @@
+df command (short for disk free): display information related to file systems about total space and available space.
+
+[root@localhost ~]# df
+Filesystem          1K-blocks    Used Available Use% Mounted on
+devtmpfs               891820       0    891820   0% /dev
+tmpfs                  921356       0    921356   0% /dev/shm
+tmpfs                  921356    9924    911432   2% /run
+tmpfs                  921356       0    921356   0% /sys/fs/cgroup
+/dev/mapper/cl-sda2  10475520 4773052   5702468  46% /
+/dev/sda1              487634  196871    261067  43% /boot
+tmpfs                  184268    1180    183088   1% /run/user/42
+tmpfs                  184268    4660    179608   3% /run/user/1000
+/dev/sr0              8037456 8037456         0 100% /run/media/lisa/CentOS-8-2-2004-x86_64-dvd
+
+df -a
+# display all the file system
+
+df -H /home/lisa
+# display sizes in power of 1000
+
+df -h /home/lisa
+# display size in power of 1024
+
+[root@localhost ~]# df -H /home/lisa
+Filesystem           Size  Used Avail Use% Mounted on
+/dev/mapper/cl-sda2   11G  4.9G  5.9G  46% /
+11G = 11 GB, base 1000
+
+[root@localhost ~]# df -h /home/lisa
+Filesystem           Size  Used Avail Use% Mounted on
+/dev/mapper/cl-sda2   10G  4.6G  5.5G  46% /
+10G = 10 Gib, base 1024
+
+df --total
+# grand total shown in the last row
+
+[root@localhost ~]# df --total
+Filesystem          1K-blocks     Used Available Use% Mounted on
+devtmpfs               891820        0    891820   0% /dev
+tmpfs                  921356        0    921356   0% /dev/shm
+tmpfs                  921356     9916    911440   2% /run
+tmpfs                  921356        0    921356   0% /sys/fs/cgroup
+/dev/mapper/cl-sda2  10475520  4772276   5703244  46% /
+/dev/sda1              487634   196871    261067  43% /boot
+tmpfs                  184268     1180    183088   1% /run/user/42
+tmpfs                  184268     4660    179608   3% /run/user/1000
+/dev/sr0              8037456  8037456         0 100% /run/media/lisa/CentOS-8-2-2004-x86_64-dvd
+total                23025034 13022359   9972979  57% -
+
+df -T /home/lisa
+# display file type, e.g. xfs
+
+[root@localhost ~]# df -T /home/lisa
+Filesystem          Type 1K-blocks    Used Available Use% Mounted on
+/dev/mapper/cl-sda2 xfs   10475520 4772276   5703244  46% /
