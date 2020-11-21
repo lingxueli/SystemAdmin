@@ -126,3 +126,11 @@ This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
 Written by Richard M. Stallman and David MacKenzie.
+
+ls -lhtra
+# list all files in long, human readable format, ordered by modification time, in reverse order
+
+man ls
+# short manual pages
+info ls
+# more comprehensive than man page
