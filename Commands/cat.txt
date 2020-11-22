@@ -1,0 +1,27 @@
+# Display Line Numbers in File
+
+[lisa@localhost ~]$ cat -n file2.txt 
+     1	16 file1.txt
+     2	16 file1.txt
+     3	1 file1.txt
+
+# Display $ at the End of File
+
+[lisa@localhost ~]$ cat -e test
+$
+hello$
+$
+$
+how was it$
+$
+$
+bleh$
+$
+
+# Display Tab separated Lines in File
+
+[lisa@localhost ~]$ cat > test
+asd   	ga	    
+^C
+[lisa@localhost ~]$ cat -T test
+asd^Iga
