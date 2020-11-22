@@ -51,3 +51,7 @@ find /data -owner bcotton
 # look for files based on permissions. Perhaps you want to find all the world-readable files in your home directory to make sure you're not oversharing.
 
 find ~ -perm -o=r
+
+# For example `-perm g=w' will only match files
+              which have mode 0020 (that is, ones for which group write
+              permission is the only permission set).  
