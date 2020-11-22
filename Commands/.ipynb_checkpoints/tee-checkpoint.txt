@@ -23,3 +23,20 @@ The command is named after the T-splitter used in plumbing. It basically breaks 
 16 file1.txt
 16 file1.txt
 1 file1.txt
+
+
+[lisa@localhost ~]$ cat | tee test2.txt
+a # stdin of cat
+a # stdout of tee
+b
+b
+c
+c
+d
+d
+^C
+[lisa@localhost ~]$ cat test2.txt
+a
+b
+c
+d
