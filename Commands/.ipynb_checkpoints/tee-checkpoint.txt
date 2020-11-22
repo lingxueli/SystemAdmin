@@ -1,0 +1,25 @@
+tee command reads the standard input and writes it to both the standard output and one or more files
+
+The command is named after the T-splitter used in plumbing. It basically breaks the output of a program so that it can be both displayed and saved in a file. It does both the tasks simultaneously, copies the result into the specified files or variables and also display the result.
+
+
+[lisa@localhost ~]$ wc -c file1.txt
+16 file1.txt
+[lisa@localhost ~]$ wc file1.txt
+ 1  1 16 file1.txt
+[lisa@localhost ~]$ wc -c file1.txt | tee file2.txt
+16 file1.txt
+
+-a Option : It basically do not overwrite the file but append to the given file.
+
+[lisa@localhost ~]$ wc -c file1.txt | tee -a file2.txt
+16 file1.txt
+[lisa@localhost ~]$ cat file2.txt
+16 file1.txt
+16 file1.txt
+[lisa@localhost ~]$ wc -l file1.txt | tee -a file2.txt
+1 file1.txt
+[lisa@localhost ~]$ cat file2.txt
+16 file1.txt
+16 file1.txt
+1 file1.txt

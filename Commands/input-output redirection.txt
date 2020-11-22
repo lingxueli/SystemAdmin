@@ -1,0 +1,24 @@
+<
+>
+2>
+
+<<
+>>
+2>>
+
+|
+
+[root@localhost ~]# ls -lhtra | find -name "*.bash*"
+./.bash_logout
+./.bash_profile
+./.bashrc
+./.bash_history
+
+find ~ -name '*jpg'
+# find all the JPEG files in your home directory
+
+[root@localhost ~]# ls -lhtra | grep "bash"
+-rw-r--r--.  1 root root  176 May 11  2019 .bashrc
+-rw-r--r--.  1 root root  176 May 11  2019 .bash_profile
+-rw-r--r--.  1 root root   18 May 11  2019 .bash_logout
+-rw-------.  1 root root 4.6K Nov 20 21:53 .bash_history
