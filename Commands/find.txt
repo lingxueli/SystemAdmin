@@ -1,2 +1,53 @@
+find takes a path to find things
 
+find /
+# find (and print) every file on the system
 
+# -name argument allows you to restrict your results to files that match the given pattern
+[lisa@localhost ~]$ find ~ -name '*file*'
+/home/lisa/.bash_profile
+/home/lisa/file1.txt
+/home/lisa/file2.txt
+/home/lisa/greekfile
+
+# What if some of them have an uppercase extension? -iname is like -name, but it is case-insensitive.
+find ~ -iname '*file'
+
+# we can combine patterns with an "or," represented by -o
+find ~ ( -iname 'jpeg' -o -iname 'jpg' )
+
+# We can modify our command with the -type argument to look only for files.
+find ~ \( -iname '*jpeg' -o -iname '*jpg' \) -type f
+# find directories only
+find ~ \( -iname '*jpeg' -o -iname '*jpg' \) -type d
+
+# narrow this down to files that have changed in the last week
+find ~ \( -iname '*jpeg' -o -iname '*jpg' \) -type f -mtime -7
+
+# You can do time filters based on file status change time (ctime), modification time (mtime), or access time (atime). These are in days.
+
+# if you want finer-grained control, you can express it in minutes instead (cmin, mmin, and amin, respectively). 
+
+# Unless you know exactly the time you want, you'll probably prefix the number with + (more than) or – (less than).
+
+[lisa@localhost ~]$ find ~ -name '*file*' -cmin -30
+[lisa@localhost ~]$ find ~ -name '*file*' -cmin -40
+/home/lisa/greekfile
+[lisa@localhost ~]$ find ~ -name '*file*' -cmin -50
+/home/lisa/greekfile
+[lisa@localhost ~]$ find ~ -name '*file*' -cmin -80
+/home/lisa/file1.txt
+/home/lisa/file2.txt
+/home/lisa/greekfile
+
+# you're running out of disk space, so you want to find all the gigantic (let's define that as "greater than 1 gigabyte") files in the log directory
+
+find /var/log -size +1G
+
+# find all the files owned by bcotton in /data
+
+find /data -owner bcotton
+
+# look for files based on permissions. Perhaps you want to find all the world-readable files in your home directory to make sure you're not oversharing.
+
+find ~ -perm -o=r
