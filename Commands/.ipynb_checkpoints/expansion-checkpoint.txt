@@ -4,8 +4,13 @@ echo '$WORD'
 # single quote prevent the expension of variables
 # do this when you want to print the exact characters of the variables
 
+echo "${WORD}"
+# alternative syntax of echo "$WORD"
+# useful to append text to the varialbe; echo "${WORD}appendable-text"
+
 [vagrant@localhost ~]$ WORD='test'
 [vagrant@localhost ~]$ echo '$WORD'
 $WORD
 [vagrant@localhost ~]$ echo "$WORD"
 test
+
