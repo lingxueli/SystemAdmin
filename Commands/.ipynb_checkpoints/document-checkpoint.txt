@@ -1,4 +1,29 @@
-help echo
 # doc for shell built-in
-man 
+
+type -a echo
+help echo
+
+type -a [[
+help [[
+# newer syntax
+
+type -a [
+help [
+# older syntax
+# it could be interpreted as a command "/usr/bin/[" when the environment not bash shell
+
+type -a test
+help test
+
 # doc for non shell built-in
+
+type -a uptime
+man uptime
+
+# doc for preset variable:
+
+e.g. $UID is a preset variable
+
+You can search for its document by "man bash"
+
+search for UID, the instruction is at the "Shell variable" section of the page
