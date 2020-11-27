@@ -1,0 +1,11 @@
+echo "$WORD"
+# double quote allows variable expansion
+echo '$WORD'
+# single quote prevent the expension of variables
+# do this when you want to print the exact characters of the variables
+
+[vagrant@localhost ~]$ WORD='test'
+[vagrant@localhost ~]$ echo '$WORD'
+$WORD
+[vagrant@localhost ~]$ echo "$WORD"
+test

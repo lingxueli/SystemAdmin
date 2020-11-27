@@ -1,0 +1,4 @@
+help echo
+# doc for shell built-in
+man uptime
+# doc for non shell built-in
