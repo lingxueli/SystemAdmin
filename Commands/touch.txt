@@ -1,0 +1,2 @@
+it creates an empty file if it doesn't exist
+otherwise it updates the timestamp as current

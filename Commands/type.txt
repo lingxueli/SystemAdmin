@@ -1,0 +1,4 @@
+type echo
+
+type -a echo
+# look up all instances of echo
