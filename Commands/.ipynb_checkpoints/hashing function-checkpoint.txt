@@ -1,0 +1,9 @@
+# list all the hashing command
+ls -l /usr/bin/*sum
+
+# calculate checksum from local file, verify the checksum agaist the checksum published by Centos
+sha256sum CentOS-7-x86_64-Minimal-1611.iso
+
+# modify the downloaded file, verify the checksum
+echo "1" >> CentOS-7-x86_64-Minimal-1611.iso
+sha256sum CentOS-7-x86_64-Minimal-1611.iso
