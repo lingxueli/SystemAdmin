@@ -1,7 +1,8 @@
 1. POST(power-on self-test)
 
-Execute POST check on firmware, which can be UEFI(Universal Extended Firmware Interface) or BIOS(Basic Input Output System)
-initialize the hardware
+Firmware executes POST check on hardware.
+The firmware can be UEFI(Universal Extended Firmware Interface) or BIOS(Basic Input Output System).
+Firmware initializes the hardware.
 
 2. Select the bootable device
 
@@ -13,7 +14,13 @@ From bootable device, a boot loader is located. on RHEL it's GRUB 2.
 
 4. Load the kernel
 
-On boot menu, you can choose the operating system to load. To load linux, kernel is loaded together with the initramfs into the memory. initramfs contains kernel modules for all hardware that is required to boot, as well as the initial scripts required for the next stage of booting. In RHEL 8, initframs = a complete operating system
+On boot menu, you can choose the operating system to load. 
+
+To load linux, kernel is loaded together with the initramfs into the memory. 
+
+initramfs contains kernel modules for all hardware that is required to boot, as well as the initial scripts required for the next stage of booting. 
+
+In RHEL 8, initframs = a complete operating system
 
 5. Start /sbin/init
 
