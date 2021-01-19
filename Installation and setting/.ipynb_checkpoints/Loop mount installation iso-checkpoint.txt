@@ -1,0 +1,57 @@
+1. install curl
+
+yum install curl
+
+rpm -qa | grep curl
+# query all the packages installed
+
+
+2. download the ISO image of installation
+
+mkdir /Downloads
+
+curl -o /Downloads/CentOS8Image.iso http://centos.host-engine.com/8.3.2011/isos/x86_64/
+# download and save the file as /Downloads/CentOS8Image.iso
+
+3. loop mount the iso image
+
+mkdir -p /media/iso
+# make parent directory if needed
+
+[root@localhost ~]# mount -o loop /Downloads/CentOS8Image.iso /media/iso 
+mount: /media/iso: wrong fs type, bad option, bad superblock on /dev/loop1, missing codepage or helper program, or other error.
+
+You receive the error because you need to convert ISO image to a loop device before mounting. ISO image itself is not a device.
+
+
+From the man page of LOOP device, there's an example of creating the loop device from an ISO image
+
+        $ dd if=/dev/zero of=file.img bs=1MiB count=10
+
+        # this is to create an image, i.e. copy blocks from /dev/zero to file.img
+
+		# dd: convert and copy a file
+		# if=/dev/zero: read from file /dev/zero instead of stdin
+		# of=file.img: write to file file.img instead of stdout
+		# count=10: copy only 10 input blocks
+		# bs=1MiB: read and write up to 1MiB bytes at a time (default: 512); overrides ibs and obs
+
+
+        $ sudo losetup /dev/loop4 file.img
+
+        # losetup - set up and control loop devices, i.e. create a loop device from the img
+
+        $ sudo mkfs -t ext4 /dev/loop4
+        
+        # make filesystem on top of the device
+
+        $ sudo mkdir /myloopdev
+        
+        # create directory as a mount point
+
+        $ sudo mount /dev/loop4 /myloopdev
+
+        # mount filesystem/device to the mount point
+
+[root@localhost ~]# sudo losetup /dev/loop1 /Downloads/CentOS8Image.iso
+losetup: /Downloads/CentOS8Image.iso: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored.
