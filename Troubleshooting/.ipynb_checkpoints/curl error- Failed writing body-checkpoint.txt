@@ -1,0 +1,69 @@
+# fix error curl: (23) Failed writing body (3202 != 1638)
+
+[root@localhost ~]# curl -o /Downloads/CentOS8Image.iso http://mirror.den01.meanservers.net/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-dvd1.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+ 56 8835M   56 5018M    0     0   9.9M      0  0:14:47  0:08:23  0:06:24 10.3M
+curl: (23) Failed writing body (3202 != 16384)
+
+
+caused by full disk space
+
+
+[root@localhost ~]# df -h
+Filesystem           Size  Used Avail Use% Mounted on
+devtmpfs             872M     0  872M   0% /dev
+tmpfs                901M     0  901M   0% /dev/shm
+tmpfs                901M  9.7M  891M   2% /run
+tmpfs                901M     0  901M   0% /sys/fs/cgroup
+/dev/mapper/cl-sda2   10G   10G   20K 100% /
+/dev/sda1            477M  193M  255M  43% /boot
+tmpfs                181M  1.2M  179M   1% /run/user/42
+tmpfs                181M  4.6M  176M   3% /run/user/1000
+/dev/sr0             7.7G  7.7G     0 100% /run/media/lisa/CentOS-8-2-2004-x86_64-dvd
+
+after remove the downloaded file, the space is freed up again
+
+[root@localhost ~]# df -h
+Filesystem           Size  Used Avail Use% Mounted on
+devtmpfs             872M     0  872M   0% /dev
+tmpfs                901M     0  901M   0% /dev/shm
+tmpfs                901M  9.7M  891M   2% /run
+tmpfs                901M     0  901M   0% /sys/fs/cgroup
+/dev/mapper/cl-sda2   10G  5.1G  5.0G  51% /
+/dev/sda1            477M  193M  255M  43% /boot
+tmpfs                181M  1.2M  179M   1% /run/user/42
+tmpfs                181M  4.6M  176M   3% /run/user/1000
+/dev/sr0             7.7G  7.7G     0 100% /run/media/lisa/CentOS-8-2-2004-x86_64-dvd
+
+# remove the installation media /dev/sr0   
+
+[root@localhost ~]# df -h
+Filesystem           Size  Used Avail Use% Mounted on
+devtmpfs             872M     0  872M   0% /dev
+tmpfs                901M     0  901M   0% /dev/shm
+tmpfs                901M  9.7M  891M   2% /run
+tmpfs                901M     0  901M   0% /sys/fs/cgroup
+/dev/mapper/cl-sda2   10G  5.1G  5.0G  51% /
+/dev/sda1            477M  193M  255M  43% /boot
+tmpfs                181M  1.2M  179M   1% /run/user/42
+tmpfs                181M  4.6M  176M   3% /run/user/1000
+
+[root@localhost ~]# fdisk -l
+Disk /dev/sda: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x918dc2f9
+
+Device     Boot    Start      End  Sectors  Size Id Type
+/dev/sda1  *        2048  1026047  1024000  500M 83 Linux
+/dev/sda2        1026048 22013951 20987904   10G 8e Linux LVM
+/dev/sda3       22013952 24111103  2097152    1G 82 Linux swap / Solaris
+
+
+Disk /dev/mapper/cl-sda2: 10 GiB, 10737418240 bytes, 20971520 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes

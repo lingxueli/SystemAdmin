@@ -55,3 +55,22 @@ From the man page of LOOP device, there's an example of creating the loop device
 
 [root@localhost ~]# sudo losetup /dev/loop1 /Downloads/CentOS8Image.iso
 losetup: /Downloads/CentOS8Image.iso: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored.
+
+# The losetup seems to map file in 512-byte sectors. If file size is not multiples of 512, then the rest will be truncated. When mapping a file to /dev/loopX with losetup, for fiile which is smaller than 512 bytes it gives us following warning:
+Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools.
+For file which the size cannot be divided by 512:
+Warning: file does not fit into a 512-byte sector; the end of the file will be ignored
+This warning was added since util-linux ver 2.22 in this commit
+https://github.com/karelzak/util-linux/commit/3554545636f639fbd65d92cc7643e89f3c0ff7a5
+
+
+[root@localhost ~]# ls -alh  /Downloads/CentOS8Image.iso
+-rw-r--r--. 1 root root 1.3K Jan 18 17:09 /Downloads/CentOS8Image.iso
+# this is not a valid ISO image. Gotta download it from the correct source.
+
+# If an ISO image is not multiple of 512 bytes, they aren't valid ISO files. You can try appending nulls to the file in order to reach an accepted size. dd and cat are your friends.
+
+[root@localhost ~]# curl -o /Downloads/CentOS8Image.iso http://mirror.den01.meanservers.net/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-dvd1.iso
+
+
+
