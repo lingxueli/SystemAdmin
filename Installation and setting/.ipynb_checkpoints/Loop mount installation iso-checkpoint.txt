@@ -55,3 +55,157 @@ From the man page of LOOP device, there's an example of creating the loop device
 
 [root@localhost ~]# sudo losetup /dev/loop1 /Downloads/CentOS8Image.iso
 losetup: /Downloads/CentOS8Image.iso: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored.
+
+# The losetup seems to map file in 512-byte sectors. If file size is not multiples of 512, then the rest will be truncated. When mapping a file to /dev/loopX with losetup, for fiile which is smaller than 512 bytes it gives us following warning:
+Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools.
+For file which the size cannot be divided by 512:
+Warning: file does not fit into a 512-byte sector; the end of the file will be ignored
+This warning was added since util-linux ver 2.22 in this commit
+https://github.com/karelzak/util-linux/commit/3554545636f639fbd65d92cc7643e89f3c0ff7a5
+
+
+[root@localhost ~]# ls -alh  /Downloads/CentOS8Image.iso
+-rw-r--r--. 1 root root 1.3K Jan 18 17:09 /Downloads/CentOS8Image.iso
+# this is not a valid ISO image. Gotta download it from the correct source.
+
+# If an ISO image is not multiple of 512 bytes, they aren't valid ISO files. You can try appending nulls to the file in order to reach an accepted size. dd and cat are your friends.
+
+# the currect path should be http://mirror.den01.meanservers.net/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-dvd1.iso
+
+To find a good spot for the installation disk
+
+# view disk space from the perspective of file system
+[root@localhost ~]# df -h
+Filesystem           Size  Used Avail Use% Mounted on
+devtmpfs             866M     0  866M   0% /dev
+tmpfs                896M     0  896M   0% /dev/shm
+tmpfs                896M  9.7M  886M   2% /run
+tmpfs                896M     0  896M   0% /sys/fs/cgroup
+/dev/mapper/cl-root   37G  4.5G   33G  12% /
+/dev/sda1           1014M  240M  775M  24% /boot
+tmpfs                180M  1.2M  178M   1% /run/user/42
+tmpfs                180M  4.6M  175M   3% /run/user/1000
+
+# view disk space from the perspective of partition and storage device
+[root@localhost ~]# fdisk -l
+Disk /dev/sda: 40 GiB, 42949672960 bytes, 83886080 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x30446862
+
+Device     Boot   Start      End  Sectors Size Id Type
+/dev/sda1  *       2048  2099199  2097152   1G 83 Linux
+/dev/sda2       2099200 83886079 81786880  39G 8e Linux LVM
+
+
+Disk /dev/sdb: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+
+
+Disk /dev/mapper/cl-root: 37 GiB, 39690698752 bytes, 77520896 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+Disk /dev/mapper/cl-swap: 2 GiB, 2181038080 bytes, 4259840 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+# see the relation between parition and storage device
+[root@localhost ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda           8:0    0   40G  0 disk 
+├─sda1        8:1    0    1G  0 part /boot
+└─sda2        8:2    0   39G  0 part 
+  ├─cl-root 253:0    0   37G  0 lvm  /
+  └─cl-swap 253:1    0    2G  0 lvm  [SWAP]
+sdb           8:16   0   20G  0 disk 
+sr0          11:0    1 1024M  0 rom  
+# -p: with full path
+[root@localhost ~]# lsblk -p
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+/dev/sda                  8:0    0   40G  0 disk 
+├─/dev/sda1               8:1    0    1G  0 part /boot
+└─/dev/sda2               8:2    0   39G  0 part 
+  ├─/dev/mapper/cl-root 253:0    0   37G  0 lvm  /
+  └─/dev/mapper/cl-swap 253:1    0    2G  0 lvm  [SWAP]
+/dev/sdb                  8:16   0   20G  0 disk 
+/dev/sr0                 11:0    1 1024M  0 rom  
+
+Available space to hold the ISO image file
+1. Under /dev/sda2:
+/dev/mapper/cl-root: 37G 12% used
+Directory: /
+
+2. Under /dev/sdb: No partition. 20G Free.
+Not related to any file system.
+It needs the filesystem + mount point + mount in order to use it.
+Optional: using LVM. Creat partition, filesystem, and PV, VG, LV.
+
+
+[root@localhost ~]# curl -o /Downloads/CentOS8Image.iso http://mirror.den01.meanservers.net/centos/8.3.2011/isos/x86_64/CentOS-8.3.2011-x86_64-dvd1.iso
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 8835M  100 8835M    0     0  8877k      0  0:16:59  0:16:59 --:--:-- 8717k
+
+
+
+[root@localhost /]# mount -o loop /Downloads/CentOS8Image.iso /repo
+mount: /repo: WARNING: device write-protected, mounted read-only.
+
+
+Verify it's mounted
+
+[root@localhost /]# mount
+/Downloads/CentOS8Image.iso on /repo type iso9660 (ro,relatime,nojoliet,check=s,map=n,blocksize=2048)
+[root@localhost /]# df -h /repo
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/loop0      8.7G  8.7G     0 100% /repo
+
+# this is the file stored inside the iso
+[root@localhost /]# ls -alh /repo
+total 34K
+dr-xr-xr-x.  7 root root 2.0K Nov 18 14:39 .
+dr-xr-xr-x. 19 root root  253 Jan 20 22:33 ..
+dr-xr-xr-x.  4 root root 2.0K Nov 18 14:39 AppStream
+dr-xr-xr-x.  4 root root 2.0K Nov 18 14:39 BaseOS
+-r--r--r--.  1 root root   44 Nov 18 14:39 .discinfo
+dr-xr-xr-x.  3 root root 2.0K Nov 18 14:39 EFI
+dr-xr-xr-x.  3 root root 2.0K Nov 18 14:39 images
+dr-xr-xr-x.  2 root root 2.0K Nov 18 14:39 isolinux
+-r--r--r--.  1 root root  18K Nov 10 08:49 LICENSE
+-r--r--r--.  1 root root   87 Nov 18 14:39 media.repo
+-r--r--r--.  1 root root  883 Nov 18 14:39 TRANS.TBL
+-r--r--r--.  1 root root 1.5K Nov 18 14:39 .treeinfo
+
+# umount it
+[root@localhost /]# umount /repo
+
+# verify it's unmounted
+[root@localhost /]# df -H /repo
+Filesystem           Size  Used Avail Use% Mounted on
+/dev/mapper/cl-root   40G   15G   26G  36% /
+[root@localhost /]# df -H
+Filesystem           Size  Used Avail Use% Mounted on
+devtmpfs             908M     0  908M   0% /dev
+tmpfs                939M     0  939M   0% /dev/shm
+tmpfs                939M   11M  929M   2% /run
+tmpfs                939M     0  939M   0% /sys/fs/cgroup
+/dev/mapper/cl-root   40G   15G   26G  36% /
+/dev/sda1            1.1G  252M  812M  24% /boot
+tmpfs                188M  1.3M  187M   1% /run/user/42
+tmpfs                188M  4.8M  183M   3% /run/user/1000
+/dev/sr0             9.3G  9.3G     0 100% /run/media/lisa/CentOS-8-3-2011-x86_64-dvd
+[root@localhost /]# ls -alh /repo
+total 0
+drwxr-xr-x.  2 root root   6 Jan 20 22:33 .
+dr-xr-xr-x. 19 root root 253 Jan 20 22:33 ..
+[root@localhost /]# mount | grep /repo
