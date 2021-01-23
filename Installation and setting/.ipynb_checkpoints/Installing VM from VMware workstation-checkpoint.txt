@@ -1,0 +1,5 @@
+In order to make customed settings, make sure the turn off easy-install.
+
+To prevent easy-install, from new VM wizard, be sure that "Power on this virtual machine after creation" checkbox is not selected.
+
+It's recommended to take snapshot of the VM when the install is finised.
