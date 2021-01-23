@@ -1,3 +1,26 @@
 Set default values for new users. Make sure that any new user password has
 a length of at least six characters and must be used for at least three days
 before it can be reset
+
+The default setting of user password is under /etc/login.defs
+
+/etc/login.defs: Please note that the parameters in this configuration file control the
+behavior of the tools from the shadow-utils component.
+
+shadow-utils package includes the necessary programs for converting UNIX password files to the shadow password format, plus
+programs for managing user and group accounts
+
+
+To make the change, adjust the following parameters:
+
+# Password aging controls:
+#
+#       PASS_MAX_DAYS   Maximum number of days a password may be used.
+#       PASS_MIN_DAYS   Minimum number of days allowed between password changes.
+#       PASS_MIN_LEN    Minimum acceptable password length.
+#       PASS_WARN_AGE   Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS   99999
+PASS_MIN_DAYS   0             => 3
+PASS_MIN_LEN    5             => 6
+PASS_WARN_AGE   7

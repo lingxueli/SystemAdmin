@@ -1,0 +1,4 @@
+Snapshot functionality is not offered by the guest OS but by the virtualization tool instead. So CentOS has nothing to do about it.
+
+Snapshot is supported by Workstation Pro, not Workstation Player.
+Workstation Player has indeed no snapshot option.
