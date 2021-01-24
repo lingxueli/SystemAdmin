@@ -1,0 +1,45 @@
+Exampe of SUID(set user ID):
+
+/usr/bin/passwd has SUID set up for normal user to change password.
+
+Because when a user changes his password, it needs root permission to write to /etc/shadow. Only root user can do that.
+
+[root@localhost /]# ls -l /etc/shadow
+----------. 1 root root 1472 Jan 23 15:48 /etc/shadow
+
+Normal user gain the root permission through /usr/bin/passwd. because passwd has SUID == 1. User running passwd will take over the same permission as passwd's owner - root. Then this user is able to change the shadow file.
+
+[root@localhost /]# ls -l /usr/bin/passwd
+-rwsr-xr-x. 1 root root 33600 Apr  6  2020 /usr/bin/passwd
+
+In summary, SUID:
+    on files - user executes file with permission of the file owner
+    on directory - no meaning
+    
+    
+
+Example of SGID(set group ID):
+
+SGID set on a file has the same effect of an SUID.
+
+SGID set on a directory makes it a shared directory of the group. 
+
+The claimed group becomes the group owner of the directory and also its subdirectories and files under it.
+
+In summary, SGID
+    on file - user executes file with permissions of group owner
+    on directory - files created in diretory get the same group owner
+    
+    
+Sticky bit:
+
+Sticky bit is used on shared group directory. It prevents users from deleting files from other users.
+
+A user can only delete the file if either of the following is true:
+
+1. user is the owner of the file
+2. user is the owner of the directory where the file exists
+
+
+For the command line tools to make these changes, pls check other document in the directory:
+Create shared group directory.txt

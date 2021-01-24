@@ -1,0 +1,64 @@
+$ useradd -m -G sales edwin 
+$ useradd -m -G sales santos
+$ useradd -m -G account alex
+$ useradd -m -G account serene
+
+Create shared group directories /groups/sales and /groups/account, and
+make sure these groups meet the following requirements:
+■ Members of the group sales have full access to their directory.
+■ Members of the group account have full access to their directory.
+■ Users have permissions to delete only their own files, but Alex is the
+general manager, so user alex has access to delete all users’ files.
+
+
+[root@localhost /]# mkdir /groups
+[root@localhost /]# mkdir /groups/sales
+[root@localhost /]# mkdir /groups/account
+[root@localhost /]# ls -la groups
+total 0
+drwxr-xr-x.  4 root root  34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root 238 Jan 24 14:55 ..
+drwxr-xr-x.  2 root root   6 Jan 24 14:55 account
+drwxr-xr-x.  2 root root   6 Jan 24 14:55 sales
+
+# change group owner
+[root@localhost /]# chown .sales /groups/sales
+[root@localhost /]# chown .account /groups/account
+[root@localhost /]# ls -al /groups
+total 0
+drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
+drwxr-xr-x.  2 root account   6 Jan 24 14:55 account
+drwxr-xr-x.  2 root sales     6 Jan 24 14:55 sales
+
+# change SGID
+[root@localhost /]# chmod g+s /groups/sales
+[root@localhost /]# chmod g+s /groups/account
+[root@localhost /]# ls -al /groups
+total 0
+drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
+drwxr-sr-x.  2 root account   6 Jan 24 14:55 account
+drwxr-sr-x.  2 root sales     6 Jan 24 14:55 sales
+
+# apply sticky bit
+[root@localhost /]# chmod +t /groups/sales
+[root@localhost /]# chmod +t /groups/account/
+[root@localhost /]# ls -al /groups/
+total 0
+drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
+drwxr-sr-t.  2 root account   6 Jan 24 14:55 account
+drwxr-sr-t.  2 root sales     6 Jan 24 14:55 sales
+
+
+# Alex is the general manager, so user alex has access to delete all users’ files.
+
+[root@localhost /]# chown alex /groups/account
+[root@localhost /]# chown alex /groups/sales
+[root@localhost /]# ls -al /groups/
+total 0
+drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
+drwxr-sr-t.  2 alex account   6 Jan 24 14:55 account
+drwxr-sr-t.  2 alex sales     6 Jan 24 14:55 sales

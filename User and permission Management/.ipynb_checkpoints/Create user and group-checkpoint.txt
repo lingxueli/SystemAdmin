@@ -1,0 +1,28 @@
+Create users edwin and santos and make them members of the group sales as
+a secondary group membership. Also, create users serene and alex and make
+them members of the group account as a secondary group
+
+To define a user, the information is included in these two files:
+/etc/passwd
+/ect/shadow
+
+To create a user, use the following command:
+
+$ useradd -m -G sales edwin 
+$ useradd -m -G sales santos
+$ useradd -m -G account alex
+$ useradd -m -G account serene
+# -m: create home directory
+# -G: define secondary group
+
+
+[root@localhost /]# useradd -m -G sales edwin
+useradd: group 'sales' does not exist
+
+Group are defined in file: /etc/group
+
+To create a group, use the following:
+
+$ groupadd sales
+$ groupadd account
+
