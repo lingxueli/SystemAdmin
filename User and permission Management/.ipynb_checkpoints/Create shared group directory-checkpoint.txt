@@ -53,7 +53,6 @@ drwxr-sr-t.  2 root sales     6 Jan 24 14:55 sales
 
 
 # Alex is the general manager, so user alex has access to delete all users’ files.
-
 [root@localhost /]# chown alex /groups/account
 [root@localhost /]# chown alex /groups/sales
 [root@localhost /]# ls -al /groups/
@@ -62,3 +61,39 @@ drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
 dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
 drwxr-sr-t.  2 alex account   6 Jan 24 14:55 account
 drwxr-sr-t.  2 alex sales     6 Jan 24 14:55 sales
+
+
+# test permission settings, failed
+[edwin@localhost sales]$ cd /groups/sales/
+[edwin@localhost sales]$ touch edwin.txt
+touch: cannot touch 'edwin.txt': Permission denied
+[edwin@localhost sales]$ ls -ld /groups/sales/
+drwxr-sr-t. 2 alex sales 6 Jan 24 14:55 /groups/sales/
+
+# Add write/execute permission to directory for group owner
+[root@localhost /]# chmod g+w,g+x /groups/sales/
+[root@localhost /]# chmod g+w,g+x /groups/account
+[root@localhost /]# ls -al /groups/
+total 0
+drwxr-xr-x.  4 root root     34 Jan 24 14:55 .
+dr-xr-xr-x. 18 root root    238 Jan 24 14:55 ..
+drwxrwsr-t.  2 alex account   6 Jan 24 14:55 account
+drwxrwsr-t.  2 alex sales     6 Jan 24 14:55 sales
+
+# test permission settings
+[edwin@localhost /]$ cd /groups/sales/
+[edwin@localhost sales]$ touch test.txt
+[edwin@localhost sales]$ ls -al /groups/sales/
+total 0
+drwxrwsr-t. 2 alex  sales 22 Jan 24 15:22 .
+drwxr-xr-x. 4 root  root  34 Jan 24 14:55 ..
+-rw-rw-r--. 1 edwin sales  0 Jan 24 15:22 test.txt
+
+[santos@localhost sales]$ echo extrastuff >> /groups/sales/test.txt
+[santos@localhost sales]$ cat /groups/sales/test.txt 
+extrastuff
+[santos@localhost sales]$ rm /groups/sales/test.txt 
+rm: cannot remove '/groups/sales/test.txt': Operation not permitted
+
+[alex@localhost /]$ rm /groups/sales/test.txt
+rm: remove write-protected regular file '/groups/sales/test.txt'? y
