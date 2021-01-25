@@ -1,0 +1,56 @@
+Optimize your server with the appropriate profile that optimizes throughput.
+
+
+The tuned tuning service can adapt the operating system to perform better under certain workloads by setting a tuning profile. The tuned-adm command-line tool allows users to interact with tuned service and switch between different tuning profiles.
+
+# turn on tuned service
+[root@localhost /]# yum -y install tuned
+[root@localhost /]# systemctl status tuned
+● tuned.service - Dynamic System Tuning Daemon
+   Loaded: loaded (/usr/lib/systemd/system/tuned.service; enabled; vendor preset: enabled)
+   Active: active (running) (thawing) since Sun 2021-01-24 22:10:16 MST; 23s ago
+     Docs: man:tuned(8)
+           man:tuned.conf(5)
+           man:tuned-adm(8)
+ Main PID: 7842 (tuned)
+    Tasks: 4 (limit: 11073)
+   Memory: 21.1M
+   CGroup: /system.slice/tuned.service
+           └─7842 /usr/libexec/platform-python -Es /usr/sbin/tuned -l -P
+
+Jan 24 22:10:16 localhost.localdomain systemd[1]: Starting Dynamic System Tuning Daemon...
+Jan 24 22:10:16 localhost.localdomain systemd[1]: Started Dynamic System Tuning Daemon.
+
+# if service is not running, use the following:
+$ systemctl enable --now tuned
+
+# check current profile
+[root@localhost /]# tuned-adm active
+Current active profile: virtual-guest
+
+# list available profiles
+[root@localhost /]# tuned-adm list
+Available profiles:
+- accelerator-performance     - Throughput performance based tuning with disabled higher latency STOP states
+- balanced                    - General non-specialized tuned profile
+- desktop                     - Optimize for the desktop use-case
+- hpc-compute                 - Optimize for HPC compute workloads
+- intel-sst                   - Configure for Intel Speed Select Base Frequency
+- latency-performance         - Optimize for deterministic performance at the cost of increased power consumption
+- network-latency             - Optimize for deterministic performance at the cost of increased power consumption, focused on low latency network performance
+- network-throughput          - Optimize for streaming network throughput, generally only necessary on older CPUs or 40G+ networks
+- optimize-serial-console     - Optimize for serial console use.
+- powersave                   - Optimize for low power consumption
+- throughput-performance      - Broadly applicable tuning that provides excellent performance across a variety of common server workloads
+- virtual-guest               - Optimize for running inside a virtual guest
+- virtual-host                - Optimize for running KVM guests
+Current active profile: virtual-guest
+
+# recommended profile
+[root@localhost /]# tuned-adm recommend
+virtual-guest
+
+# switch profile
+[root@localhost /]# tuned-adm profile throughput-performance
+[root@localhost /]# tuned-adm active
+Current active profile: throughput-performance
