@@ -44,4 +44,15 @@ In corporate environment, it's not always desirable for time client to go out to
 # pool 2.centos.pool.ntp.org iburst
 pool serverabc.example.com iburst
 
+
+# check NTP status
+[root@localhost /]# timedatectl show
+Timezone=America/Denver
+LocalRTC=no
+CanNTP=yes
+NTP=yes
+NTPSynchronized=no
+TimeUSec=Mon 2021-01-25 01:08:21 MST
+RTCTimeUSec=Mon 2021-01-25 01:08:21 MST
+
 # name resolution to serverabc.example.com if the time server exists

@@ -75,5 +75,3 @@ In all the following steps, replace vdo-name with the identifier you want to use
 Find a persistent name for the block device where you want to create the VDO volume. For more information on persistent names, see Chapter 6, Overview of persistent naming attributes.
 
 If you use a non-persistent device name, then VDO might fail to start properly in the future if the device name changes.
-
-

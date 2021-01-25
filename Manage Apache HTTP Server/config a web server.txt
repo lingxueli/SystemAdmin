@@ -1,0 +1,83 @@
+Configure a web server to use the non-default document root /webfiles. In this
+directory, create a file index.html that has the contents hello world and then
+test that it works
+
+# install required software: httpd is the base package
+
+# check the common addition package
+[root@localhost /]# yum search http
+
+# install httpd
+[root@localhost /]# yum install httpd
+
+
+# main Apache configuration file and a few important settings
+
+[root@localhost /]# vim /etc/httpd/conf/httpd.conf 
+#
+# This is the main Apache HTTP server configuration file.  It contains the
+# configuration directives that give the server its instructions.
+# See <URL:http://httpd.apache.org/docs/2.4/> for detailed information.
+# In particular, see 
+# <URL:http://httpd.apache.org/docs/2.4/mod/directives.html>
+# for a discussion of each configuration directive.
+
+
+#
+# ServerRoot: The top of the directory tree under which the server's
+# configuration, error, and log files are kept.
+#
+# Do not add a slash at the end of the directory path.  If you point
+# ServerRoot at a non-local disk, be sure to specify a local disk on the
+# Mutex directive, if file-based mutexes are used.  If you wish to share the
+# same ServerRoot for multiple httpd daemons, you will need to change at
+# least PidFile.
+#
+ServerRoot "/etc/httpd"
+
+
+#
+# DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+DocumentRoot "/var/www/html"
+
+
+By default, the Apache web server looks for a file: index.html and will present the contents of that document to clients
+
+[root@localhost /]# vim /var/www/html/index.html
+hello world
+
+# start and enable web server
+
+[root@localhost /]# systemctl enable --now httpd
+Created symlink /etc/systemd/system/multi-user.target.wants/httpd.service → /usr/lib/systemd/system/httpd.service.
+
+[root@localhost /]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor prese>
+   Active: active (running) since Mon 2021-01-25 01:05:54 MST; 22s ago
+     Docs: man:httpd.service(8)
+ Main PID: 5873 (httpd)
+   Status: "Running, listening on: port 80"
+    Tasks: 213 (limit: 11073)
+   Memory: 24.4M
+   CGroup: /system.slice/httpd.service
+           ├─5873 /usr/sbin/httpd -DFOREGROUND
+           ├─5880 /usr/sbin/httpd -DFOREGROUND
+           ├─5881 /usr/sbin/httpd -DFOREGROUND
+           ├─5882 /usr/sbin/httpd -DFOREGROUND
+           └─5883 /usr/sbin/httpd -DFOREGROUND
+
+Jan 25 01:05:54 localhost.localdomain systemd[1]: Starting The Apache HTTP Serv>
+Jan 25 01:05:54 localhost.localdomain httpd[5873]: AH00558: httpd: Could not re>
+Jan 25 01:05:54 localhost.localdomain systemd[1]: Started The Apache HTTP Serve>
+Jan 25 01:05:54 localhost.localdomain httpd[5873]: Server configured, listening>
+
+
+# use text based web browser to test it's working
+[root@localhost /]# yum install curl
+
+[root@localhost /]# curl http://localhost
+hello world
