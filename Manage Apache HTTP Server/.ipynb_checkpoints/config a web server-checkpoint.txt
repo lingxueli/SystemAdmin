@@ -10,6 +10,9 @@ test that it works
 # install httpd
 [root@localhost /]# yum install httpd
 
+# this installs httpd along with the commonly used additional packages as well
+[root@localhost /]# yum module install httpd
+
 
 # main Apache configuration file and a few important settings
 
@@ -43,11 +46,23 @@ ServerRoot "/etc/httpd"
 #
 DocumentRoot "/var/www/html"
 
+Update DocumentRoot
+[root@localhost /]# vim /etc/httpd/conf/httpd.conf 
+
+# DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+DocumentRoot "/webfiles"
+
 
 By default, the Apache web server looks for a file: index.html and will present the contents of that document to clients
 
 [root@localhost /]# vim /var/www/html/index.html
 hello world
+
+Move the content file to the claimed directory
+[root@localhost /]# mkdir /webfiles && cp /var/www/html/index.html /webfiles/index.html
 
 # start and enable web server
 
