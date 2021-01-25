@@ -1,0 +1,52 @@
+$ useradd -m -G sales edwin 
+$ useradd -m -G sales santos
+$ useradd -m -G account alex
+$ useradd -m -G account serene
+
+Create a group sysadmins. Make users edwin and santos members of this
+group and ensure that all members of this group can run all administrative
+commands using sudo.
+
+# Create sysadmins group, add users
+[root@localhost /]# groupadd sysadmins
+[root@localhost sudoers.d]# usermod -a -G sysadmins edwin 
+[root@localhost sudoers.d]# usermod -a -G sysadmins santos
+
+# verify users in group
+[root@localhost sudoers.d]# groups edwin
+edwin : edwin sales sysadmins
+[root@localhost sudoers.d]# cat /etc/group | grep sysadmins 
+sysadmins:x:1007:edwin,santos
+
+# Check the document - sudoer.txt for the process of giving sudoers priviledge to the group
+[root@localhost sudoers.d]# visudo -f /etc/sudoers.d/sysadmins
+# allow user in group sysadmins to run all commands
+%sysadmins  ALL=(ALL)       ALL
+
+# allow user in group sysadmins to run all commands without a password
+%sysadmins        ALL=(ALL)       NOPASSWD: ALL
+
+# testing sudo access from user account
+
+# edwin as a sudoer
+[edwin@localhost /]$ sudo lvmdiskscan
+  /dev/sda1 [       1.00 GiB] 
+  /dev/sda2 [     <19.00 GiB] LVM physical volume
+  /dev/sdb1 [       4.00 GiB] LVM physical volume
+  0 disks
+  1 partition
+  0 LVM physical volume whole disks
+  2 LVM physical volumes
+
+# alex as a non-sudoer
+[alex@localhost /]$ sudo lvmdiskscan 
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for alex: 
+alex is not in the sudoers file.  This incident will be reported.
