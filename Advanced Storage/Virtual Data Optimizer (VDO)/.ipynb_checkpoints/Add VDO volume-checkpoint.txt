@@ -1,0 +1,49 @@
+Add a new disk to your virtual machine with a size of 10 GiB. On this disk,
+create a VDO volume with a size of 50 GiB and mount it persistently
+
+
+Virtual Data Optimizer (VDO) provides inline data reduction for Linux in the form of deduplication, compression, and thin provisioning. When you set up a VDO volume, you specify a block device on which to construct your VDO volume and the amount of logical storage you plan to present.
+
+You can simply put a file system on top of the logical device presented by VDO and then use it directly or as part of a distributed cloud storage architecture
+
+Reference: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/vdo-quick-start#:~:text=1.,storage%20you%20plan%20to%20present.
+
+# VDO is deployed using the following RPM packages:
+# vdo
+# kmod-kvdo
+[root@localhost /]# yum install vdo kmod-kvdo
+
+
+# create VDO from blk device
+[root@localhost /]# lsblk -p
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+/dev/sda                  8:0    0   20G  0 disk 
+├─/dev/sda1               8:1    0    1G  0 part /boot
+└─/dev/sda2               8:2    0   19G  0 part 
+  ├─/dev/mapper/cl-root 253:0    0   17G  0 lvm  /
+  └─/dev/mapper/cl-swap 253:1    0    2G  0 lvm  [SWAP]
+/dev/sdb                  8:16   0   20G  0 disk 
+└─/dev/sdb1               8:17   0    4G  0 part 
+  └─/dev/mapper/vg--test-myfiles
+                        253:2    0    1G  0 lvm  /myfiles
+/dev/sdc                  8:32   0   10G  0 disk 
+/dev/sr0                 11:0    1  8.6G  0 rom  /run/media/lisa/CentOS-8-3-2011
+
+[root@localhost /]# vdo create --name=vdo_sdc --device=/dev/sdc --vdoLogicalSize=50G
+Creating VDO vdo_sdc
+vdo: ERROR - Kernel module kvdo not installed
+vdo: ERROR - modprobe: FATAL: Module kvdo not found in directory /lib/modules/4.18.0-240.el8.x86_64
+
+
+kvdo: A pair of kernel modules which provide pools of deduplicated and/or compressed block storage.
+https://github.com/dm-vdo/kvdo
+
+[root@localhost /]# make -C /usr/src/kernels/`uname -r` M=`pwd`
+make: *** /usr/src/kernels/4.18.0-240.el8.x86_64: No such file or directory.  Stop.
+
+[root@localhost kernels]# ls -al
+total 0
+drwxr-xr-x. 2 root root  6 Nov  3 08:22 .
+drwxr-xr-x. 4 root root 34 Jan 22 23:32 ..
+[root@localhost kernels]# pwd
+/usr/src/kernels
