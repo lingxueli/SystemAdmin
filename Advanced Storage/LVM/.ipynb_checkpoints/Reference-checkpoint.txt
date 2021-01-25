@@ -1,0 +1,21 @@
+create physical volume
+
+https://www.redhat.com/sysadmin/create-physical-volume
+
+If you were able to follow those steps successfully, congratulations on initializing a physical volume! If not, be sure that your new drives or partitions are formatted but NOT mounted prior to using the pvcreate command. Otherwise, you will see the following error:
+
+[root@rhel ~]# pvcreate /dev/sdb /dev/sdc
+  Can't open /dev/sdb exclusively.  Mounted filesystem?
+  Can't open /dev/sdc exclusively.  Mounted filesystem?
+
+create volume group
+
+https://www.redhat.com/sysadmin/create-volume-group
+
+create logical volume
+
+https://www.redhat.com/sysadmin/creating-logical-volumes
+
+LVM CONFIGURATION EXAMPLES
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/lvm_examples

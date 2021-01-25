@@ -1,0 +1,1 @@
+From VMWare Workstation player, click the VM -> settings -> Hardware -> Add -> Hard disk -> SCSI(recommended) -> Create a new virtual disk -> 20GM, split virtual disk into multiple files -> disk file, name: CentOS 8 64-bit-0.vmdk
