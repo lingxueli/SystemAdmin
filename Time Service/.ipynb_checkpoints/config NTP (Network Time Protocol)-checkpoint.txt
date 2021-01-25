@@ -1,0 +1,47 @@
+Configure your server to synchronize time with serverabc.example.com, where
+serverabc is an alias to myserver.example.com. Note that this server does not
+have to exist to accomplish this exercise.
+
+timedatectl manages many aspects of time. When it's used to switch on NTP time, it talks to the chronyd process. chronyd (man chronyd) is a daemon for synchronisation of the system clock. It can synchronise the clock with NTP servers, reference clocks (e.g. a GPS receiver), and manual input using wristwatch and keyboard via chronyc.
+
+[root@localhost /]# timedatectl show
+Timezone=America/Denver
+LocalRTC=no
+CanNTP=yes
+NTP=no
+NTPSynchronized=no
+TimeUSec=Mon 2021-01-25 00:03:40 MST
+RTCTimeUSec=Mon 2021-01-25 00:03:40 MST
+
+# turn on NTP
+[root@localhost /]# timedatectl set-ntp 1
+[root@localhost /]# timedatectl show
+Timezone=America/Denver
+LocalRTC=no
+CanNTP=yes
+NTP=yes
+NTPSynchronized=yes
+TimeUSec=Mon 2021-01-25 00:06:39 MST
+RTCTimeUSec=Mon 2021-01-25 00:06:39 MST
+
+# this config file specify the servers that should be used for NTP time sync
+[root@localhost /]# vim /etc/chrony.conf
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+pool 2.centos.pool.ntp.org iburst
+
+By default, chrony service is configured to get the right time form the internet. The highly reliable time servers from pool.ntp.org are used.
+In corporate environment, it's not always desirable for time client to go out to the internet. Local time services should be used instead.
+
+# modify chrony config file
+# server1 - time server - serverabc.example.com
+# server2 - time client
+
+# disable the default NTP server
+[root@localhost /]# vim /etc/chrony.conf
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+# pool 2.centos.pool.ntp.org iburst
+pool serverabc.example.com iburst
+
+# name resolution to serverabc.example.com if the time server exists

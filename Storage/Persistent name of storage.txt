@@ -1,0 +1,3 @@
+CHAPTER 6. OVERVIEW OF PERSISTENT NAMING ATTRIBUTES
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deduplicating_and_compressing_storage/assembly_overview-of-persistent-naming-attributes_deduplicating-and-compressing-storage
