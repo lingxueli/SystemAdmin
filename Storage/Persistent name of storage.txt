@@ -1,3 +1,58 @@
 CHAPTER 6. OVERVIEW OF PERSISTENT NAMING ATTRIBUTES
 
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deduplicating_and_compressing_storage/assembly_overview-of-persistent-naming-attributes_deduplicating-and-compressing-storage
+
+
+UUID is the persistent name of device
+lable is the persistent name of file system
+
+# show current file system table
+[root@localhost lisa]# cat /etc/fstab
+#
+# /etc/fstab
+# Created by anaconda on Sat Jan 23 06:22:08 2021
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/cl-root     /                       xfs     defaults        0 0
+UUID=ac852133-2d9c-4580-af07-faaadbf3e8f0 /boot                   xfs     defaults        0 0
+/dev/mapper/cl-swap     none                    swap    defaults        0 0
+/dev/vg-test/myfiles	/myfiles	ext4	defaults	0	0
+
+
+device name /dev/vg-test/myfiles is not persistent
+Use blkid to view UUID, and label, if a file system has it
+
+[root@localhost /]# blkid /dev/vg-test/myfiles
+/dev/vg-test/myfiles: UUID="916b19d6-a562-43aa-a7ed-11f11f313bda" BLOCK_SIZE="4096" TYPE="ext4"
+
+[root@localhost /]# blkid
+/dev/sda1: UUID="ac852133-2d9c-4580-af07-faaadbf3e8f0" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="531284a9-01"
+/dev/sda2: UUID="xSu98o-6nBy-TjVi-IrQx-1QFQ-VyX8-itZGtx" TYPE="LVM2_member" PARTUUID="531284a9-02"
+/dev/sdb1: UUID="7xUI0d-McRB-CBkF-HI37-wKG8-dOPv-gO1JWb" TYPE="LVM2_member" PARTLABEL="Linux filesystem" PARTUUID="3780084d-6aa1-4611-ad5a-13d4cf61e7f0"
+/dev/sr0: BLOCK_SIZE="2048" UUID="2020-11-18-21-39-52-00" LABEL="CentOS-8-3-2011-x86_64-dvd" TYPE="iso9660" PTUUID="6b8b4567" PTTYPE="dos"
+/dev/mapper/cl-root: UUID="5ee78fe9-7731-4a07-9525-7ac7e03e85b5" BLOCK_SIZE="512" TYPE="xfs"
+/dev/mapper/cl-swap: UUID="5c7272a6-e5d3-467d-a4db-824d19cd10dd" TYPE="swap"
+/dev/mapper/vg--test-myfiles: UUID="916b19d6-a562-43aa-a7ed-11f11f313bda" BLOCK_SIZE="4096" TYPE="ext4"
+
+
+# update file system table with UUID
+[root@localhost lisa]# cat /etc/fstab
+#
+# /etc/fstab
+# Created by anaconda on Sat Jan 23 06:22:08 2021
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/cl-root     /                       xfs     defaults        0 0
+UUID=ac852133-2d9c-4580-af07-faaadbf3e8f0 /boot                   xfs     defaults        0 0
+/dev/mapper/cl-swap     none                    swap    defaults        0 0
+UUID=916b19d6-a562-43aa-a7ed-11f11f313bda       /myfiles        ext4    defaults        0       0

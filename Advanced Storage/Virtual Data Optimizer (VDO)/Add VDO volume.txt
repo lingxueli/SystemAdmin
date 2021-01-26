@@ -38,40 +38,22 @@ vdo: ERROR - modprobe: FATAL: Module kvdo not found in directory /lib/modules/4.
 kvdo: A pair of kernel modules which provide pools of deduplicated and/or compressed block storage.
 https://github.com/dm-vdo/kvdo
 
-# based on doc, run the following to set up kvdo
-[root@localhost /]# make -C /usr/src/kernels/`uname -r` M=`pwd`
-make: *** /usr/src/kernels/4.18.0-240.el8.x86_64: No such file or directory.  Stop.
-
-[root@localhost kernels]# ls -al
-total 0
-drwxr-xr-x. 2 root root  6 Nov  3 08:22 .
-drwxr-xr-x. 4 root root 34 Jan 22 23:32 ..
-[root@localhost kernels]# pwd
-/usr/src/kernels
-
 # check current linux version and its compatibility with kvdo 
 [root@localhost kernels]# uname -srm
 Linux 4.18.0-240.el8.x86_64 x86_64
 
-# check another Documentation introduced from github page
-RHEL8 VDO Documentation
+[root@localhost /]# systemctl status vdo
+● vdo.service - VDO volume services
+   Loaded: loaded (/usr/lib/systemd/system/vdo.service; enabled; vendor preset:>
+   Active: active (exited) since Mon 2021-01-25 22:20:05 MST; 16min ago
+  Process: 989 ExecStart=/usr/bin/vdo start --all --confFile /etc/vdoconf.yml (>
+ Main PID: 989 (code=exited, status=0/SUCCESS)
+    Tasks: 0 (limit: 11073)
+   Memory: 0B
+   CGroup: /system.slice/vdo.service
 
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/deduplicating_and_compressing_storage/deploying-vdo_deduplicating-and-compressing-storage#con_introduction-to-vdo-deploying-vdo
+Jan 25 22:20:01 localhost.localdomain systemd[1]: Starting VDO volume services.>
+Jan 25 22:20:05 localhost.localdomain systemd[1]: Started VDO volume services.
+lines 1-11/11 (END)
 
-
-1.8. Creating a VDO volume
-This procedure creates a VDO volume on a block device.
-
-Prerequisites
-
-Install the VDO software. See Section 1.7, “Installing VDO”.
-Use expandable storage as the backing block device. For more information, see Section 1.6.3, “Placement of VDO in the storage stack”.
-
-
-Procedure
-
-In all the following steps, replace vdo-name with the identifier you want to use for your VDO volume; for example, vdo1. You must use a different name and device for each instance of VDO on the system.
-
-Find a persistent name for the block device where you want to create the VDO volume. For more information on persistent names, see Chapter 6, Overview of persistent naming attributes.
-
-If you use a non-persistent device name, then VDO might fail to start properly in the future if the device name changes.
+# it's related to the version of kernel module. The current version is not compatible with kvdo
