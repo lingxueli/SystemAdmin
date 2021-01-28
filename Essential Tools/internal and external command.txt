@@ -1,0 +1,33 @@
+Internal command 
+[root@localhost ~]# type source
+source is a shell builtin
+
+External command
+[root@localhost ~]# type cat
+cat is /usr/bin/cat
+
+which command doesn't work for internal command
+[root@localhost ~]# which source
+/usr/bin/which: no source in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)
+which command only works for external command
+[root@localhost ~]# which cat
+/usr/bin/cat
+
+
+External command can be found at:
+[root@localhost ~]# echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+
+Different users could have different setting of $PATH
+[root@localhost ~]# env
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+
+
+Command as both the internal and the external
+# internal
+[root@localhost ~]# type time
+time is a shell keyword
+
+# external
+[root@localhost ~]# which time
+/usr/bin/time
