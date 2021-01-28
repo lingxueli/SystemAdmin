@@ -55,4 +55,5 @@ NTPSynchronized=no
 TimeUSec=Mon 2021-01-25 01:08:21 MST
 RTCTimeUSec=Mon 2021-01-25 01:08:21 MST
 
-# name resolution to serverabc.example.com if the time server exists
+# set up name resolution to serverabc.example.com if the time server exists
+/etc/hosts

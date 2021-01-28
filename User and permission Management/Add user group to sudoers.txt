@@ -26,7 +26,7 @@ sysadmins:x:1007:edwin,santos
 # allow user in group sysadmins to run all commands without a password
 %sysadmins        ALL=(ALL)       NOPASSWD: ALL
 
-# testing sudo access from user account
+# test sudo access from user account
 
 # edwin as a sudoer
 [edwin@localhost /]$ sudo lvmdiskscan
