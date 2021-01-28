@@ -3,6 +3,8 @@ Find all files that have the SUID permission set, and write the result to the fi
 
 
 [root@localhost /]# find / -perm /u+s > /root/suidfiles
+OR
+[root@localhost /]# find / -perm -4000 > /root/suidfiles2
 
 
 [root@localhost /]# man find
