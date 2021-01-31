@@ -1,0 +1,46 @@
+info page is useful when the command's main document is not in man page.
+Use info or pinfo to read the page. pinfo is easier because it provides menu items.
+
+Example:
+[root@localhost lisa]# man ls
+SEE ALSO
+       Full documentation at: <https://www.gnu.org/software/coreutils/ls>
+       or available locally via: info '(coreutils) ls invocation'
+
+
+This indicates the full document is at info page instead of man page.
+
+
+Info page is organized like web pages. The first line of info page is the navigation. It gives you the current position in the doc.
+Each item starts with asterisk(*) is a menu item. Use the arrow key + enter to select an item this brings you down one level. To get back up again, type u.
+
+[root@localhost lisa]# info '(coreutils) ls invocation'
+
+    Next: dir invocation,  Up: Directory listing
+
+
+    * Menu:
+
+    * Which files are listed::
+    * What information is listed::
+    * Sorting the output::
+    * Details about version sort::
+    * General output formatting::
+    * Formatting file timestamps::
+    * Formatting the file names::
+
+
+After selecting from the menu item - * What information is listed::
+
+    Next: Sorting the output,  Prev: Which files are listed,  Up: ls invocation
+
+    10.1.2 What information is listed
+    ---------------------------------
+
+    These options affect the information that ‘ls’ displays.  By default,
+    only file names are shown.
+
+    ‘--author’
+         List each file’s author when producing long format directory
+         listings.  In GNU/Hurd, file authors can differ from their owners,
+         but in other operating systems the two are the same.
