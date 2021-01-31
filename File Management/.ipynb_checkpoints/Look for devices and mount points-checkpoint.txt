@@ -1,0 +1,119 @@
+$ mount
+
+It reads /proc/mounts file, this is where the kernal keeps the info about all the mounts. It shows kernal interface also, which leads to a long list. Such as tmpfs - the Kernal devices that creates a temporary file system in RAM.
+
+
+$ findmnt
+
+It reads the mounts and also display the relationship between the mount. A cleaner display of the information.
+
+
+$ df -hT
+
+-T options display the file system type
+
+[root@localhost /]# mount
+sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=885944k,nr_inodes=221486,mode=755)
+securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=000)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,mode=755)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+pstore on /sys/fs/pstore type pstore (rw,nosuid,nodev,noexec,relatime,seclabel)
+bpf on /sys/fs/bpf type bpf (rw,nosuid,nodev,noexec,relatime,mode=700)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,memory)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,perf_event)
+cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,blkio)
+cgroup on /sys/fs/cgroup/rdma type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,rdma)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,freezer)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,devices)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,cpuset)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,cpu,cpuacct)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,net_cls,net_prio)
+cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,pids)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,seclabel,hugetlb)
+none on /sys/kernel/tracing type tracefs (rw,relatime,seclabel)
+configfs on /sys/kernel/config type configfs (rw,relatime)
+/dev/mapper/cl-root on / type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+selinuxfs on /sys/fs/selinux type selinuxfs (rw,relatime)
+mqueue on /dev/mqueue type mqueue (rw,relatime,seclabel)
+debugfs on /sys/kernel/debug type debugfs (rw,relatime,seclabel)
+systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=46,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=25558)
+hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel,pagesize=2M)
+fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
+/dev/mapper/vg--test-myfiles on /myfiles type ext4 (rw,relatime,seclabel)
+/dev/sda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
+tmpfs on /run/user/42 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=183300k,mode=700,uid=42,gid=42)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=183300k,mode=700,uid=1000,gid=1000)
+gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
+/dev/sr0 on /run/media/lisa/CentOS-8-3-2011-x86_64-dvd type iso9660 (ro,nosuid,nodev,relatime,nojoliet,check=s,map=n,blocksize=2048,uid=1000,gid=1000,dmode=500,fmode=400,uhelper=udisks2)
+
+
+mqueue on /dev/mqueue type mqueue (rw,relatime,seclabel)
+debugfs on /sys/kernel/debug type debugfs (rw,relatime,seclabel)
+systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=46,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=25558)
+hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel,pagesize=2M)
+fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
+/dev/mapper/vg--test-myfiles on /myfiles type ext4 (rw,relatime,seclabel)
+/dev/sda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
+tmpfs on /run/user/42 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=183300k,mode=700,uid=42,gid=42)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=183300k,mode=700,uid=1000,gid=1000)
+gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
+/dev/sr0 on /run/media/lisa/CentOS-8-3-2011-x86_64-dvd type iso9660 (ro,nosuid,nodev,relatime,nojoliet,check=s,map=n,blocksize=2048,uid=1000,gid=1000,dmode=500,fmode=400,uhelper=udisks2)
+
+
+
+
+[root@localhost /]# findmnt
+TARGET                                SOURCE     FSTYPE          OPTIONS
+/                                     /dev/mapper/cl-root
+│                                                xfs             rw,relatime,seclabel,attr2,inode64,logbufs=8,logbsize=32k,noquota
+├─/sys                                sysfs      sysfs           rw,nosuid,nodev,noexec,relatime,seclabel
+│ ├─/sys/kernel/security              securityfs securityfs      rw,nosuid,nodev,noexec,relatime
+│ ├─/sys/fs/cgroup                    tmpfs      tmpfs           ro,nosuid,nodev,noexec,seclabel,mode=755
+│ │ ├─/sys/fs/cgroup/systemd          cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,
+│ │ ├─/sys/fs/cgroup/memory           cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,memory
+│ │ ├─/sys/fs/cgroup/perf_event       cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,perf_event
+│ │ ├─/sys/fs/cgroup/blkio            cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,blkio
+│ │ ├─/sys/fs/cgroup/rdma             cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,rdma
+│ │ ├─/sys/fs/cgroup/freezer          cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,freezer
+│ │ ├─/sys/fs/cgroup/devices          cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,devices
+│ │ ├─/sys/fs/cgroup/cpuset           cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,cpuset
+│ │ ├─/sys/fs/cgroup/cpu,cpuacct      cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,cpu,cpuacct
+│ │ ├─/sys/fs/cgroup/net_cls,net_prio cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,net_cls,net_prio
+│ │ ├─/sys/fs/cgroup/pids             cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,pids
+│ │ └─/sys/fs/cgroup/hugetlb          cgroup     cgroup          rw,nosuid,nodev,noexec,relatime,seclabel,hugetlb
+│ ├─/sys/fs/pstore                    pstore     pstore          rw,nosuid,nodev,noexec,relatime,seclabel
+│ ├─/sys/fs/bpf                       bpf        bpf             rw,nosuid,nodev,noexec,relatime,mode=700
+│ ├─/sys/kernel/tracing               none       tracefs         rw,relatime,seclabel
+│ ├─/sys/fs/selinux                   selinuxfs  selinuxfs       rw,relatime
+│ ├─/sys/kernel/debug                 debugfs    debugfs         rw,relatime,seclabel
+│ ├─/sys/fs/fuse/connections          fusectl    fusectl         rw,relatime
+│ └─/sys/kernel/config                configfs   configfs        rw,relatime
+├─/proc                               proc       proc            rw,nosuid,nodev,noexec,relatime
+│ └─/proc/sys/fs/binfmt_misc          systemd-1  autofs          rw,relatime,fd=46,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=25558
+├─/dev                                devtmpfs   devtmpfs        rw,nosuid,seclabel,size=885944k,nr_inodes=221486,mode=755
+│ ├─/dev/shm                          tmpfs      tmpfs           rw,nosuid,nodev,seclabel
+│ ├─/dev/pts                          devpts     devpts          rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=000
+│ ├─/dev/mqueue                       mqueue     mqueue          rw,relatime,seclabel
+│ └─/dev/hugepages                    hugetlbfs  hugetlbfs       rw,relatime,seclabel,pagesize=2M
+├─/run                             
+
+
+[root@localhost /]# df -hT
+Filesystem                   Type      Size  Used Avail Use% Mounted on
+devtmpfs                     devtmpfs  866M     0  866M   0% /dev
+tmpfs                        tmpfs     896M     0  896M   0% /dev/shm
+tmpfs                        tmpfs     896M  9.8M  886M   2% /run
+tmpfs                        tmpfs     896M     0  896M   0% /sys/fs/cgroup
+/dev/mapper/cl-root          xfs        17G  4.7G   13G  28% /
+/dev/mapper/vg--test-myfiles ext4      976M  2.6M  907M   1% /myfiles
+/dev/sda1                    xfs      1014M  240M  775M  24% /boot
+tmpfs                        tmpfs     180M  1.2M  178M   1% /run/user/42
+tmpfs                        tmpfs     180M  4.6M  175M   3% /run/user/1000
+/dev/sr0                     iso9660   8.7G  8.7G     0 100% /run/media/lisa/CentOS-8-3-2011-x86_64-dvd

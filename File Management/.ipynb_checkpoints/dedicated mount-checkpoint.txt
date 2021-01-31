@@ -1,0 +1,15 @@
+These directories are mounted from sepearate device:
+
+/boot: root directory is often on a LVM, where Linux cannot boot by default. The kernal and associated files are stored on a seperately on /boot device.
+
+[root@localhost boot]# ls 
+config-4.18.0-240.el8.x86_64                             initramfs-4.18.0-240.el8.x86_64.img       vmlinuz-0-rescue-ef42488fe41a4812a6a0ed66f48dd10b
+efi                                                      initramfs-4.18.0-240.el8.x86_64kdump.img  vmlinuz-4.18.0-240.el8.x86_64
+grub2                                                    loader
+initramfs-0-rescue-ef42488fe41a4812a6a0ed66f48dd10b.img  System.map-4.18.0-240.el8.x86_64
+
+/var: the size of this directory is dynamic. To avoid it filling up all storage on the server, a dedicated device is mounted for this directory.
+
+/home: It's separated so that this could be mounted with specific options, such as noexec, nodev. When reinstalling the OS, the home directory can also survive the system reinstall.
+
+/usr: this contains the program files where user don't need any write access to. Separating it allows administrator to configure it as a read-only mount. 
