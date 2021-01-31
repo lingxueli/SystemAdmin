@@ -43,6 +43,7 @@ Here're the essentails:
     ^ go to the first position in the current line
     $ go to the last position in the current line
     
+    :3 go to line number 3
     
 5. search and replace
 
