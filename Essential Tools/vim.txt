@@ -1,0 +1,52 @@
+vim stands for vi improved. It has vast amount of commands. Remembering the essentials are important.
+
+vimtutor command opens a vim tutorial. To install: 
+
+yum install vim-enhanced
+
+
+Here're the essentails:
+
+1. They're two modes of vim: command mode, and input mode. To switch the mode:
+
+    Esc switch from input mode to command mode, press this before typing any command
+
+    i, a switch form command mode to input mode
+        i insert at the current cursor
+        a insert after the current cursor
+
+    o open a new lin below the cursor and goes to input mode
+
+
+2. File operations:
+
+    :wq save and quit
+    :q! quit
+    :w filename: save as "filename"
+
+
+3. Edit operations:
+    
+    dd delete the current line
+    yy copy the current line
+    p paste the current selection
+    v enter visual mode, where you could select a block of text using arrow kyes. Later you could use d to cut the selection or y to copy it, p to paste it
+    u undo the last command
+    Ctrl-r redo the last command
+
+
+4. navigation:
+    
+    gg go to the first line of the document
+    G go to the last line of the document
+    
+    ^ go to the first position in the current line
+    $ go to the last position in the current line
+    
+    
+5. search and replace
+
+    /text serach for text from the current cursor forward
+    ?text search for text from the current cursor backward
+    ! ls add the output of ls(or any other command) in the current file. It replaces the current line
+    :%s/old/new/g  replace all occurrences of old with new
