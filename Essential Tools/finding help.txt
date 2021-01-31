@@ -1,0 +1,106 @@
+the most important part of a man page is in the bottom: "examples" and "see also". "see also" is usedful when you don't hit the right man page but it gives you the relevant pages.
+
+To search the man page:
+
+$ man -k  keyword
+$ apropos keyword
+
+They can search the mandb database and looks in the summary of all man pages for keyword.
+
+$ man man
+       -k, --apropos
+              Equivalent to apropos.  Search the short  manual  page  descrip‐
+              tions  for keywords and display any matches.  See apropos(1) for
+              details.
+    SEE ALSO
+           apropos(1),   groff(1),   less(1),   manpath(1),   nroff(1),  troff(1),
+           whatis(1), zsoelim(1), setlocale(3), manpath(5),  ascii(7),  latin1(7),
+           man(7), catman(8), mandb(8), the man-db package manual, FSSTND
+
+[lisa@localhost ~]$ man -k partition
+sgdisk (8)           - Command-line GUID partition table (GPT) manipulator fo...
+addpart (8)          - tell the kernel about the existence of a partition
+cfdisk (8)           - display or manipulate a disk partition table
+cgdisk (8)           - Curses-based GUID partition table (GPT) manipulator
+delpart (8)          - tell the kernel to forget about a partition
+fdisk (8)            - manipulate disk partition table
+fixparts (8)         - MBR partition table repair utility
+gdisk (8)            - Interactive GUID partition table (GPT) manipulator
+kpartx (8)           - Create device maps from partition tables.
+mpartition (1)       - partition an MSDOS hard disk
+parted (8)           - a partition manipulation program
+partprobe (8)        - inform the OS of partition table changes
+partx (8)            - tell the kernel about the presence and numbering of on...
+resizepart (8)       - tell the kernel about the new size of a partition
+sfdisk (8)           - display or manipulate a disk partition table
+systemd-gpt-auto-generator (8) - Generator for automatically discovering and ...
+
+man page sections
+The most relevant sections for system administration man page:
+    1: executable programs or shell commands
+    5: file formats and conventions
+    8: system administration commands
+
+
+For example, this returns the configuration file that has something to do with password:
+
+[lisa@localhost ~]$ man -k password | grep 5
+login.defs (5)       - shadow password suite configuration
+passwd (5)           - password file
+password-auth (5)    - Common configuration file for PAMified services
+shadow (5)           - shadowed password file
+smbpasswd (5)        - The Samba encrypted password file
+
+As another example, this returns the administrator command for partition
+[lisa@localhost ~]$ man -k partition | grep 8
+sgdisk (8)           - Command-line GUID partition table (GPT) manipulator for Linux and Unix
+addpart (8)          - tell the kernel about the existence of a partition
+cfdisk (8)           - display or manipulate a disk partition table
+cgdisk (8)           - Curses-based GUID partition table (GPT) manipulator
+delpart (8)          - tell the kernel to forget about a partition
+fdisk (8)            - manipulate disk partition table
+fixparts (8)         - MBR partition table repair utility
+gdisk (8)            - Interactive GUID partition table (GPT) manipulator
+kpartx (8)           - Create device maps from partition tables.
+parted (8)           - a partition manipulation program
+partprobe (8)        - inform the OS of partition table changes
+partx (8)            - tell the kernel about the presence and numbering of on-disk partitions
+resizepart (8)       - tell the kernel about the new size of a partition
+
+
+[lisa@localhost ~]$ man passwd
+PASSWD(1)                                                                User utilities                                                                PASSWD(1)
+
+NAME
+       passwd - update user's authentication tokens
+
+[lisa@localhost ~]$ man 5 passwd
+PASSWD(5)                                                           Linux Programmer's Manual                                                          PASSWD(5)
+
+NAME
+       passwd - password file
+
+DESCRIPTION
+       The /etc/passwd file is a text file that describes user login accounts for the system.  It should have read permission allowed for all users (many utili‐
+       ties, like ls(1) use it to map user IDs to usernames), but write access only for the superuser.
+       
+       The field are as follows:
+
+       name        This is the user's login name.  It should not contain capital letters.
+
+       password    This is either the encrypted user password, an asterisk (*), or the letter 'x'.  (See pwconv(8) for an explanation of 'x'.)
+
+
+[lisa@localhost ~]$ man man
+
+       The table below shows the section numbers of the manual followed by the types of pages they contain.
+
+       1   Executable programs or shell commands
+       2   System calls (functions provided by the kernel)
+       3   Library calls (functions within program libraries)
+       4   Special files (usually found in /dev)
+       5   File formats and conventions eg /etc/passwd
+       6   Games
+       7   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)
+       8   System administration commands (usually only for root)
+       9   Kernel routines [Non standard]
