@@ -1,0 +1,61 @@
+# create the files and directory
+[lisa@localhost ~]$ mkdir newfiles oldfiles
+[lisa@localhost ~]$ touch newfiles/.hidden
+[lisa@localhost ~]$ touch newfiles/unhidden
+
+# switch to the directory oldfiles, cp will work from here
+[lisa@localhost ~]$ cd oldfiles
+[lisa@localhost oldfiles]$ ls -al
+total 4
+drwxrwxr-x.  2 lisa lisa    6 Jan 31 17:39 .
+drwx------. 17 lisa lisa 4096 Jan 31 17:39 ..
+
+# copy the files and keep its permission
+[lisa@localhost oldfiles]$ ls -al ../newfiles
+total 4
+drwxrwxr-x.  2 lisa lisa   37 Jan 31 17:39 .
+drwx------. 17 lisa lisa 4096 Jan 31 17:39 ..
+-rw-rw-r--.  1 lisa lisa    0 Jan 31 17:39 .hidden
+-rw-rw-r--.  1 lisa lisa    0 Jan 31 17:39 unhidden
+[lisa@localhost oldfiles]$ cp -a ../newfiles/ .
+# this copies the entire directory including all files under it and the directory itself
+# the / at the end of /newfiles makes sure hidden files are copied as well
+
+[lisa@localhost oldfiles]$ ls -alR
+.:
+total 4
+drwxrwxr-x.  3 lisa lisa   22 Jan 31 17:40 .
+drwx------. 17 lisa lisa 4096 Jan 31 17:39 ..
+drwxrwxr-x.  2 lisa lisa   37 Jan 31 17:39 newfiles
+
+./newfiles:
+total 0
+drwxrwxr-x. 2 lisa lisa 37 Jan 31 17:39 .
+drwxrwxr-x. 3 lisa lisa 22 Jan 31 17:40 ..
+-rw-rw-r--. 1 lisa lisa  0 Jan 31 17:39 .hidden
+-rw-rw-r--. 1 lisa lisa  0 Jan 31 17:39 unhidden
+
+# remove the copy, copy again
+[lisa@localhost oldfiles]$ rm -rf newfiles
+
+# hidden files are not copied 
+[lisa@localhost oldfiles]$ cp -a ../newfiles/* .
+[lisa@localhost oldfiles]$ ls -alR
+.:
+total 4
+drwxrwxr-x.  2 lisa lisa   22 Jan 31 17:46 .
+drwx------. 17 lisa lisa 4096 Jan 31 17:39 ..
+-rw-rw-r--.  1 lisa lisa    0 Jan 31 17:39 unhidden
+[lisa@localhost oldfiles]$ rm unhidden
+
+
+# remove the copy, copy again
+# this copies all the files under it, not including the directory itself
+[lisa@localhost oldfiles]$ cp -a ../newfiles/. .
+[lisa@localhost oldfiles]$ ls -alR
+.:
+total 4
+drwxrwxr-x.  2 lisa lisa   37 Jan 31 17:39 .
+drwx------. 17 lisa lisa 4096 Jan 31 17:47 ..
+-rw-rw-r--.  1 lisa lisa    0 Jan 31 17:39 .hidden
+-rw-rw-r--.  1 lisa lisa    0 Jan 31 17:39 unhidden
