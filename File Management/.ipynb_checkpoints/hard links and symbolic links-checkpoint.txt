@@ -1,0 +1,108 @@
+Hard link
+
+File names are hard links. A file could have multiple hard links. It enables user to access the same file from multiple locations.
+
+inodes contains administrative data of a file, except the file name. The hard link is the link from the filename to inode. And inode contains information about how to further access the file content.
+
+You cannot create hard link to directories.
+
+Symbolic link
+
+Symbolic link doesn't link to the inode but to the file name. It s more flexible. They can link to files on other devices. The major disadvantage is when the original file is removed, the symbolic link doesn't work any longer.
+
+
+Creating links
+$ man ln
+       ln [OPTION]... [-T] TARGET LINK_NAME
+       ln [OPTION]... TARGET
+       ln [OPTION]... TARGET... DIRECTORY
+       ln [OPTION]... -t DIRECTORY TARGET...
+
+The second argument could be the destination of the link, or the link name
+
+Create a hard link to /etc/hosts in the current directroy
+
+[root@localhost lisa]# ln /etc/hosts .
+
+[root@localhost lisa]# ls -l
+total 168
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Desktop
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Documents
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Downloads
+-rw-r--r--. 2 root root   158 Sep 10  2018 hosts        ----> hard link, hard link counter == 2
+-rw-rw-r--. 1 lisa lisa 78063 Jan 30 18:50 intelnew
+-rw-rw-r--. 1 lisa lisa 78441 Jan 30 18:28 intel.txt
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Music
+drwxrwxr-x. 2 lisa lisa    37 Jan 31 17:39 newfiles
+drwxrwxr-x. 2 lisa lisa    37 Jan 31 17:39 oldfiles
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Pictures
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Public
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Templates
+-rw-rw-r--. 1 lisa lisa  1038 Jan 30 19:13 testvim
+-rw-rw-r--. 1 lisa lisa     0 Jan 31 17:39 unhidden
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Videos
+
+
+To create the hard link, you need to be the file owner
+
+[lisa@localhost oldfiles]$ ls -al /etc/hosts
+-rw-r--r--. 1 root root 158 Sep 10  2018 /etc/hosts
+
+[lisa@localhost ~]$ ln /etc/hosts .
+ln: failed to create hard link './hosts' => '/etc/hosts': Operation not permitted
+
+
+
+Create a symbolic link to /etc/hosts in the current directory
+
+[root@localhost lisa]# ln -s /etc/hosts .
+[root@localhost lisa]# ls -l
+total 164
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Desktop
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Documents
+drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Downloads
+lrwxrwxrwx. 1 root root    10 Jan 31 22:47 hosts -> /etc/hosts    ---> symbolic link, the first char is an l if it's a symbolic link
+                                                                    it shows the name of the item it links to after the filename
+
+
+Create a symbolic link to /home in the directory /tmp
+
+[root@localhost lisa]# ls -s /home /tmp
+
+
+Remove link example
+
+[lisa@localhost ~]$ mkdir ~/test
+
+# copy files under /etc starting with a-e under ~/test
+[lisa@localhost ~]$ cp /etc/[a-e]* ~/test
+
+# switch to home directory
+[lisa@localhost ~]$ cd
+
+# create symbolic link to test, with link name - link
+[lisa@localhost ~]$ ln -s test link
+
+[lisa@localhost ~]$ ls -al | grep link
+lrwxrwxrwx.  1 lisa lisa     4 Jan 31 23:02 link -> test
+
+# remove the symbolic link
+[lisa@localhost ~]$ rm link
+[lisa@localhost ~]$ ls -al | grep link
+
+# link is removed
+
+[lisa@localhost ~]$ ln -s test link
+
+
+# remove the symbolic link again
+# using the bash command link completion this time
+[lisa@localhost ~]$ rm -rf link/
+
+[lisa@localhost ~]$ ls -l | grep link
+lrwxrwxrwx. 1 lisa lisa     4 Jan 31 23:08 link -> test
+
+[lisa@localhost ~]$ ls test/
+
+# link is not removed
+# but the directory is now empty
