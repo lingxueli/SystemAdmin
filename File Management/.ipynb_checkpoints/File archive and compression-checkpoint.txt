@@ -1,0 +1,73 @@
+# archive command and options
+[root@localhost ~]# man -k archive
+tar (5)              - format of tape archive files
+
+[root@localhost ~]# man tar
+
+
+# compression command
+[root@localhost ~]# man -k zip
+bunzip2 (1)          - a block-sorting file compressor, v1.0.6
+bzip2 (1)            - a block-sorting file compressor, v1.0.6
+gunzip (1)           - compress or expand files
+gzip (1)             - compress or expand files
+
+
+# create an archive
+[root@localhost ~]# tar -cvf etc.tar /etc
+
+# read archive file type
+[root@localhost ~]# file etc.tar
+etc.tar: POSIX tar archive (GNU)
+
+# compress the archive
+[root@localhost ~]# gzip etc.tar
+
+# read file type again
+[root@localhost ~]# file etc.tar.gz 
+etc.tar.gz: gzip compressed data, was "etc.tar", last modified: Mon Feb  1 21:31:41 2021, from Unix, original size 27310080
+
+# show the content of archive (or a compressed archive)
+[root@localhost ~]# tar tvf etc.tar.gz | less
+drwxr-xr-x root/root         0 2021-01-31 13:44 etc/
+lrwxrwxrwx root/root         0 2021-01-22 23:38 etc/mtab -> ../proc/self/mounts
+-rw-r--r-- root/root       648 2021-01-25 22:34 etc/fstab
+-rw------- root/root         0 2021-01-22 23:22 etc/crypttab
+-rw-r--r-- root/root        74 2021-01-31 13:44 etc/resolv.conf
+drwxr-xr-x root/root         0 2021-01-22 23:27 etc/dnf/
+drwxr-xr-x root/root         0 2021-01-25 00:57 etc/dnf/modules.d/
+-rw-r--r-- root/root        76 2021-01-22 23:25 etc/dnf/modules.d/container-tools.module
+-rw-r--r-- root/root        70 2021-01-22 23:25 etc/dnf/modules.d/llvm-toolset.module
+-rw-r--r-- root/root        53 2021-01-22 23:25 etc/dnf/modules.d/perl.module
+
+# extract one file from the archive (or a compressed archive)
+[root@localhost ~]# tar xvf etc.tar.gz etc/hosts
+
+# verify it's extracted
+[root@localhost ~]# ls -R
+.:
+anaconda-ks.cfg  etc  etc.tar.gz  initial-setup-ks.cfg  suidfiles  suidfiles2
+
+./etc:
+hosts
+
+# it's not in archive any longer
+[root@localhost ~]# tar tvf etc.tar.gz | less host
+host: No such file or directory
+
+# decompress the rest
+[root@localhost ~]# gunzip etc.tar.gz
+
+# extract another file to the target directoy: /tmp
+[root@localhost ~]# tar xvf etc.tar -C /tmp etc/passwd
+etc/passwd
+
+
+# create a compressed archive
+[root@localhost ~]# tar cjvf homes.tar /home
+
+[root@localhost ~]# file homes.tar
+homes.tar: bzip2 compressed data, block size = 900k
+
+# clean up all the files from this exercise
+[root@localhost ~]# rm -f *gz *tar
