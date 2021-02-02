@@ -1,0 +1,108 @@
+awk searches each line of a document and take action when a match is found within a line.
+
+More advanced usage is here: https://www.geeksforgeeks.org/awk-command-unixlinux-examples/
+
+[lisa@localhost ~]$ cat > employee.txt 
+ajay manager account 45000
+sunil clerk account 25000
+varun manager sales 50000
+amit manager account 47000
+tarun peon sales 15000
+deepak clerk sales 23000
+sunil peon sales 13000
+satvik director purchase 80000 
+^C
+
+1. Default behavior of Awk : By default Awk prints every line of data from the specified file. 
+
+[lisa@localhost ~]$ awk '{print}' employee.txt
+
+2. Print the lines which matches with the given pattern. 
+
+[lisa@localhost ~]$ awk '/manager/ {print}' employee.txt 
+ajay manager account 45000
+varun manager sales 50000
+amit manager account 47000
+
+3. Splitting a Line Into Fields
+
+For each record i.e line, the awk command splits the record delimited by whitespace character by default and stores it in the $n variables. If the line has 4 words, it will be stored in $1, $2, $3 and $4 respectively. Also, $0 represents the whole line. 
+
+[lisa@localhost ~]$ awk '{print $1,$4}' employee.txt
+ajay 45000
+sunil 25000
+varun 50000
+amit 47000
+tarun 15000
+deepak 23000
+sunil 13000
+satvik 80000
+
+4. Built In Variables In Awk
+
+Awk’s built-in variables include the field variables—$1, $2, $3, and so on ($0 is the entire line) — that break a line of text into individual words or pieces called fields. 
+
+NR: NR command keeps a current count of the number of input records
+
+Use of NR built-in variables (Display Line Number) 
+
+[lisa@localhost ~]$ awk '{print NR,$0}' employee.txt 
+1 ajay manager account 45000
+2 sunil clerk account 25000
+3 varun manager sales 50000
+4 amit manager account 47000
+5 tarun peon sales 15000
+6 deepak clerk sales 23000
+7 sunil peon sales 13000
+8 satvik director purchase 80000 
+
+Another use of NR built-in variables (Display Line From 3 to 6) 
+
+[lisa@localhost ~]$ awk 'NR==3, NR==6 {print NR,$0}' employee.txt 
+3 varun manager sales 50000
+4 amit manager account 47000
+5 tarun peon sales 15000
+6 deepak clerk sales 23000
+
+NF: NF command keeps a count of the number of fields within the current input record. 
+
+Use of NF built-in variables (Display Last Field) 
+
+[lisa@localhost ~]$ awk '{print $1,$NF}' employee.txt 
+ajay 45000
+sunil 25000
+varun 50000
+amit 47000
+tarun 15000
+deepak 23000
+sunil 13000
+satvik 80000
+
+
+Another example:
+
+[lisa@localhost ~]$ netstat -nutl -4
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN     
+
+
+# display the port information from ipv4 address
+# man awk
+    SYNOPSIS
+           gawk [ POSIX or GNU style options ] -f program-file [ -- ] file ...  ->  [ POSIX or GNU style options ]  i.e. short or long options
+           gawk [ POSIX or GNU style options ] [ -- ] program-text file ...     ->   program-file / program-text i.e. the command
+
+       -F fs
+       --field-separator fs
+              Use fs for the input field separator (the value of the FS prede‐
+              fined variable).
+
+   Built-in Variables
+       Gawk's built-in variables are:
+       NF          The number of fields in the current input record.
+
+
+
+[lisa@localhost ~]$ netstat -nutl -4 | grep ':' | awk '{print $4}' | awk -F ':' '{print $NF}'
