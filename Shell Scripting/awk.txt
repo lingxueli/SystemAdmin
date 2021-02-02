@@ -106,3 +106,79 @@ tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN
 
 
 [lisa@localhost ~]$ netstat -nutl -4 | grep ':' | awk '{print $4}' | awk -F ':' '{print $NF}'
+
+Another example
+[lisa@localhost ~]$ cat > geeksforgeeks.txt
+A    B    C
+Tarun    A12    1
+Man    B6    2
+Praveen    M42    3
+
+To count the lines in a file: 
+ 
+[lisa@localhost ~]$ awk 'END { print NR }' geeksforgeeks.txt
+4
+
+To find the length of the longest line present in the file: 
+
+[lisa@localhost ~]$ awk '{ if (length($0) > max) max = length($0) } END { print max }' geeksforgeeks.txt
+19
+# $0 is the built in variable, the whole line
+
+The END isn't superfluous. If you don't specify END then the print would be executed for every line of input.
+
+Quoting from the manual:
+
+A BEGIN rule is executed once only, before the first input record is read. Likewise, an END rule is executed once only, after all the input is read.
+
+
+# man awk
+    SYNOPSIS
+           gawk [ POSIX or GNU style options ] -f program-file [ -- ] file ...  ->  [ POSIX or GNU style options ]  i.e. short or long options
+           gawk [ POSIX or GNU style options ] [ -- ] program-text file ...     ->   program-file / program-text i.e. the command
+
+    AWK PROGRAM EXECUTION
+           An  AWK program consists of a sequence of optional directives, pattern-
+           action statements, and optional function definitions.
+
+                  @include "filename"
+                  @load "filename"
+                  pattern   { action statements }
+                  function name(parameter list) { statements }
+
+            ...
+               Finally,  after  all  the input is exhausted, gawk executes the code in
+               the END rule(s) (if any).
+
+            String Functions
+                   Gawk has the following built-in string functions:
+                       length([s])             Return  the  length  of  the  string  s, or the
+                                               length of $0 if s is not supplied.  As  a  non-
+                                               standard  extension,  with  an  array argument,
+                                               length() returns the number of elements in  the
+                                               array.
+           Patterns
+               AWK patterns may be one of the following:
+
+                      BEGIN
+                      END
+               BEGIN  and  END  are two special kinds of patterns which are not tested
+               against the input.  The action parts of all BEGIN patterns  are  merged
+               as if all the statements had been written in a single BEGIN rule.  They
+               are executed before any of the input is read.  Similarly, all  the  END
+               rules are merged, and executed when all the input is exhausted (or when
+               an exit statement is executed).  BEGIN and END patterns cannot be  com‐
+               bined  with  other patterns in pattern expressions.  BEGIN and END pat‐
+               terns cannot have missing action parts.
+
+
+            EXAMPLES
+                   Print and sort the login names of all users:
+
+                        BEGIN     { FS = ":" }
+                             { print $1 | "sort" }
+
+                   Count lines in a file:
+
+                             { nlines++ }
+                        END  { print nlines }
