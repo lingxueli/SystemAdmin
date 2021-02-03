@@ -1,0 +1,10 @@
+To issue a proper reboot, the systemd process has to be alerted:
+$ systemctl reboot
+$ reboot
+$ systemctl halt
+$ halt
+$ systemctl poweroff
+$ poweroff
+
+if none of the above works, use this:
+$ echo b > /proc/sysrq-trigger
