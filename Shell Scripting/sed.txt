@@ -1,1 +1,1 @@
-echo "front" | sed 's/front/back/'
+sed echo "front" | sed 's/front/back/'

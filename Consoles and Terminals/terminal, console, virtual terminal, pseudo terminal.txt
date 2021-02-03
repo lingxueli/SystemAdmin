@@ -1,0 +1,38 @@
+Virtual terminal: you can open six different terminal windowns from the same console at the same time
+Pseudo terminal: the terminal windows that are started from a graphical environment.
+
+To navigate between virtual terminals:
+
+Alt-F1: switch to graphical terminals
+Alt-F2:
+Alt-F3:
+
+Alt-F4: switch to non-graphical terminals
+Alt-F5
+Alt-F5
+
+
+To use the command sequence from a graphical environment, use Ctrl - Alt - Fx instead. Because Alt -Fx is a different command from graphical environment.
+
+
+Every terminal has a device file associated with it.
+
+In a nongraphical environment they are /dev/tty1 - /dev/tty6 
+
+In a graphical environment they are pseduo terminal: /dev/pts/1 - /dev/pts/6
+
+
+NAME
+       w - Show who is logged on and what they are doing.
+
+[lisa@localhost ~]$ w
+ 22:50:31 up  1:20,  1 user,  load average: 2.33, 0.89, 0.32
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+lisa     tty2     tty2             22:49    5:44m 14.61s  0.19s /usr/libexec/tr
+
+[lisa@localhost ~]$ su -
+
+[root@localhost ~]# w
+ 22:50:40 up  1:20,  1 user,  load average: 2.29, 0.92, 0.33
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+lisa     tty2     tty2             22:49    5:44m 16.45s  0.19s /usr/libexec/tr
