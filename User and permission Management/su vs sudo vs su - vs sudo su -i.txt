@@ -1,0 +1,16 @@
+sudo su Calls sudo with the command su. Bash is called as interactive non-login shell. So bash only executes .bashrc. You can see that after switching to root you are still in the same directory:
+
+user@host:~$ sudo su
+root@host:/home/user#
+
+Environment follows the settings of user's login shell
+
+sudo su - This time it is a login shell, so /etc/profile, .profile and .bashrc are executed and you will find yourself in root's home directory with root's environment.
+
+Environment follows the settings of root's login shell
+
+sudo -i It is nearly the same as sudo su - The -i (simulate initial login) option runs the shell specified by the password database entry of the target user as a login shell. This means that login-specific resource files such as .profile, .bashrc or .login will be read and executed by the shell.
+
+sudo /bin/bash This means that you call sudo with the command /bin/bash. /bin/bash is started as non-login shell so all the dot-files are not executed, but bash itself reads .bashrc of the calling user. Your environment stays the same. Your home will not be root's home. So you are root, but in the environment of the calling user.
+
+Environment follows the settings of user's login shell

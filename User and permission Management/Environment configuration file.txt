@@ -38,3 +38,16 @@ Environment configuration file
     # export SYSTEMD_PAGER=
 
     # User specific aliases and functions
+    
+    
+[lisa@localhost bin]$ man bash
+    
+    FILES
+       /etc/profile
+              The systemwide initialization file, executed for login shells
+       /etc/bash.bash_logout
+              The systemwide login shell cleanup file, executed when a login shell exits
+       ~/.bash_profile
+              The personal initialization file, executed for login shells
+       ~/.bashrc
+              The individual per-interactive-shell startup file

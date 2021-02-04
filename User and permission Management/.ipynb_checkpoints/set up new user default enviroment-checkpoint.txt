@@ -1,0 +1,21 @@
+cd /etc/skel
+
+# add default folders to home directory
+mkdir /Pictures
+
+# modify default editor
+# .bashrc : settting for the subshell when the current user starts one 
+vim .bashrc
+
+EDITOR=/usr/bin/vim
+
+
+The printenv and env commands print only the environment variables. If you want to get a list of all variables, including environment, shell and variables, and shell functions you can use the set command:
+
+[root@localhost lisa]# man env
+
+SEE ALSO
+       Full documentation at: <https://www.gnu.org/software/coreutils/env>
+       or available locally via: info '(coreutils) env invocation'
+
+[root@localhost lisa]# info env

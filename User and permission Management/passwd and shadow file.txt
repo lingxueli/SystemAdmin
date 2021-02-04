@@ -1,0 +1,72 @@
+[root@localhost ~]# man -k shadow
+shadow (3)           - encrypted password file routines
+shadow (5)           - shadowed password file
+
+[root@localhost ~]# man 5 shadow
+
+
+DESCRIPTION
+       shadow is a file which contains the password information for the system's accounts and
+       optional aging information.
+
+       This file must not be readable by regular users if password security is to be maintained.
+
+       Each line of this file contains 9 fields, separated by colons (“:”), in the following
+       order:
+       ...
+       
+FILES
+       /etc/passwd
+           User account information.
+
+       /etc/shadow
+           Secure user account information.
+
+       /etc/shadow-
+
+
+[root@localhost ~]# man 5 passwd
+
+NAME
+       passwd - password file
+
+       Each line of the file describes a single user, and contains seven colon-separated fields:
+
+           name:password:UID:GID:GECOS:directory:shell
+
+       The field are as follows:
+       ...
+              shell       This  is  the  program  to  run  at login (if empty, use /bin/sh).  If set to a
+                   nonexistent executable, the user will be unable to login through login(1).  The
+                   value in this field is used to set the SHELL environment variable.
+
+       
+[root@localhost ~]# cat /etc/passwd | grep lisa
+lisa:x:1000:1000:lisa:/home/lisa:/bin/bash
+
+# last column: shell - defin the program that is started after the user has succesfully connected to a server
+
+[root@localhost ~]# ls -al /bin/sh 
+lrwxrwxrwx. 1 root root 4 Jul 21  2020 /bin/sh -> bash
+[root@localhost ~]# ls -al /bin/bash
+-rwxr-xr-x. 1 root root 1150704 Jul 21  2020 /bin/bash
+
+
+[root@localhost ~]# cat /etc/shadow | grep lisa
+lisa:xxxxxxxxxxxxx::0:99999:7:::
+[root@localhost ~]# tail -n 10 /etc/shadow
+gnome-initial-setup:!!:18650::::::
+sshd:!!:18650::::::
+rngd:!!:18650::::::
+tcpdump:!!:18650::::::
+lisa:$6$iVvmW0lzd/lrgisd$x0kWr7av6YHMHBFiFycL0veckXieEU1/TKK4lvWchqcXb6t6dmR9BZuVBaVv.JKnhn4ePIvfr.EDPmSm6WW16.::0:99999:7:::
+edwin:!!:18650:0:99999:7:::
+santos:!!:18650:0:99999:7:::
+alex:$6$9evF7HGxPl9XeRW5$QunOJPxL548dxuHJ4eI13Ab5e7I40VXVfBS6P1fgdXurrQ2POTYTV1RhnVJMdqC5BiGTTcefLMUulPON.15dB1:18652:0:99999:7:::
+serene:!!:18650:0:99999:7:::
+apache:!!:18652::::::
+
+
+
+/etc/passwd manages user properties
+/etc/shadow manages password properties
