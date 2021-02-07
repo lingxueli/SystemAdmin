@@ -1,0 +1,40 @@
+[root@localhost ~]# man -k ownership
+chgrp (1)            - change group ownership
+chgrp (1p)           - change the file group ownership
+chown (1p)           - change the file ownership
+chown (2)            - change ownership of a file
+
+change user and group ownership
+
+EXAMPLES
+       chown root /u
+              Change the owner of /u to "root".
+
+       chown root:staff /u
+              Likewise, but also change its group to "staff".
+
+       chown -hR root /u
+              Change the owner of /u and subfiles to "root".
+
+
+       -R, --recursive
+              operate on files and directories recursively
+       -h, --no-dereference
+              affect symbolic links instead of any referenced file (useful only  on  systems  that
+              can change the ownership of a symlink)
+
+       Owner is unchanged if missing.  Group is unchanged if missing, but changed to  login  group
+       if  implied by a ':' following a symbolic OWNER.  OWNER and GROUP may be numeric as well as
+       symbolic.
+
+
+Another way to change group ownerhship
+
+[root@localhost ~]# man chgrp
+
+EXAMPLES
+       chgrp staff /u
+              Change the group of /u to "staff".
+
+       chgrp -hR staff /u
+              Change the group of /u and subfiles to "staff".
