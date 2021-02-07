@@ -1,3 +1,4 @@
+# To change the default setting of new user, make the change under skeleton folder
 cd /etc/skel
 
 # add default folders to home directory
@@ -7,15 +8,23 @@ mkdir /Pictures
 # .bashrc : settting for the subshell when the current user starts one 
 vim .bashrc
 
-EDITOR=/usr/bin/vim
+# Add variables to the bottom
+export EDITOR=/usr/bin/vim
 
 
-The printenv and env commands print only the environment variables. If you want to get a list of all variables, including environment, shell and variables, and shell functions you can use the set command:
+Why the default EDITOR setting is in .bashrc not .bash_profile?
+Because .bash_profile settings only works in log in shell.
 
-[root@localhost lisa]# man env
+When a user issue a command such as visudo, the user enters a subshell, and it inherites settings from .bashrc only.
 
-SEE ALSO
-       Full documentation at: <https://www.gnu.org/software/coreutils/env>
-       or available locally via: info '(coreutils) env invocation'
+The default editor works when you issue the Visudo, and it's the setting of a subshell that's taking effect.
 
-[root@localhost lisa]# info env
+
+Where's the variable EDITOR coming from?
+
+1. printenv command – Print all or part of environment.
+2. env command – Display all exported environment or run a program in a modified environment.
+3. set command – List the name and value of each shell variable.
+
+
+The printenv and env commands print only the environment variables. If you want to get a list of all variables, including environment, shell and variables, and shell functions you can use the set command.

@@ -44,3 +44,72 @@ After selecting from the menu item - * What information is listed::
          List each file’s author when producing long format directory
          listings.  In GNU/Hurd, file authors can differ from their owners,
          but in other operating systems the two are the same.
+         
+         
+         
+How to navigate info page?
+
+type info + h  to read the tutorial:
+
+This is the Info main menu (aka directory node).
+A few useful Info commands:
+
+  'q' quits;
+  'H' lists all Info commands;
+  'h' starts the Info tutorial;
+  'mTexinfo RET' visits the Texinfo manual, etc.
+
+
+* Menu:
+
+* Stand-alone Info::            What is Info?
+* Invoking Info::               Options you can pass on the command line.
+* Cursor Commands::             Commands which move the cursor within a node.
+* Scrolling Commands::          Commands for reading the text within a node.
+* Node Commands::               Commands for selecting a new node.
+* Searching Commands::          Commands for searching an Info file.
+* Index Commands::              Commands for looking up in indices.
+* Xref Commands::               Commands for selecting cross-references.
+* Window Commands::             Commands which manipulate multiple windows.
+* Printing Nodes::              How to print out the contents of a node.
+* Miscellaneous Commands::      A few commands that defy categorization.
+* Variables::                   How to change the default behavior of Info.
+
+
+-> search comands: 
+For the info command, type s to search, then enter your search term or regex. It will bring you to the first occurrence. To move to the next match, type }, to move to the previous occurrence type {.
+
+
+5 Selecting a Node
+******************
+
+This section details the numerous Info commands which select a new node
+to view in the current window.
+
+
+  The most basic node commands are 'n', 'p', 'u', and 'l'.
+
+   When you are viewing a node, the top line of the node contains some
+Info "pointers" which describe where the next, previous, and up nodes
+are.  Info uses this line to move about the node structure of the file
+when you use the following commands:
+
+'n' ('next-node')
+'C-<NEXT>' (on DOS/Windows only)
+     Select the 'Next' node.
+
+     The <NEXT> key is known as the <PgDn> key on some keyboards.
+
+'p' ('prev-node')
+'C-<PREVIOUS>' (on DOS/Windows only)
+     Select the 'Prev' node.
+
+     The <PREVIOUS> key is known as the <PgUp> key on some keyboards.
+
+'u' ('up-node')
+'C-<UP>' (an arrow key on DOS/Windows only)
+     Select the 'Up' node.
+
+
+type u - go to the menu page
+menu item starting with *: use arrow key to select
