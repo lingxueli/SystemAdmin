@@ -1,0 +1,69 @@
+Changing the primary group could change the group ownership of new files a user create.
+
+This method change the primary group temporarily.
+
+
+[lisa@localhost ~]$ groups lisa
+lisa : lisa wheel
+
+
+# command to change primary group
+[lisa@localhost ~]$ man -k group | grep new
+groupadd (8)         - create a new group
+newgrp (1)           - log in to a new group
+newgrp (1p)          - change to a new group
+vgsplit (8)          - Move physical volumes into a new or existing volume group
+
+[lisa@localhost ~]$ man newgrp
+
+NAME
+       newgrp - log in to a new group
+
+[lisa@localhost ~]$ man 1p newgrp
+
+NAME
+       newgrp — change to a new group
+
+
+# change primary group to wheel
+[lisa@localhost ~]$ newgrp wheel
+
+[lisa@localhost ~]$ touch file1.txt
+
+[lisa@localhost ~]$ ls -al | grep file
+-rw-r--r--.  1 lisa lisa    141 Jul 21  2020 .bash_profile
+-rw-r--r--.  1 lisa wheel     0 Feb  7 12:04 file1.txt
+
+# change primary group to the group a user is not a member of
+# it will asks for group password
+
+[lisa@localhost ~]$ newgrp sysadmins
+Password: 
+
+
+# change group passsword
+
+[lisa@localhost ~]$ man -k pass | grep group
+chgpasswd (8)        - update group passwords in batch mode
+gpasswd (1)          - administer /etc/group and /etc/gshadow
+grpconv (8)          - convert to and from shadow passwords and groups
+grpunconv (8)        - convert to and from shadow passwords and groups
+lpasswd (1)          - Change group or user password
+pwconv (8)           - convert to and from shadow passwords and groups
+pwunconv (8)         - convert to and from shadow passwords and groups
+vigr (8)             - edit the password, group, shadow-password or shadow-group file
+vipw (8)             - edit the password, group, shadow-password or shadow-group file
+
+[root@localhost lisa]# man gpasswd
+
+       gpasswd - administer /etc/group and /etc/gshadow
+
+SYNOPSIS
+       gpasswd [option] group
+
+DESCRIPTION
+       The gpasswd command is used to administer /etc/group, and /etc/gshadow. Every group can
+       have administrators, members and a password.
+
+       System administrators can use the -A option to define group administrator(s) and the -M
+       option to define members. They have all rights of group administrators and members.
