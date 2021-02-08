@@ -1,0 +1,218 @@
+To use the ACL, file system needs to be extended for extra metadata. To extend, please add mount options to the file system. To be exact, add acl mount option to /etc/fstab file.
+
+[root@localhost ~]# man -k acl
+acl (5)              - Access Control Lists
+getfacl (1)          - get file access control lists
+setfacl (1)          - set file access control lists
+
+
+view and change ACL
+
+original permission without ACL
+
+[root@localhost ~]# ls -l | grep ACL
+drwxr-xr-x. 3 root root   37 Feb  7 22:20 ACLdir
+
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+other::r-x
+
+set ACL in the smart place - top-level directory. the ACL will also apply to the subdirectories and files under it.
+
+[root@localhost ~]# man setfacl
+
+NAME
+       setfacl - set file access control lists
+
+SYNOPSIS
+       setfacl [-bkndRLPvh] [{-m|-x} acl_spec] [{-M|-X} acl_file] file ...
+
+       setfacl --restore=file
+       
+       The -m (--modify) and -M (--modify-file) options modify the ACL of  a  file  or  directory.
+       ACL entries for this operation must include permissions.
+
+       The  -x (--remove) and -X (--remove-file) options remove ACL entries. It is not an error to
+       remove an entry which does not exist.   Only  ACL  entries  without  the  perms  field  are
+       accepted as parameters, unless POSIXLY_CORRECT is defined.
+
+
+       -R, --recursive
+           Apply operations to all files and directories recursively. This option cannot be  mixed
+           with `--restore'.
+
+       --restore=file
+           Restore  a  permission  backup created by `getfacl -R' or similar. All permissions of a
+           complete directory subtree are restored using this mechanism.  If  the  input  contains
+           owner  comments  or  group  comments,  setfacl attempts to restore the owner and owning
+           group. If the input contains flags comments  (which  define  the  setuid,  setgid,  and
+           sticky  bits),  setfacl  sets  those three bits accordingly; otherwise, it clears them.
+           This option cannot be mixed with other options except `--test'.
+
+
+EXAMPLES
+       Granting an additional user read access
+              setfacl -m u:lisa:r file
+
+       Revoking write access from all groups and all named users (using the effective rights mask)
+              setfacl -m m::rx file
+
+       Removing a named group entry from a file's ACL
+              setfacl -x g:staff file
+
+       Copying the ACL of one file to another
+              getfacl file1 | setfacl --set-file=- file2
+
+       Copying the access ACL into the Default ACL
+              getfacl --access dir | setfacl -d -M- dir
+
+[root@localhost ~]# cat /etc/group  | grep sysad
+sysadmins:x:1007:edwin,santos
+
+[root@localhost ~]# setfacl -m g:sysadmins:rwx ACLdir
+
+# verify ACL
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+group:sysadmins:rwx
+mask::rwx
+other::r-x
+
+# the + and . after the normal permission means there's ACL added as an extra permission on top of the normal ones
+
+[root@localhost ~]# ls -ld ACLdir
+drwxrwxr-x+ 3 root root 37 Feb  7 22:20 ACLdir
+
+[root@localhost ~]# ls -l ACLdir
+total 0
+drwxr-xr-x. 2 root root 23 Feb  7 22:20 ACLsub
+-rw-r--r--. 1 root root  0 Feb  7 22:19 file1.txt
+
+[root@localhost ~]# ls -l ACLdir/ACLsub/
+total 0
+-rw-r--r--. 1 root root 0 Feb  7 22:20 file2.txt
+
+
+# remove rwx access for group sysadmins
+[root@localhost ~]# setfacl -m g:sysadmins:- ACLdir
+
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+group:sysadmins:---
+mask::r-x
+other::r-x
+
+# this way, it updates the ACL, but it doesn't delete the ACL
+[root@localhost ~]# ls -ld ACLdir
+drwxr-xr-x+ 3 root root 37 Feb  7 22:20 ACLdir
+
+# delete the ACL
+[root@localhost ~]# setfacl -x g:sysadmins ACLdir
+
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+mask::r-x
+other::r-x
+
+[root@localhost ~]# ls -ld ACLdir
+drwxr-xr-x+ 3 root root 37 Feb  7 22:20 ACLdir
+
+[root@localhost ~]# setfacl -x mask ACLdir
+
+[root@localhost ~]# ls -ld ACLdir
+drwxr-xr-x. 3 root root 37 Feb  7 22:20 ACLdir
+
+[root@localhost ~]# ls -l ACLdir
+total 0
+drwxr-xr-x. 2 root root 23 Feb  7 22:20 ACLsub
+-rw-r--r--. 1 root root  0 Feb  7 22:19 file1.txt
+
+# you need to remove ACL recursively in order to clean it up
+[root@localhost ~]# setfacl -x group:sysadmins -R ACLdir
+[root@localhost ~]# setfacl -x mask -R ACLdir
+
+
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+other::r-x
+
+[root@localhost ~]# getfacl ACLdir/file1.txt
+# file: ACLdir/file1.txt
+# owner: root
+# group: root
+user::rw-
+group::r--
+other::r--
+
+[root@localhost ~]# getfacl ACLdir/ACLsub/file2.txt
+# file: ACLdir/ACLsub/file2.txt
+# owner: root
+# group: root
+user::rw-
+group::r--
+other::r--
+
+# reset the ACL, recersively
+[root@localhost ~]# setfacl -R -m g:sysadmins:r-x ACLdir
+
+[root@localhost ~]# getfacl ACLdir/file1.txt
+# file: ACLdir/file1.txt
+# owner: root
+# group: root
+user::rw-
+group::r--
+group:sysadmins:r-x
+mask::r-x
+other::r--
+
+[root@localhost ~]# getfacl ACLdir
+# file: ACLdir
+# owner: root
+# group: root
+user::rwx
+group::r-x
+group:sysadmins:r-x
+mask::r-x
+other::r-x
+
+# if it's not set recursively, the subdirectories/files don't inherit the same permission.
+# alwasy use -R option to update ACL recursively
+
+[root@localhost ~]# setfacl -R -x g:sysadmins ACLdir
+
+[root@localhost ~]# setfacl -m g:sysadmins:r-x ACLdir
+[root@localhost ~]# getfacl ACLdir/file1.txt
+# file: ACLdir/file1.txt
+# owner: root
+# group: root
+user::rw-
+group::r--
+mask::r--
+other::r--
+
+
+
+backup ACL
+
+[root@localhost ~]# getfacl -R ACLdir > file.acls
+[root@localhost ~]# setfacl --restore=file.acls
