@@ -1,0 +1,18 @@
+read permission on file:
+    open a file
+write permission on file:
+    change contents of a file
+execute permission on file:
+    run a program file
+    
+read permission on direcotry:
+    list contents of directory
+write permission on directory:
+    create and delete files
+execute permission on directory:
+    change (cd) to directory 
+    
+    
+To open a file for reading, please give the user read permission of the file and the directory containing it.
+
+without read permission on the directory, user cannot see the file. Unless the user knows a file with that name exists.
