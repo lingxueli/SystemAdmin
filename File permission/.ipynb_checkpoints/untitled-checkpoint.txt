@@ -1,0 +1,34 @@
+[root@localhost lisa]# man chmod
+
+NAME
+       chmod - change file mode bits
+
+SYNOPSIS
+       chmod [OPTION]... MODE[,MODE]... FILE...
+       chmod [OPTION]... OCTAL-MODE FILE...
+       chmod [OPTION]... --reference=RFILE FILE...
+
+
+
+       Each MODE is of the form '[ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+'.
+
+       -R, --recursive
+              change files and directories recursively
+
+SEE ALSO
+       chmod(2)
+
+       Full documentation at: <https://www.gnu.org/software/coreutils/chmod>
+       or available locally via: info '(coreutils) chmod invocation'
+
+
+Example
+
+chmod +x somefile
+chmod g+w,o-r somefile
+
+# this sets the execute permission on all files and directories under /data
+chmod -R o+rx /data
+
+# Uppercase X: this sets the execute permission on only files, not directories under /data, unless the file already has the execute permission set
+chmod -R o+rX /data
