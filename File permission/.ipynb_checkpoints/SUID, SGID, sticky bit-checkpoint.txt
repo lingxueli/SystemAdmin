@@ -1,5 +1,7 @@
 Exampe of SUID(set user ID):
 
+SUID is only used on file, not directory.
+
 /usr/bin/passwd has SUID set up for normal user to change password.
 
 Because when a user changes his password, it needs root permission to write to /etc/shadow. Only root user can do that.
@@ -20,9 +22,9 @@ In summary, SUID:
 
 Example of SGID(set group ID):
 
-SGID set on a file has the same effect of an SUID.
+SGID set on a file has the same effect of an SUID. The user executes the files gains the same permission of the group owner of the file.
 
-SGID set on a directory makes it a shared directory of the group. 
+SGID set on a directory makes it a shared directory of the group. The subdirectoryes and file of that directory will claim the same group owner as the directory's.
 
 The claimed group becomes the group owner of the directory and also its subdirectories and files under it.
 
@@ -33,7 +35,9 @@ In summary, SGID
     
 Sticky bit:
 
-Sticky bit is used on shared group directory. It prevents users from deleting files from other users.
+Sticky bit is only used on directory.
+
+Sticky bit is used on shared group directory. It prevents users from deleting files from other users.1
 
 A user can only delete the file if either of the following is true:
 
@@ -43,3 +47,23 @@ A user can only delete the file if either of the following is true:
 
 For the command line tools to make these changes, pls check other document in the directory:
 Create shared group directory.txt
+
+How to apply these permissions?
+
+absolute mode:
+SUID = 4, SGID = 2, Sticky bit = 1
+extra digits in front of normal permission bits
+
+# add SGID to directory
+chmod 2755 /domedir
+
+relative mode:
+
+# set SUID
+chmod u+s somefile
+
+# set SGID
+chmod g+s /somedirectory
+
+# set sticky bit
+chmod +t /somedirectory
