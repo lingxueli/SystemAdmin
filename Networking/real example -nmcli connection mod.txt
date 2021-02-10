@@ -1,0 +1,97 @@
+[root@localhost ~]# nmcli connection modify help
+Usage: nmcli connection modify { ARGUMENTS | help }
+
+ARGUMENTS := [id | uuid | path] <ID> ([+|-]<setting>.<property> <value>)+
+
+Modify one or more properties of the connection profile.
+The profile is identified by its name, UUID or D-Bus path. For multi-valued
+properties you can use optional '+' or '-' prefix to the property name.
+The '+' sign allows appending items instead of overwriting the whole value.
+The '-' sign allows removing selected items instead of the whole value.
+
+ARGUMENTS := remove <setting>
+
+Remove a setting from the connection profile.
+
+Examples:
+nmcli con mod home-wifi wifi.ssid rakosnicek
+nmcli con mod em1-1 ipv4.method manual ipv4.addr "192.168.1.2/24, 10.10.1.5/8"
+nmcli con mod em1-1 +ipv4.dns 8.8.4.4
+nmcli con mod em1-1 -ipv4.dns 1
+nmcli con mod em1-1 -ipv6.addr "abbe::cafe/56"
+nmcli con mod bond0 +bond.options mii=500
+nmcli con mod bond0 -bond.options downdelay
+nmcli con mod em1-1 remove sriov
+
+
+# modify connection settings: autoconnect
+[root@localhost ~]# nmcli connection modify static connection.aut
+connection.auth-retries          connection.autoconnect-priority  connection.autoconnect-slaves
+connection.autoconnect           connection.autoconnect-retries   
+[root@localhost ~]# nmcli connection modify static connection.autoconnect 
+no   yes  
+[root@localhost ~]# nmcli connection modify static connection.autoconnect no
+
+# verify
+[root@localhost ~]# nmcli connection show static | grep auto
+connection.autoconnect:                 no
+
+# modify connection settings: dns server
+[root@localhost ~]# nmcli connection modify static ipv4.
+ipv4.addresses                     ipv4.dns-priority
+ipv4.dad-timeout                   ipv4.dns-search
+ipv4.dhcp-client-id                ipv4.gateway
+ipv4.dhcp-fqdn                     ipv4.ignore-auto-dns
+ipv4.dhcp-hostname                 ipv4.ignore-auto-routes
+ipv4.dhcp-hostname-flags           ipv4.may-fail
+ipv4.dhcp-iaid                     ipv4.method
+ipv4.dhcp-send-hostname            ipv4.never-default
+ipv4.dhcp-timeout                  ipv4.route-metric
+ipv4.dhcp-vendor-class-identifier  ipv4.routes
+ipv4.dns                           ipv4.route-table
+ipv4.dns-options                   ipv4.routing-rules
+
+[root@localhost ~]# nmcli connection modify static ipv4.dns 10.0.0.10
+
+# modify connection settings: add extra item to the same parameter
+[root@localhost ~]# nmcli connection modify static +ipv4.dns 8.8.8.8
+
+# modify connection settings: modify existing parameter
+[root@localhost ~]# nmcli connection modify static ipv4.addresses 10.0.0.100/24
+
+# extra ip address
+[root@localhost ~]# nmcli connection modify static +ipv4.addresses 10.20.30.40/16
+
+
+[root@localhost ~]# nmcli connection show static | grep ipv4.address
+ipv4.addresses:                         10.0.0.100/24, 10.20.30.40/16
+
+[root@localhost ~]# nmcli connection up static
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/10)
+
+# verify
+[root@localhost ~]# nmcli connection show 
+NAME    UUID                                  TYPE      DEVICE 
+static  ac6271ee-bcfc-487a-a76e-b963d5e27f21  ethernet  ens33  
+dhcp    c2e1d731-c370-4396-b401-e68cbaef938c  ethernet  --     
+ens33   446e3bb4-a594-45ec-a0cc-cfba301dc4fe  ethernet  --     
+
+[root@localhost ~]# ip address show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.0.100/24 brd 10.0.0.255 scope global noprefixroute ens33
+       valid_lft forever preferred_lft forever
+    inet 10.20.30.40/16 brd 10.20.255.255 scope global noprefixroute ens33
+       valid_lft forever preferred_lft forever
+    inet6 fe80::f96a:a2:a658:ee8d/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff

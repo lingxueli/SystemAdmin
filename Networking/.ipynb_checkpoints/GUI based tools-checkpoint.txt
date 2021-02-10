@@ -1,0 +1,34 @@
+[root@localhost ~]# man -k networkmanager
+NetworkManager (8)   - network management daemon
+NetworkManager.conf (5) - NetworkManager configuration file
+nm-connection-editor (1) - network connection editor for NetworkManager
+nm-initrd-generator (8) - early boot NetworkManager configuration generator
+nm-online (1)        - ask NetworkManager whether the network is connected
+nm-settings (5)      - Description of settings and properties of NetworkManager connection profile...
+nm-settings-dbus (5) - Description of settings and properties of NetworkManager connection profile...
+nm-settings-nmcli (5) - Description of settings and properties of NetworkManager connection profil...
+nm-system-settings.conf (5) - NetworkManager configuration file
+nmcli (1)            - command-line tool for controlling NetworkManager
+nmtui (1)            - Text User Interface for controlling NetworkManager
+nmtui-connect (1)    - Text User Interface for controlling NetworkManager
+nmtui-edit (1)       - Text User Interface for controlling NetworkManager
+nmtui-hostname (1)   - Text User Interface for controlling NetworkManager
+
+
+[root@localhost ~]# nmtui
+
+[root@localhost ~]# nm-connection-editor 
+No protocol specified
+
+(nm-connection-editor:34350): dbind-WARNING **: 00:36:30.853: Could not open X display
+
+(nm-connection-editor:34350): GLib-GIO-CRITICAL **: 00:36:30.944: g_dbus_proxy_new_sync: assertion 'G_IS_DBUS_CONNECTION (connection)' failed
+Error creating proxy: The connection is closed (g-io-error-quark, 18)
+Error creating proxy: The connection is closed (g-io-error-quark, 18)
+Error creating proxy: The connection is closed (g-io-error-quark, 18)
+Error creating proxy: The connection is closed (g-io-error-quark, 18)
+Error creating proxy: The connection is closed (g-io-error-quark, 18)
+
+(nm-connection-editor:34350): dconf-WARNING **: 00:36:41.589: failed to commit changes to dconf: The connection is closed
+
+(nm-connection-editor:34350): dconf-WARNING **: 00:36:41.590: failed to commit changes to dconf: The connection is closed

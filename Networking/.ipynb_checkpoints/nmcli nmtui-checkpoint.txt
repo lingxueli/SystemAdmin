@@ -1,0 +1,182 @@
+# NetworkManager is the module manages networking on linux
+
+# it reads the network card configuration scripts, the file starts with ifcfg, and it's followed by the name of network card
+[root@localhost ~]# ls -al /etc/sysconfig/network-scripts/
+total 8
+drwxr-xr-x. 2 root root   25 Jan 23 00:04 .
+drwxr-xr-x. 6 root root 4096 Jan 25 00:57 ..
+-rw-r--r--. 1 root root  280 Jan 23 00:04 ifcfg-ens33
+
+[root@localhost ~]# cat /etc/sysconfig/network-scripts/ifcfg-ens33
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=dhcp
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=ens33
+UUID=446e3bb4-a594-45ec-a0cc-cfba301dc4fe
+DEVICE=ens33
+ONBOOT=yes
+
+
+# a network card can have multiple connections
+# e.g. mobile device switch from corporate network to home network
+
+[root@localhost ~]# man -k Network | less
+nmcli (1)            - command-line tool for controlling NetworkManager
+nmtui (1)            - Text User Interface for controlling NetworkManager
+
+# these commands can modify network config persistently
+# nmcli has long command options but it supports Tab completion
+
+
+# regular user and root user can make modifications to networking
+# regular users that have used ssh to connect to the server are not allowed to change the network config.
+
+# check your permission to change network settings
+[root@localhost ~]# nmcli general permissions
+PERMISSION                                                        VALUE 
+org.freedesktop.NetworkManager.checkpoint-rollback                yes   
+org.freedesktop.NetworkManager.enable-disable-connectivity-check  yes   
+org.freedesktop.NetworkManager.enable-disable-network             yes   
+org.freedesktop.NetworkManager.enable-disable-statistics          yes   
+org.freedesktop.NetworkManager.enable-disable-wifi                yes   
+org.freedesktop.NetworkManager.enable-disable-wimax               yes   
+org.freedesktop.NetworkManager.enable-disable-wwan                yes   
+org.freedesktop.NetworkManager.network-control                    yes   
+org.freedesktop.NetworkManager.reload                             yes   
+org.freedesktop.NetworkManager.settings.modify.global-dns         yes   
+org.freedesktop.NetworkManager.settings.modify.hostname           yes   
+org.freedesktop.NetworkManager.settings.modify.own                yes   
+org.freedesktop.NetworkManager.settings.modify.system             yes   
+org.freedesktop.NetworkManager.sleep-wake                         yes   
+org.freedesktop.NetworkManager.wifi.scan                          yes   
+org.freedesktop.NetworkManager.wifi.share.open                    yes   
+org.freedesktop.NetworkManager.wifi.share.protected               yes   
+
+
+
+NMCLI(1)                              General Commands Manual                             NMCLI(1)
+
+NAME
+       nmcli - command-line tool for controlling NetworkManager
+
+SYNOPSIS
+       nmcli [OPTIONS...] {help | general | networking | radio | connection | device | agent |
+             monitor} [COMMAND] [ARGUMENTS...]
+
+
+CONNECTION MANAGEMENT COMMANDS
+       nmcli connection {show | up | down | modify | add | edit | clone | delete | monitor |
+                        reload | load | import | export} [ARGUMENTS...]
+
+EXAMPLES
+       This section presents various examples of nmcli usage. If you want even more, please refer
+       to nmcli-examples(7) manual page.
+
+SEE ALSO
+       nmcli-examples(7), nm-settings-nmcli(5), nm-online(1), NetworkManager(8),
+       NetworkManager.conf(5), nm-applet(1), nm-connection-editor(1), terminal-colors.d(5).
+
+[root@localhost ~]# nmcli connection show
+NAME   UUID                                  TYPE      DEVICE 
+ens33  446e3bb4-a594-45ec-a0cc-cfba301dc4fe  ethernet  ens33  
+
+[root@localhost ~]# nmcli connection show ens33 |less
+connection.id:                          ens33
+connection.uuid:                        446e3bb4-a594-45ec-a0cc-cfba301dc4fe
+connection.stable-id:                   --
+connection.type:                        802-3-ethernet
+connection.interface-name:              ens33
+connection.autoconnect:                 yes
+connection.autoconnect-priority:        0
+connection.autoconnect-retries:         -1 (default)
+connection.multi-connect:               0 (default)
+connection.auth-retries:                -1
+...
+
+
+[root@localhost ~]# man -k network | grep settings
+nm-settings (5)      - Description of settings and properties of NetworkManager connection profile...
+
+
+
+[root@localhost ~]# man 5 nm-settings
+
+   connection setting
+       General Connection Profile Settings.
+
+       Properties:
+
+       auth-retries
+           The number of retries for the authentication. Zero means to try indefinitely; -1 means
+           to use a global default. If the global default is not set, the authentication retries
+           for 3 times before failing the connection. Currently this only applies to 802-1x
+           authentication.
+
+           Format: int32
+
+       autoconnect
+           Alias: autoconnect
+
+           Whether or not the connection should be automatically connected by NetworkManager when
+           the resources for the connection are available. TRUE to automatically activate the
+           connection, FALSE to require manual intervention to activate the connection. Note that
+           autoconnect is not implemented for VPN profiles. See "secondaries" as an alternative to
+           automatically connect VPN profiles.
+
+           Format: boolean
+
+# show device i.e. interface, or network card. 
+
+[root@localhost ~]# nmcli dev status
+DEVICE      TYPE      STATE      CONNECTION 
+ens33       ethernet  connected  ens33      
+virbr0      bridge    unmanaged  --         
+lo          loopback  unmanaged  --         
+virbr0-nic  tun       unmanaged  --         
+
+
+DEVICE MANAGEMENT COMMANDS
+       nmcli device {status | show | set | connect | reapply | modify | disconnect | delete |
+                    monitor | wifi | lldp} [ARGUMENTS...]
+
+       Show and manage network interfaces.
+
+       status
+           Print status of devices.
+
+           This is the default action if no command is specified to nmcli device.
+
+       show [ifname]
+           Show detailed information about devices. Without an argument, all devices are examined.
+           To get information for a specific device, the interface name has to be provided.
+
+       set [ifname] ifname [autoconnect {yes | no}] [managed {yes | no}]
+           Set device properties.
+
+[root@localhost ~]# nmcli dev show ens33
+GENERAL.DEVICE:                         ens33
+GENERAL.TYPE:                           ethernet
+GENERAL.HWADDR:                         00:0C:29:8F:90:80
+GENERAL.MTU:                            1500
+GENERAL.STATE:                          100 (connected)
+GENERAL.CONNECTION:                     ens33
+GENERAL.CON-PATH:                       /org/freedesktop/NetworkManager/ActiveConnection/7
+WIRED-PROPERTIES.CARRIER:               on
+IP4.ADDRESS[1]:                         192.168.219.130/24
+IP4.GATEWAY:                            192.168.219.2
+IP4.ROUTE[1]:                           dst = 0.0.0.0/0, nh = 192.168.219.2, mt = 100
+IP4.ROUTE[2]:                           dst = 192.168.219.0/24, nh = 0.0.0.0, mt = 100
+IP4.DNS[1]:                             192.168.219.2
+IP4.DOMAIN[1]:                          localdomain
+IP6.ADDRESS[1]:                         fe80::86b1:edf6:3cbb:3e1f/64
+IP6.GATEWAY:                            --
+IP6.ROUTE[1]:                           dst = fe80::/64, nh = ::, mt = 100
+IP6.ROUTE[2]:                           dst = ff00::/8, nh = ::, mt = 256, table=255
