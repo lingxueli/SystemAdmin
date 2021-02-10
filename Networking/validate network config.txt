@@ -1,0 +1,113 @@
+# check link
+# the most important are link status and MAC address
+[root@localhost ~]# ip -s link
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    10844      132      0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    10844      132      0       0       0       0       
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    70162549   70066    0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    773424     11242    0       0       0       0       
+3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    0          0        0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    0          0        0       0       0       0       
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    0          0        0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    0          0        0       0       0       0       
+
+[root@localhost ~]# ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+
+# check interface
+# the most important are interface name, IP, boardcast address and status
+[root@localhost ~]# ip address show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.219.130/24 brd 192.168.219.255 scope global dynamic noprefixroute ens33
+       valid_lft 1057sec preferred_lft 1057sec
+    inet6 fe80::86b1:edf6:3cbb:3e1f/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
+    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+
+# check routing
+# the most important are default gateway router: 192.168.219.2 which can be reached from ens33
+[root@localhost ~]# ip route show
+default via 192.168.219.2 dev ens33 proto dhcp metric 100 
+192.168.219.0/24 dev ens33 proto kernel scope link src 192.168.219.130 metric 100 
+
+# check ports and services
+# listing port and address
+# 127.0.0.01 and ::1 are listening to local process only
+#        -l, --listening
+              Display only listening sockets (these are omitted by default).
+
+[root@localhost ~]# ss -lt
+State        Recv-Q       Send-Q             Local Address:Port               Peer Address:Port      
+LISTEN       0            128                      0.0.0.0:sunrpc                  0.0.0.0:*         
+LISTEN       0            128                      0.0.0.0:ssh                     0.0.0.0:*         
+LISTEN       0            5                      127.0.0.1:ipp                     0.0.0.0:*         
+LISTEN       0            128                         [::]:sunrpc                     [::]:*         
+LISTEN       0            128                            *:http                          *:*         
+LISTEN       0            128                         [::]:ssh                        [::]:*         
+LISTEN       0            5                          [::1]:ipp                        [::]:*         
+LISTEN       0            128                            *:https                         *:*         
+
+
+[root@localhost ~]# ss -tul
+Netid     State      Recv-Q     Send-Q          Local Address:Port             Peer Address:Port     
+udp       UNCONN     0          0              0.0.0.0%virbr0:bootps                0.0.0.0:*        
+udp       UNCONN     0          0                     0.0.0.0:58440                 0.0.0.0:*        
+udp       UNCONN     0          0                     0.0.0.0:sunrpc                0.0.0.0:*        
+udp       UNCONN     0          0                     0.0.0.0:mdns                  0.0.0.0:*        
+udp       UNCONN     0          0                   127.0.0.1:323                   0.0.0.0:*        
+udp       UNCONN     0          0                        [::]:51221                    [::]:*        
+udp       UNCONN     0          0                        [::]:sunrpc                   [::]:*        
+udp       UNCONN     0          0                        [::]:mdns                     [::]:*        
+udp       UNCONN     0          0                       [::1]:323                      [::]:*        
+tcp       LISTEN     0          128                   0.0.0.0:sunrpc                0.0.0.0:*        
+tcp       LISTEN     0          128                   0.0.0.0:ssh                   0.0.0.0:*        
+tcp       LISTEN     0          5                   127.0.0.1:ipp                   0.0.0.0:*        
+tcp       LISTEN     0          128                      [::]:sunrpc                   [::]:*        
+tcp       LISTEN     0          128                         *:http                        *:*        
+tcp       LISTEN     0          128                      [::]:ssh                      [::]:*        
+tcp       LISTEN     0          5                       [::1]:ipp                      [::]:*        
+tcp       LISTEN     0          128                         *:https                       *:*        
+
+[root@localhost ~]# netstat -altp
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:sunrpc          0.0.0.0:*               LISTEN      1/systemd           
+tcp        0      0 0.0.0.0:ssh             0.0.0.0:*               LISTEN      1156/sshd           
+tcp        0      0 localhost:ipp           0.0.0.0:*               LISTEN      1155/cupsd          
+tcp6       0      0 [::]:sunrpc             [::]:*                  LISTEN      1/systemd           
+tcp6       0      0 [::]:http               [::]:*                  LISTEN      1263/httpd          
+tcp6       0      0 [::]:ssh                [::]:*                  LISTEN      1156/sshd           
+tcp6       0      0 localhost:ipp           [::]:*                  LISTEN      1155/cupsd          
+tcp6       0      0 [::]:https              [::]:*                  LISTEN      1263/httpd          
