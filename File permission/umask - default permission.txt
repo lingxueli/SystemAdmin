@@ -1,0 +1,23 @@
+max - umask = permission
+
+maximum permission of a file: 666
+maximum permission of a directory: 777
+
+To change umask for all users:
+/etc/profile.d -> umask.sh
+It applys to all users after loggin in to the server.
+
+[root@localhost ~]# cat /etc/profile
+# /etc/profile
+
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+
+To change umask for individual user:
+$HOME/.profile
