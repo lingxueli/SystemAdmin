@@ -1,0 +1,136 @@
+RPM(red hat package manager):
+
+    It's the format Redhat manages the software. It archives the software packages and provide package metadata.
+
+Yum repository:
+
+    It's the software repositories maintained by Redhat/Centos. 
+
+    Yum is the tool to manage the software. When install one package, its dependencies are installed as well.
+
+[root@localhost ~]# man -k subscription
+rct (8)              - Displays information (headers) about or size and statistics of a entitlemen...
+rhsm-debug (8)       - Compiles information about system's entitlements, products, and identity us...
+rhsm.conf (5)        - Configuration file for the subscription-manager tooling
+subscription-manager (8) - Registers systems to a subscription management service and then attache...
+subscriptions.conf (5) - subscription configuration file for cups
+
+section 8 of man page
+
+       The table below shows the section numbers of the manual followed by the types of pages they
+       contain.
+
+       1   Executable programs or shell commands
+       2   System calls (functions provided by the kernel)
+       3   Library calls (functions within program libraries)
+       4   Special files (usually found in /dev)
+       5   File formats and conventions eg /etc/passwd
+       6   Games
+       7   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)
+       8   System administration commands (usually only for root)
+       9   Kernel routines [Non standard]
+
+       A manual page consists of several sections.
+       
+       
+
+subscription-manager (8) - Registers systems to a subscription management service and then attache...
+
+
+NAME
+       subscription-manager  -  Registers  systems  to  a subscription management service and then
+       attaches and manages subscriptions for software products.
+
+SYNOPSIS
+       subscription-manager command [options]
+
+       Subscription Manager performs several key operations:
+
+              * It registers systems to the Red Hat subscription management service and  adds  the
+              system  to  the inventory. Once a system is registered, it can receive updates based
+              on its subscriptions to any kind of software products.
+
+              * It lists both available and used subscriptions.
+
+              * It allows administrators to both attach specific subscriptions  to  a  system  and
+              remove those subscriptions.
+
+
+COMMANDS AND OPTIONS
+       subscription-manager has specific options available for each  command,  depending  on  what
+       operation  is  being  performed. Subscription Manager commands are related to the different
+       subscription operations:
+
+              1. register
+
+              2. unregister
+
+              3. attach
+
+              4. auto-attach
+
+              5. remove
+
+              6. release
+
+...
+
+   LIST OPTIONS
+       The  list  command  lists  all  of the subscriptions that are compatible with a system. The
+       options allow the list to be filtered by subscriptions that  are  used  by  the  system  or
+       unused subscriptions that are available to the system.
+
+       --afterdate=YYYY-MM-DD
+              Shows  pools  that are active on or after the given date. This is only used with the
+              --available option.
+
+       --all  Lists all possible subscriptions that have been purchased, even if they don't  match
+              the architecture of the system. This is used with the --available option.
+
+       --available
+              Lists available subscriptions which are not yet attached to the system.
+              
+       --consumed
+              Lists all of the subscriptions currently attached to the system.
+              
+
+   ATTACH OPTIONS
+       The attach command applies a specific subscription to the system.
+
+       --auto Automatically  attaches the best-matched compatible subscription or subscriptions to
+              the system. This is the default unless --pool or --file are used.
+
+
+Manage subscription - example:
+
+# if you are using CentOs, you get access to the repository and no registeration is required.
+$ subscription-manager register
+
+$ subscription-manager list --available
+
+$ subscription-manager attach --auto
+
+$ subscription-manager list --consumed
+
+$ subscription-manager unregister
+
+
+configuration files
+
+[root@localhost ~]# cd /etc/pki
+[root@localhost pki]# ls -al
+total 12
+drwxr-xr-x.  14 root root  196 Jan 23 00:11 .
+drwxr-xr-x. 140 root root 8192 Feb 10 23:17 ..
+drwxr-xr-x.   4 root root   73 Jan 22 23:37 ca-trust
+drwxr-xr-x.   2 root root    6 Sep 14 08:29 consumer               ===> Red hat account to which the system is registered
+drwxr-xr-x.   2 root root    6 Sep 14 08:29 entitlement            ===> subscriptions attached to this system
+drwxr-xr-x.   2 root root  142 Jan 22 23:47 fwupd
+drwxr-xr-x.   2 root root  111 Jan 22 23:47 fwupd-metadata
+drwxr-xr-x.   2 root root   21 Jan 22 23:37 java
+drwxr-xr-x.   2 root root  103 Jan 22 23:48 nssdb
+drwxr-xr-x.   2 root root    6 Jan 23 00:11 product                ===> certificate indicates which red hat are installed on this system
+drwxr-xr-x.   2 root root    6 Jan 23 00:11 product-default
+drwxr-xr-x.   2 root root   73 Jan 22 23:32 rpm-gpg
+drwx------.   2 root root    6 Jul 20  2020 rsyslog
+drwxr-xr-x.   5 root root  104 Jan 22 23:37 tls
