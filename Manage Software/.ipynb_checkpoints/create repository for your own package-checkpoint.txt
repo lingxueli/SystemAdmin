@@ -1,0 +1,173 @@
+-1. generate repo metadata using createrepo command
+
+1. attach installation disk to the VM
+
+2. mount the iso file
+
+[root@localhost lisa]# vim /etc/fstab
+[root@localhost lisa]# cat /etc/fstab
+
+#
+# /etc/fstab
+# Created by anaconda on Sat Jan 23 06:22:08 2021
+#
+# Accessible filesystems, by reference, are maintained under '/dev/disk/'.
+# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.
+#
+# After editing this file, run 'systemctl daemon-reload' to update systemd
+# units generated from this file.
+#
+/dev/mapper/cl-root     /                       xfs     defaults        0 0
+UUID=ac852133-2d9c-4580-af07-faaadbf3e8f0 /boot                   xfs     defaults        0 0
+/dev/mapper/cl-swap     none                    swap    defaults        0 0
+UUID=916b19d6-a562-43aa-a7ed-11f11f313bda	/myfiles	ext4	defaults	0	0
+/dev/sr0	/repo	iso9660	defaults 0	0
+
+[root@localhost lisa]# lsblk -p
+NAME                             MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+/dev/sda                           8:0    0   20G  0 disk 
+├─/dev/sda1                        8:1    0    1G  0 part /boot
+└─/dev/sda2                        8:2    0   19G  0 part 
+  ├─/dev/mapper/cl-root          253:0    0   17G  0 lvm  /
+  └─/dev/mapper/cl-swap          253:1    0    2G  0 lvm  [SWAP]
+/dev/sdb                           8:16   0   20G  0 disk 
+└─/dev/sdb1                        8:17   0    4G  0 part 
+  └─/dev/mapper/vg--test-myfiles 253:2    0    1G  0 lvm  /myfiles
+/dev/sdc                           8:32   0   10G  0 disk 
+/dev/sr0                          11:0    1  8.6G  0 rom  /repo
+
+
+[root@localhost lisa]# man -k "fstab"
+endfsent (3)         - handle fstab entries
+fstab (5)            - static information about the filesystems
+getfsent (3)         - handle fstab entries
+getfsfile (3)        - handle fstab entries
+getfsspec (3)        - handle fstab entries
+nfs (5)              - fstab format and options for the nfs file systems
+setfsent (3)         - handle fstab entries
+systemd-fstab-generator (8) - Unit generator for /etc/fstab
+[root@localhost lisa]# man 5 fstab
+       The third field (fs_vfstype).
+              This  field describes the type of the filesystem.  Linux supports many filesystem types: ext4, xfs, btrfs, f2fs, vfat, ntfs,
+              hfsplus, tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs, and many more.  For more details, see mount(8).
+
+              An entry swap denotes a file or partition to be used for swapping, cf. swapon(8).  An entry none is useful for bind or  move
+              mounts.
+
+              More than one type may be specified in a comma-separated list.
+
+              mount(8) and umount(8) support filesystem subtypes.  The subtype is defined by '.subtype' suffix.  For example 'fuse.sshfs'.
+              It's recommended to use subtype notation rather than add any prefix to the  first  fstab  field  (for  example  'sshfs#exam‐
+              ple.com' is deprecated).
+
+
+[root@localhost lisa]# findmnt --verify
+Success, no errors or warnings detected
+
+[root@localhost lisa]# mount -a
+mount: /repo: WARNING: device write-protected, mounted read-only.
+
+
+       -a, --all
+              Mount  all  filesystems  (of  the given types) mentioned in fstab (except for those whose line contains the noauto keyword).
+              The filesystems are mounted following their order in fstab.  The mount command compares filesystem source,  target  (and  fs
+              root  for  bind  mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is
+              cached during mount --all. It means that all duplicated fstab entries will be mounted.
+
+              Note that it is a bad practice to use mount -a for fstab checking. The recommended solution is findmnt --verify.
+
+[root@localhost lisa]# mount | grep sr0
+/dev/sr0 on /run/media/lisa/CentOS-8-3-2011-x86_64-dvd type iso9660 (ro,nosuid,nodev,relatime,nojoliet,check=s,map=n,blocksize=2048,uid=1000,gid=1000,dmode=500,fmode=400,uhelper=udisks2)
+/dev/sr0 on /repo type iso9660 (ro,relatime,nojoliet,check=s,map=n,blocksize=2048,uid=1000,gid=1000,dmode=500,fmode=400)
+
+
+[root@localhost CentOS-8-3-2011-x86_64-dvd]# cd /repo
+[root@localhost repo]# ls -al
+total 34
+dr-xr-xr-x.  7 lisa lisa  2048 Nov 18 14:39 .
+dr-xr-xr-x. 21 root root   281 Feb 13 18:11 ..
+dr-xr-xr-x.  4 lisa lisa  2048 Nov 18 14:39 AppStream
+dr-xr-xr-x.  4 lisa lisa  2048 Nov 18 14:39 BaseOS
+-r--r--r--.  1 lisa lisa    44 Nov 18 14:39 .discinfo
+dr-xr-xr-x.  3 lisa lisa  2048 Nov 18 14:39 EFI
+dr-xr-xr-x.  3 lisa lisa  2048 Nov 18 14:39 images
+dr-xr-xr-x.  2 lisa lisa  2048 Nov 18 14:39 isolinux
+-r--r--r--.  1 lisa lisa 18092 Nov 10 08:49 LICENSE
+-r--r--r--.  1 lisa lisa    87 Nov 18 14:39 media.repo
+-r--r--r--.  1 lisa lisa   883 Nov 18 14:39 TRANS.TBL
+-r--r--r--.  1 lisa lisa  1520 Nov 18 14:39 .treeinfo
+
+BaseOS repo provides base packages
+AppStream repo provides access to the application stream
+
+[root@localhost repo]# cd BaseOS/
+[root@localhost BaseOS]# ls -al
+total 306
+dr-xr-xr-x. 4 lisa lisa   2048 Nov 18 14:39 .
+dr-xr-xr-x. 7 lisa lisa   2048 Nov 18 14:39 ..
+dr-xr-xr-x. 2 lisa lisa 305152 Nov 18 14:39 Packages
+dr-xr-xr-x. 2 lisa lisa   4096 Nov 18 14:39 repodata       => repo metadata
+
+[root@localhost Packages]# ls -al | head
+total 1115824
+dr-xr-xr-x. 2 lisa lisa    305152 Nov 18 14:39 .
+dr-xr-xr-x. 4 lisa lisa      2048 Nov 18 14:39 ..
+-r--r--r--. 1 lisa lisa    151784 Jul  2  2019 aajohan-comfortaa-fonts-3.001-2.el8.noarch.rpm
+-r--r--r--. 1 lisa lisa     82988 Jul  2  2019 acl-2.2.53-1.el8.x86_64.rpm
+-r--r--r--. 1 lisa lisa   1024604 Jul  2  2019 acpica-tools-20180629-3.el8.x86_64.rpm
+-r--r--r--. 1 lisa lisa    110964 Aug 24 11:40 adcli-0.8.2-7.el8.x86_64.rpm
+-r--r--r--. 1 lisa lisa     58568 Aug 24 11:40 adcli-doc-0.8.2-7.el8.noarch.rpm
+-r--r--r--. 1 lisa lisa    427304 Jul 17  2020 alsa-sof-firmware-1.5-2.el8.noarch.rpm
+-r--r--r--. 1 lisa lisa    203240 Apr  9  2020 arpwatch-2.1a15-44.el8.x86_64.rpm
+
+[root@localhost AppStream]# cd Packages
+[root@localhost Packages]# ls -al | head
+total 7203860
+dr-xr-xr-x. 2 lisa lisa   1073152 Nov 18 14:39 .
+dr-xr-xr-x. 4 lisa lisa      2048 Nov 18 14:39 ..
+-r--r--r--. 1 lisa lisa   1865292 Aug 31 14:14 389-ds-base-1.4.3.8-5.module_el8.3.0+473+53682548.x86_64.rpm
+-r--r--r--. 1 lisa lisa    142900 Aug 31 14:15 389-ds-base-devel-1.4.3.8-5.module_el8.3.0+473+53682548.x86_64.rpm
+-r--r--r--. 1 lisa lisa    296216 Aug 31 14:15 389-ds-base-legacy-tools-1.4.3.8-5.module_el8.3.0+473+53682548.x86_64.rpm
+-r--r--r--. 1 lisa lisa    872436 Aug 31 14:15 389-ds-base-libs-1.4.3.8-5.module_el8.3.0+473+53682548.x86_64.rpm
+-r--r--r--. 1 lisa lisa     51788 Aug 31 14:16 389-ds-base-snmp-1.4.3.8-5.module_el8.3.0+473+53682548.x86_64.rpm
+-r--r--r--. 1 lisa lisa    158964 Jul  2  2019 abattis-cantarell-fonts-0.0.25-4.el8.noarch.rpm
+-r--r--r--. 1 lisa lisa    553952 Aug 24 11:46 abrt-2.10.9-20.el8.x86_64.rpm
+
+3. config the repo in the yum repository directory: /etc/yum.repos.d
+
+[root@localhost yum.repos.d]# vim exercise-centos-linux-baseOS.repo
+[root@localhost yum.repos.d]# cat exercise-centos-linux-baseOS.repo 
+[BaseOS-exercise]
+name=BaseOS-exercise
+baseurl=file:///repo/BaseOS
+gpgcheck=0
+
+[root@localhost yum.repos.d]# vim exercise-centos-linux-appStream.repo
+[root@localhost yum.repos.d]# cat exercise-centos-linux-appStream.repo 
+[AppStream-exercise]
+name=AppStream-exercise
+baseurl=file:///repo/AppStream
+gpgcheck=0
+
+
+[root@localhost yum.repos.d]# yum repolist
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+repo id                                                            repo name
+AppStream-exercise                                                 AppStream-exercise
+BaseOS-exercise                                                    BaseOS-exercise
+appstream                                                          CentOS Linux 8 - AppStream
+baseos                                                             CentOS Linux 8 - BaseOS
+extras                                                             CentOS Linux 8 - Extras
+
+
+[root@localhost yum.repos.d]# man yum
+   Repolist Command
+       dnf [options] repolist [--enabled|--disabled|--all]
+              Depending on the exact command lists enabled, disabled or all known repositories. Lists all enabled repositories by default.
+              Provides more detailed information when -v option is used.
+
+       This command by default does not force a sync of expired metadata. See also Metadata Synchronization.
