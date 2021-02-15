@@ -246,10 +246,39 @@ Repo        : baseos
 Matched from:
 Filename    : /usr/bin/repoquery
 
-[root@localhost ~]# yum install yum-utils-4.0.17-5.el8.noarch
-[root@localhost ~]# rpm -qd yum-utils-4.0.17-5.el8.noarch 
+[root@localhost ~]# yum install yum-utils
+
+[root@localhost ~]# rpm -qd yum-utils
+
+[root@localhost ~]# rpm -qd yum-utils
+/usr/share/man/man1/debuginfo-install.1.gz
+/usr/share/man/man1/dnf-utils.1.gz
+/usr/share/man/man1/find-repos-of-install.1.gz
+/usr/share/man/man1/needs-restarting.1.gz
+/usr/share/man/man1/package-cleanup.1.gz
+/usr/share/man/man1/repo-graph.1.gz
+/usr/share/man/man1/repoclosure.1.gz
+/usr/share/man/man1/repodiff.1.gz
+/usr/share/man/man1/repomanage.1.gz
+/usr/share/man/man1/repoquery.1.gz
+/usr/share/man/man1/reposync.1.gz
+/usr/share/man/man1/repotrack.1.gz
+/usr/share/man/man1/yum-builddep.1.gz
+/usr/share/man/man1/yum-config-manager.1.gz
+/usr/share/man/man1/yum-debug-dump.1.gz
+/usr/share/man/man1/yum-debug-restore.1.gz
+/usr/share/man/man1/yum-utils.1.gz
+/usr/share/man/man1/yumdownloader.1.gz
 
 
+[root@localhost ~]# file /usr/share/man/man1/repoquery.1.gz
+/usr/share/man/man1/repoquery.1.gz: symbolic link to /usr/share/man/man1/yum-utils.1.gz
+
+# it's actually a man page
+# after installation, its man page is available
+[root@localhost ~]# man repoquery
+
+Example
 [root@localhost ~]# which dnsmasq
 /usr/sbin/dnsmasq
 [root@localhost ~]# rpm -qf $(which dnsmasq)
