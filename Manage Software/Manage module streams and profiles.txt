@@ -237,6 +237,27 @@ Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
 [root@localhost ~]# yum module install php:7.3
 
+[root@localhost ~]# yum module list  php
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:40:55 ago on Sun 14 Feb 2021 10:31:29 AM MST.
+AppStream-exercise
+Name                    Stream                     Profiles                                          Summary                                  
+php                     7.2 [d]                    common [d], devel, minimal                        PHP scripting language                   
+php                     7.3 [e]                    common [d] [i], devel, minimal                    PHP scripting language                   
+php                     7.4                        common [d], devel, minimal                        PHP scripting language                   
+
+CentOS Linux 8 - AppStream
+Name                    Stream                     Profiles                                          Summary                                  
+php                     7.2 [d]                    common [d], devel, minimal                        PHP scripting language                   
+php                     7.3 [e]                    common [d] [i], devel, minimal                    PHP scripting language                   
+php                     7.4                        common [d], devel, minimal                        PHP scripting language                   
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
 [root@localhost ~]# yum module enable php:7.2
 
    Distro-Sync command

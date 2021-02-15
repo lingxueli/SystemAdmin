@@ -1,0 +1,356 @@
+Reasons not to use rpm to install packages: lack of support for dependencies; only RPM database is synced after install, yum database is unsynced.
+
+It's still useful to query the packages.
+
+
+RPM package name:
+
+autof-5.0.7-40.el7.x86_64.rmp
+
+package name - package version + subversion - Red Hat version - platform
+
+
+Query RPM database
+
+   select-options
+        [PACKAGE_NAME]
+        [-a,--all [SELECTOR]] [-f,--file FILE]
+        [-g,--group GROUP] {-p,--package PACKAGE_FILE]
+        [--hdrid SHA1] [--pkgid MD5] [--tid TID]
+        [--querybynumber HDRNUM] [--triggeredby PACKAGE_NAME]
+        [--whatprovides CAPABILITY] [--whatrequires CAPABILITY]
+        [--whatrecommends CAPABILITY] [--whatsuggests CAPABILITY]
+        [--whatsupplements CAPABILITY] [--whatenhances CAPABILITY]
+        [--whatobsoletes CAPABILITY] [--whatconflicts CAPABILITY]
+
+   query-options
+       General:
+        [--changelog] [--changes]  [--dupes] [-i,--info]
+        [--last] [--qf,--queryformat QUERYFMT] [--xml]
+
+       Dependencies:
+        [--conflicts] [--enhances] [--obsoletes] [--provides]
+        [--recommends] [-R,--requires] [--suggests] [--supplements]
+
+       Files:
+        [-c,--configfiles] [-d,--docfiles] [--dump] [--fileclass]
+        [--filecolor] [--fileprovide][--filerequire] [--filecaps]
+        [--filesbypkg] [-l,--list] [-s,--state]
+        [--noartifact] [--noghost] [--noconfig
+
+       Scripts and triggers:
+        [--filetriggers] [--scripts] [--triggers,--triggerscripts]
+
+   QUERY OPTIONS
+       The general form of an rpm query command is
+
+       rpm {-q|--query} [select-options] [query-options]
+
+       You may specify the format that package information should be printed in. To do this, you use the
+
+        --qf|--queryformat QUERYFMT
+
+       option, followed by the QUERYFMT format string.  Query formats are modified versions of the standard printf(3) formatting. The for‐
+       mat is made up of static strings (which may include standard C character escapes for newlines, tabs, and other special  characters)
+       and printf(3) type formatters.  As rpm already knows the type to print, the type specifier must be omitted however, and replaced by
+       the name of the header tag to be printed, enclosed by {} characters. Tag names are case insensitive, and the leading  RPMTAG_  por‐
+       tion of the tag name may be omitted as well.
+
+       Alternate output formats may be requested by following the tag with :typetag.  Currently, the following types are supported:
+
+       There are two subsets of options for querying: package selection, and information selection.
+
+   PACKAGE SELECTION OPTIONS:
+       PACKAGE_NAME
+              Query  installed  package  named PACKAGE_NAME. To specify the package more precisely the package name may be followed by the
+              version or version and release both separated by a dash or an architecture name separated by a dot. See the  output  of  rpm
+              -qa or rpm -qp PACKAGE_FILE as an example.
+
+       -a, --all [SELECTOR]
+              Query all installed packages.
+
+              An  optional  SELECTOR  in  the  form of tag=pattern can be provided to narrow the selection, for example name="b*" to query
+              packages whose name starts with "b".
+
+       --dupes
+              List duplicated packages.
+
+       -f, --file FILE
+              Query package owning FILE.
+              
+       -p, --package PACKAGE_FILE
+              Query an (uninstalled) package PACKAGE_FILE.  The PACKAGE_FILE may be specified as an ftp or http style URL, in  which  case
+              the  package  header  will  be  downloaded and queried.  See FTP/HTTP OPTIONS for information on rpm's internal ftp and http
+              client support. The PACKAGE_FILE argument(s), if not a binary package, will be interpreted  as  an  ASCII  package  manifest
+              unless  --nomanifest  option is used.  In manifests, comments are permitted, starting with a '#', and each line of a package
+              manifest file may include white space separated glob expressions, including URL's, that will be expanded to paths  that  are
+              substituted in place of the package manifest as additional PACKAGE_FILE arguments to the query.
+
+   PACKAGE QUERY OPTIONS:
+       -d, --artifactfiles
+              List only artifact files (implies -l).
+              Display change information for the package with full time stamps.
+
+       -c, --configfiles
+              List only configuration files (implies -l).
+
+       -d, --docfiles
+              List only documentation files (implies -l).
+
+       --dump Dump file information as follows (implies -l):
+
+              path size mtime digest mode owner group isconfig isdoc rdev symlink
+
+       -i, --info
+              Display package information, including name, version, and description.  This uses the --queryformat if one was specified.
+
+       --last Orders the package listing by install time such that the latest packages are at the top.
+
+       -l, --list
+              List files in package.
+
+       --provides
+              List capabilities this package provides.
+              
+       --recommends
+              List capabilities recommended by package(s)
+
+       -R, --requires
+              List capabilities on which this package depends.
+
+       --suggests
+              List capabilities suggested by package(s)
+
+       --supplements
+              List capabilities supplemented by package(s)
+
+       --scripts
+              List the package specific scriptlet(s) that are used as part of the installation and uninstallation processes.
+
+       -s, --state
+              Display  the  states  of  files  in  the  package  (implies -l).  The state of each file is one of normal, not installed, or
+              replaced.
+
+       --triggers, --triggerscripts
+              Display the trigger scripts, if any, which are contained in the package.
+
+       --noartifact
+              Don't display artifact files.  --noghost Don't display ghost files. Useful in combination with option --list.
+              
+       --noconfig
+              Don't display config files.
+
+       --xml  Format package headers as XML.
+
+# all packages installed. It queries rpm database
+[root@localhost ~]# rpm -qa
+
+# detailed info of a package
+[root@localhost ~]# rpm -qi nmap
+Name        : nmap
+Epoch       : 2
+Version     : 7.70
+Release     : 5.el8
+Architecture: x86_64
+Install Date: Sat 13 Feb 2021 08:16:23 PM MST
+Group       : Applications/System
+Size        : 25355861
+License     : Nmap
+Signature   : RSA/SHA256, Wed 04 Dec 2019 06:33:24 PM MST, Key ID 05b555b38483c65d
+Source RPM  : nmap-7.70-5.el8.src.rpm
+Build Date  : Fri 08 Nov 2019 01:58:48 PM MST
+Build Host  : x86-01.mbox.centos.org
+Relocations : (not relocatable)
+Packager    : CentOS Buildsys <bugs@centos.org>
+Vendor      : CentOS
+URL         : http://nmap.org/
+Summary     : Network exploration tool and security scanner
+Description :
+Nmap is a utility for network exploration or security auditing.  It supports
+ping scanning (determine which hosts are up), many port scanning techniques
+(determine what services the hosts are offering), and TCP/IP fingerprinting
+(remote host operating system identification). Nmap also offers flexible target
+and port specification, decoy scanning, determination of TCP sequence
+predictability characteristics, reverse-identd scanning, and more. In addition
+to the classic command-line nmap executable, the Nmap suite includes a flexible
+data transfer, redirection, and debugging tool (netcat utility ncat), a utility
+for comparing scan results (ndiff), and a packet generation and response
+analysis tool (nping).
+
+# what's in the package
+[root@localhost ~]# rpm -ql nmap | head
+/usr/bin/nmap
+/usr/bin/nping
+/usr/lib/.build-id
+/usr/lib/.build-id/03
+/usr/lib/.build-id/03/8d830a0745657e142cc51013cdde580d30f939
+/usr/lib/.build-id/9b
+/usr/lib/.build-id/9b/9895c3aec4ae0534358dde0ff38a674f68fbcc
+
+# list only doc files
+[root@localhost ~]# rpm -qd nmap
+/usr/share/doc/nmap/COPYING
+/usr/share/doc/nmap/README
+/usr/share/doc/nmap/nmap.usage.txt
+/usr/share/man/de/man1/nmap.1.gz
+/usr/share/man/es/man1/nmap.1.gz
+/usr/share/man/fr/man1/nmap.1.gz
+/usr/share/man/hr/man1/nmap.1.gz
+/usr/share/man/hu/man1/nmap.1.gz
+/usr/share/man/it/man1/nmap.1.gz
+/usr/share/man/ja/man1/nmap.1.gz
+/usr/share/man/man1/nmap.1.gz
+/usr/share/man/man1/nping.1.gz
+/usr/share/man/pl/man1/nmap.1.gz
+/usr/share/man/pt_BR/man1/nmap.1.gz
+/usr/share/man/pt_PT/man1/nmap.1.gz
+/usr/share/man/ro/man1/nmap.1.gz
+/usr/share/man/ru/man1/nmap.1.gz
+/usr/share/man/sk/man1/nmap.1.gz
+/usr/share/man/zh/man1/nmap.1.gz
+
+# list only configuration file
+[root@localhost ~]# rpm -qc nmap
+
+# which package owns this file?
+[root@localhost ~]# rpm -qf /usr/bin/passwd
+passwd-0.80-3.el8.x86_64
+[root@localhost ~]# rpm -qf /usr/bin/ls
+coreutils-8.30-8.el8.x86_64
+
+
+# query the package before it's installed.
+# by default it queries RPM database, which containes installed software. 
+# use -p option in order to query the RPM packages before it's installed
+# when using this option, you need to refer to the complete filename
+
+[root@localhost ~]# rpm -qa | grep .rpm
+python3-rpm-4.14.3-4.el8.x86_64
+
+# what scripts are in the pacages, this can check if there's any malware
+[root@localhost ~]# rpm -qp --scripts python3-rpm-4.14.3-4.el8.x86_64
+
+
+# rpm querys the packages
+# repoquery querys the repositories
+
+[root@localhost ~]# yum provides repoquery
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:27:41 ago on Sun 14 Feb 2021 05:20:56 PM MST.
+yum-utils-4.0.17-5.el8.noarch : Yum-utils CLI compatibility layer
+Repo        : baseos
+Matched from:
+Filename    : /usr/bin/repoquery
+
+[root@localhost ~]# yum install yum-utils-4.0.17-5.el8.noarch
+[root@localhost ~]# rpm -qd yum-utils-4.0.17-5.el8.noarch 
+
+
+[root@localhost ~]# which dnsmasq
+/usr/sbin/dnsmasq
+[root@localhost ~]# rpm -qf $(which dnsmasq)
+dnsmasq-2.79-13.el8_3.1.x86_64
+
+# query rpm db. A general package name is acceptable.
+[root@localhost ~]# rpm -qi dnsmasq
+Name        : dnsmasq
+Version     : 2.79
+Release     : 13.el8_3.1
+Architecture: x86_64
+Install Date: Sun 14 Feb 2021 10:59:16 AM MST
+Group       : Unspecified
+Size        : 662788
+License     : GPLv2 or GPLv3
+Signature   : RSA/SHA256, Tue 19 Jan 2021 01:17:33 PM MST, Key ID 05b555b38483c65d
+Source RPM  : dnsmasq-2.79-13.el8_3.1.src.rpm
+Build Date  : Tue 19 Jan 2021 08:14:58 AM MST
+Build Host  : x86-01.mbox.centos.org
+Relocations : (not relocatable)
+Packager    : CentOS Buildsys <bugs@centos.org>
+Vendor      : CentOS
+URL         : http://www.thekelleys.org.uk/dnsmasq/
+Summary     : A lightweight DHCP/caching DNS server
+Description :
+Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
+It is designed to provide DNS and, optionally, DHCP, to a small network.
+It can serve the names of local machines which are not in the global
+DNS. The DHCP server integrates with the DNS server and allows machines
+with DHCP-allocated addresses to appear in the DNS with names configured
+either in each host or in a central configuration file. Dnsmasq supports
+static and dynamic DHCP leases and BOOTP for network booting of diskless
+machines.
+
+# files in the package
+[root@localhost ~]# rpm -ql dnsmasq 
+/etc/dbus-1/system.d/dnsmasq.conf
+/etc/dnsmasq.conf
+/etc/dnsmasq.d
+/usr/lib/.build-id
+/usr/lib/.build-id/06
+/usr/lib/.build-id/06/ed8ceae61b1ed30a620c4e7459dcb3edf87de8
+/usr/lib/systemd/system/dnsmasq.service
+/usr/lib/sysusers.d/dnsmasq.conf
+/usr/sbin/dnsmasq
+/usr/share/dnsmasq
+/usr/share/dnsmasq/trust-anchors.conf
+/usr/share/doc/dnsmasq
+/usr/share/doc/dnsmasq/CHANGELOG
+/usr/share/doc/dnsmasq/DBus-interface
+/usr/share/doc/dnsmasq/FAQ
+/usr/share/doc/dnsmasq/doc.html
+/usr/share/doc/dnsmasq/setup.html
+/usr/share/licenses/dnsmasq
+/usr/share/licenses/dnsmasq/COPYING
+/usr/share/licenses/dnsmasq/COPYING-v3
+/usr/share/man/man8/dnsmasq.8.gz
+/var/lib/dnsmasq
+
+# doc
+[root@localhost ~]# rpm -qd dnsmasq
+/usr/share/doc/dnsmasq/CHANGELOG
+/usr/share/doc/dnsmasq/DBus-interface
+/usr/share/doc/dnsmasq/FAQ
+/usr/share/doc/dnsmasq/doc.html         => These html files re accessible in the browser
+/usr/share/doc/dnsmasq/setup.html
+/usr/share/man/man8/dnsmasq.8.gz        => there's a man page
+
+# config files
+[root@localhost ~]# rpm -qc dnsmasq
+/etc/dbus-1/system.d/dnsmasq.conf
+/etc/dnsmasq.conf
+
+
+# what scripts are executed when it's installed
+[root@localhost ~]# rpm -q --scripts dnsmasq
+preinstall scriptlet (using /bin/sh):
+#precreate users so that rpm can install files owned by that user
+
+systemd-sysusers - <<SYSTEMD_INLINE_EOF &>/dev/null || : 
+u dnsmasq - "Dnsmasq DHCP and DNS server" /var/lib/dnsmasq 
+SYSTEMD_INLINE_EOF
+postinstall scriptlet (using /bin/sh):
+#https://fedoraproject.org/wiki/Changes/SystemdSysusers
+
+systemd-sysusers  &>/dev/null || : 
+
+
+if [ $1 -eq 1 ] ; then 
+        # Initial installation 
+        systemctl --no-reload preset dnsmasq.service &>/dev/null || : 
+fi
+preuninstall scriptlet (using /bin/sh):
+
+if [ $1 -eq 0 ] ; then 
+        # Package removal, not upgrade 
+        systemctl --no-reload disable --now dnsmasq.service &>/dev/null || : 
+fi
+postuninstall scriptlet (using /bin/sh):
+
+if [ $1 -ge 1 ] ; then 
+        # Package upgrade, not uninstall 
+        systemctl try-restart dnsmasq.service &>/dev/null || : 
+fi
