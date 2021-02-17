@@ -1,7 +1,118 @@
 Optimize your server with the appropriate profile that optimizes throughput.
 
+[root@localhost lisa]# man -k profile
+tuned-adm (8)        - command line tool for switching between different tuning profiles
+tuned-profiles (7)   - description of basic tuned profiles
+tuned.conf (5)       - Tuned profile definition
 
-The tuned tuning service can adapt the operating system to perform better under certain workloads by setting a tuning profile. The tuned-adm command-line tool allows users to interact with tuned service and switch between different tuning profiles.
+
+
+Profiles:
+
+[root@localhost lisa]# man tuned-profiles 
+
+TUNED_PROFILES(7)                                                  tuned                                                 TUNED_PROFILES(7)
+
+NAME
+       tuned-profiles - description of basic tuned profiles
+
+PROFILES
+       At the moment we're providing the following pre-defined profiles:
+
+       balanced
+              It is the default profile. It provides balanced power saving and performance.  At the moment it enables CPU and disk plugins
+              of tuned and it makes sure the conservative governor is active (if supported by the current  cpufreq  driver).   It  enables
+              ALPM  power  saving  for  SATA host adapters and sets the link power management policy to medium_power. It also sets the CPU
+              energy performance bias to normal. It also enables AC97 audio power saving or (it depends on your  system)  HDA-Intel  power
+              savings  with  10 seconds timeout. In case your system contains supported Radeon graphics card (with enabled KMS) it config‐
+              ures it to automatic power saving.
+
+       powersave
+              Maximal power saving, at the moment it enables USB autosuspend (in case environment variable USB_AUTOSUSPEND is set  to  1),
+              enables  ALPM  power  saving for SATA host adapters and sets the link power management policy to min_power.  It also enables
+              WiFi power saving and makes sure the ondemand governor is active (if supported by the current cpufreq driver). It  sets  the
+              CPU  energy  performance bias to powersave. It also enables AC97 audio power saving or (it depends on your system) HDA-Intel
+              power savings (with 10 seconds timeout). In case your system contains supported Radeon graphics card (with enabled  KMS)  it
+              configures it to automatic power saving. On Asus Eee PCs dynamic Super Hybrid Engine is enabled.
+
+       throughput-performance
+              Profile for typical throughput performance tuning. Disables power saving mechanisms and enables sysctl settings that improve
+              the throughput performance of your disk and network IO. CPU governor is set to performance and CPU energy  performance  bias
+              is set to performance. Disk readahead values are increased.
+
+       accelerator-performance
+              This profile contains the same tuning as the throughput-performance profile.  Additionally, it locks the CPU to low C states
+              so that the latency is less than 100us. This improves the performance of certain accelerators, such as GPUs.
+       .../
+
+
+# tuned-adm command: interact with tuned service and switch between different tuning profiles.
+
+# install tuned service
+
+[root@localhost lisa]# yum provides tuned
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 2:27:00 ago on Tue 16 Feb 2021 08:43:37 PM MST.
+tuned-2.14.0-3.el8.noarch : A dynamic adaptive system tuning daemon
+Repo        : BaseOS-exercise
+Matched from:
+Provide    : tuned = 2.14.0-3.el8
+
+tuned-2.14.0-3.el8_3.1.noarch : A dynamic adaptive system tuning daemon
+Repo        : @System
+Matched from:
+Provide    : tuned = 2.14.0-3.el8_3.1
+
+tuned-2.14.0-3.el8_3.1.noarch : A dynamic adaptive system tuning daemon
+Repo        : baseos
+Matched from:
+Provide    : tuned = 2.14.0-3.el8_3.1
+
+[root@localhost lisa]# rpm -q tuned
+tuned-2.14.0-3.el8_3.1.noarch
+
+[root@localhost lisa]# rpm -qd tuned
+/usr/share/doc/tuned/AUTHORS
+/usr/share/doc/tuned/COPYING
+/usr/share/doc/tuned/README
+/usr/share/doc/tuned/TIPS.txt
+/usr/share/man/man5/tuned-main.conf.5.gz
+/usr/share/man/man5/tuned.conf.5.gz
+/usr/share/man/man7/tuned-profiles.7.gz
+/usr/share/man/man8/tuned-adm.8.gz
+/usr/share/man/man8/tuned-gui.8.gz
+/usr/share/man/man8/tuned.8.gz
+
+[root@localhost lisa]# cat /usr/share/doc/tuned/README | less
+
+Tuned: Daemon for monitoring and adaptive tuning of system devices.
+
+(This is tuned 2.0 with a new code base. If you are looking for the older
+version, please check out branch '1.0' in our Git repository.)
+
+How to use it
+-------------
+
+In Fedora, Red Hat Enterprise Linux, and their derivates install tuned package
+(optionally tuned-utils, tuned-utils-systemtap, and tuned-profiles-compat):
+
+# yum install tuned
+
+After the installation, start the tuned service:
+
+# systemctl start tuned
+
+You might also want to run tuned whenever your machine starts:
+
+# systemctl enable tuned
+
+If the daemon is running you can easily control it using 'tuned-adm' command
+line utility...
+
 
 # turn on tuned service
 [root@localhost /]# yum -y install tuned
@@ -23,6 +134,45 @@ Jan 24 22:10:16 localhost.localdomain systemd[1]: Started Dynamic System Tuning 
 
 # if service is not running, use the following:
 $ systemctl enable --now tuned
+
+
+# how to use the tool
+
+TUNED_ADM(8)                                                       tuned                                                      TUNED_ADM(8)
+
+NAME
+       tuned-adm - command line tool for switching between different tuning profiles
+
+SYNOPSIS
+       tuned-adm [list | active | profile [profile]... | off | verify | recommend]
+
+OPTIONS
+       list   List all available profiles.
+
+              profiles List all available profiles.
+
+              plugins List all available plugins.
+
+                     -v, --verbose List plugin's configuration options and their hints.
+
+       active Show current active profile.
+
+       profile [PROFILE_NAME]...
+              Switches to the given profile. If more than one profile is given, the profiles are merged (in case of conflicting  settings,
+              the  setting from the last profile is used) and the resulting profile is applied. If no profile is given, then all available
+              profiles are listed. If the profile given is not valid, the command gracefully exits without performing any operation.
+
+       verify Verifies current profile against system settings. Outputs information whether system settings match current profile  or  not
+              (e.g.  somebody  modified  a  sysfs/sysctl value by hand). Detailed information about what is checked, what value is set and
+              what value is expected can be found in the log.
+
+       recommend
+              Recommend a profile suitable for your system. Currently only static detection is implemented - it decides according to  data
+              in  /etc/system-release-cpe  and virt-what output. The rules for autodetection are defined in the file /usr/lib/tuned/recom‐
+              mend.d/50-tuned.conf. The default rules recommend profiles targeted to the best performance,  or  the  balanced  profile  if
+              unsure.
+
+
 
 # check current profile
 [root@localhost /]# tuned-adm active

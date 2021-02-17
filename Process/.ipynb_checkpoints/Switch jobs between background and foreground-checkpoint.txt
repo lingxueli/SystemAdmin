@@ -1,0 +1,45 @@
+[root@localhost ~]# sleep 3600 &
+[1] 63945
+[root@localhost ~]# dd if=/dev/zero of=/dev/null &
+[2] 63952
+[root@localhost ~]# sleep 7200
+^Z
+[3]+  Stopped                 sleep 7200
+
+[root@localhost ~]# jobs
+[1]   Running                 sleep 3600 &
+[2]-  Running                 dd if=/dev/zero of=/dev/null &
+[3]+  Stopped                 sleep 7200
+[root@localhost ~]# bg 3
+[3]+ sleep 7200 &
+
+[root@localhost ~]# fg 1
+sleep 3600
+^C
+[root@localhost ~]# jobs
+[2]-  Running                 dd if=/dev/zero of=/dev/null &
+[3]+  Running                 sleep 7200 &
+
+[root@localhost ~]# fg 2
+dd if=/dev/zero of=/dev/null
+^C35707389+0 records in
+35707388+0 records out
+18282182656 bytes (18 GB, 17 GiB) copied, 132.586 s, 138 MB/s
+
+[root@localhost ~]# jobs
+[3]+  Running                 sleep 7200 &
+[root@localhost ~]# fg 3
+sleep 7200
+^C
+[root@localhost ~]# jobs
+
+Use the k command from the top utility to kill a job.
+
+
+Ctrl-C: cancel the current job, not properly closed
+Ctrl-D: send EOF character, no long waiting for the user input, terminate the job properly
+Ctrl-Z: pause the job, the job is still in memory
+bg jobID: switch job to background
+fg jobID: switch job to foreground
+jobs: list active/pending jobs, can be used to get jobID
+&(append it at the end of the command): push the job to the background

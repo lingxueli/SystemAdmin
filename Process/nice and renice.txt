@@ -1,0 +1,94 @@
+[root@localhost ~]# man -k nice
+nice (1)             - run a program with modified scheduling priority
+nice (1p)            - invoke a utility with an altered nice value
+nice (2)             - change process priority
+nice (3p)            - change the nice value of a process
+renice (1)           - alter priority of running processes
+renice (1p)          - set nice values of running processes
+
+
+NICE(1)                                                        User Commands                                                       NICE(1)
+
+NAME
+       nice - run a program with modified scheduling priority
+
+SYNOPSIS
+       nice [OPTION] [COMMAND [ARG]...]
+
+       -n, --adjustment=N
+              add integer N to the niceness (default 10)
+
+[root@localhost ~]# info nice
+
+
+22.3.4.2 Functions For Traditional Scheduling
+.............................................
+
+This section describes how you can read and set the nice value of a
+process.  All these symbols are declared in ‘sys/resource.h’.
+
+   The function and macro names are defined by POSIX, and refer to
+"priority," but the functions actually have to do with nice values, as
+the terms are used both in the manual and POSIX.
+
+   The range of valid nice values depends on the kernel, but typically
+it runs from ‘-20’ to ‘20’.  A lower nice value corresponds to higher
+priority for the process.  These constants describe the range of
+priority values:
+
+‘PRIO_MIN’
+
+     The lowest valid nice value.
+
+‘PRIO_MAX’
+
+     The highest valid nice value.
+
+# nice: run a program with a specified value of priority
+[root@localhost ~]# nice -n 5 dd if=/dev/zero of=/dev/null &
+[1] 67875
+
+[root@localhost ~]# ps aux  | head
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.6 245312 11476 ?        Ss   Feb15   0:25 /usr/lib/systemd/systemd --system --deserialize 21
+root           2  0.0  0.0      0     0 ?        S    Feb15   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   Feb15   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   Feb15   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   Feb15   0:00 [kworker/0:0H-kblockd]
+root           9  0.0  0.0      0     0 ?        I<   Feb15   0:00 [mm_percpu_wq]
+root          10  0.0  0.0      0     0 ?        S    Feb15   0:10 [ksoftirqd/0]
+root          11  0.0  0.0      0     0 ?        R    Feb15   0:30 [rcu_sched]
+root          12  0.0  0.0      0     0 ?        S    Feb15   0:00 [migration/0]
+
+[root@localhost ~]# ps aux | grep dd
+root       67875 76.7  0.0   7328   916 pts/0    RN   09:52   0:20 dd if=/dev/zero of=/dev/null
+
+# renice: adjust the priority of a running program
+[root@localhost ~]# renice -n 10 -p 67875
+67875 (process ID) old priority 5, new priority 10
+
+
+RENICE(1)                                                      User Commands                                                     RENICE(1)
+
+NAME
+       renice - alter priority of running processes
+
+SYNOPSIS
+       renice [-n] priority [-g|-p|-u] identifier...
+
+DESCRIPTION
+       renice  alters the scheduling priority of one or more running processes.  The first argument is the priority value to be used.  The
+       other arguments are interpreted as process IDs (by default), process group IDs, user IDs, or  user  names.   renice'ing  a  process
+       group  causes all processes in the process group to have their scheduling priority altered.  renice'ing a user causes all processes
+       owned by the user to have their scheduling priority altered.
+
+OPTIONS
+       -n, --priority priority
+              Specify the scheduling priority to be used for the process, process group, or user.  Use of the option -n or  --priority  is
+              optional, but when used it must be the first argument.
+
+       -g, --pgrp
+              Interpret the succeeding arguments as process group IDs.
+
+       -p, --pid
+              Interpret the succeeding arguments as process IDs (the default).

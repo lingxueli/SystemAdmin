@@ -1,0 +1,184 @@
+top - 21:54:57 up 1 day,  1:13,  1 user,  load average: 3.63, 3.85, 3.05
+Tasks: 284 total,   5 running, 279 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 38.8 us, 36.1 sy,  3.7 ni,  0.0 id,  0.0 wa, 21.1 hi,  0.3 si,  0.0 st
+MiB Mem :   1790.0 total,     83.4 free,   1288.1 used,    418.6 buff/cache
+MiB Swap:   2048.0 total,   1006.2 free,   1041.8 used.    309.4 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                                
+  74744 root      20   0    7328    912    848 R  53.6   0.0   9:16.28 dd                                                                     
+  74737 root      20   0    7328    924    860 R  53.3   0.1   9:21.47 dd                                                                     
+   2445 lisa      20   0 3540816 315536  65292 S  28.0  17.2  21:40.64 gnome-shell                                                            
+  67875 root      25   5    7328    916    848 R  15.5   0.0 332:50.73 dd                                                                     
+   3038 lisa      20   0  541876  35592  22956 S   3.6   1.9   2:21.62 gnome-terminal-                                                        
+    988 root      20   0  369488   5544   4576 S   0.7   0.3   5:47.65 vmtoolsd                                                               
+  75376 root      20   0   65528   5024   4144 R   0.7   0.3   0:00.14 top                                                                    
+    982 dbus      20   0   94508   6556   3680 S   0.3   0.4   0:28.34 dbus-daemon                                                            
+   1000 rngd      20   0  160116   2460   2208 S   0.3   0.1   0:24.25 rngd                                                                   
+   2527 lisa      20   0  389072   4592   3440 S   0.3   0.3   0:57.77 ibus-daemon                                                            
+   2897 lisa      20   0  534712  12624  10080 S   0.3   0.7   5:03.77 vmtoolsd                                                               
+  74415 root      20   0       0      0      0 I   0.3   0.0   0:00.98 kworker/1:1-events                                                     
+  74633 root      20   0  205212  30752   9156 S   0.3   1.7   0:02.30 sssd_kcm                                                               
+  75288 root      20   0       0      0      0 I   0.3   0.0   0:00.13 kworker/u256:0-events_unbound                                          
+      1 root      20   0  245312  11264   7656 S   0.0   0.6   0:29.44 systemd                                                                
+      2 root      20   0       0      0      0 S   0.0   0.0   0:00.21 kthreadd                                                               
+      3 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_gp                                                                 
+      4 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 rcu_par_gp                                                             
+      6 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 kworker/0:0H-kblockd                                                   
+      9 root       0 -20       0      0      0 I   0.0   0.0   0:00.00 mm_percpu_wq                                                           
+...
+
+$ man top
+   4a. GLOBAL Commands
+       The global interactive commands are always available in both full-screen mode and alternate-display mode.  However, some  of  these
+       interactive commands are not available when running in Secure mode.
+
+       If  you  wish  to  know in advance whether or not your top has been secured, simply ask for help and view the system summary on the
+       second line.
+
+         <Enter> or <Space>  :Refresh-Display
+              These commands awaken top and following receipt of any input the entire display will  be  repainted.   They  also  force  an
+              update of any hotplugged cpu or physical memory changes.
+
+              Use either of these keys if you have a large delay interval and wish to see current status,
+
+          ? | h  :Help
+              There  are  two  help levels available.  The first will provide a reminder of all the basic interactive commands.  If top is
+              secured, that screen will be abbreviated.
+
+$ top 
+
+type ?
+
+Help for Interactive Commands - procps-ng 3.3.15
+Window 1:Def: Cumulative mode Off.  System: Delay 3.0 secs; Secure mode Off.
+
+  Z,B,E,e   Global: 'Z' colors; 'B' bold; 'E'/'e' summary/task memory scale
+  l,t,m     Toggle Summary: 'l' load avg; 't' task/cpu stats; 'm' memory info
+  0,1,2,3,I Toggle: '0' zeros; '1/2/3' cpus or numa node views; 'I' Irix mode
+  f,F,X     Fields: 'f'/'F' add/remove/order/sort; 'X' increase fixed-width
+
+  L,&,<,> . Locate: 'L'/'&' find/again; Move sort column: '<'/'>' left/right
+  R,H,V,J . Toggle: 'R' Sort; 'H' Threads; 'V' Forest view; 'J' Num justify
+  c,i,S,j . Toggle: 'c' Cmd name/line; 'i' Idle; 'S' Time; 'j' Str justify
+  x,y     . Toggle highlights: 'x' sort field; 'y' running tasks
+  z,b     . Toggle: 'z' color/mono; 'b' bold/reverse (only if 'x' or 'y')
+  u,U,o,O . Filter by: 'u'/'U' effective/any user; 'o'/'O' other criteria
+  n,#,^O  . Set: 'n'/'#' max tasks displayed; Show: Ctrl+'O' other filter(s)
+  C,...   . Toggle scroll coordinates msg for: up,down,left,right,home,end
+
+  k,r       Manipulate tasks: 'k' kill; 'r' renice
+  d or s    Set update interval
+  W,Y       Write configuration file 'W'; Inspect other output 'Y'
+  q         Quit
+          ( commands shown with '.' require a visible task display window ) 
+Press 'h' or '?' for help with Windows,
+Type 'q' or <Esc> to continue 
+
+
+Process State:
+
+$ man ps
+PROCESS STATE CODES         top
+       Here are the different values that the s, stat and state output
+       specifiers (header "STAT" or "S") will display to describe the
+       state of a process:
+
+               D    uninterruptible sleep (usually IO)
+               I    Idle kernel thread
+               R    running or runnable (on run queue)
+               S    interruptible sleep (waiting for an event to
+                    complete)
+               T    stopped by job control signal
+               t    stopped by debugger during the tracing
+               W    paging (not valid since the 2.6.xx kernel)
+               X    dead (should never be seen)
+               Z    defunct ("zombie") process, terminated but not
+                    reaped by its parent
+
+
+R: running
+S: sleeping, waiting for an event to complete
+D: uninterruptible sleep， waiting for i/o
+T: Stopped, after using Ctrl-Z
+Z: Zombie
+
+
+# parameters on the top of the output 
+
+$ top
+top - 22:18:53 up 1 day,  1:37,  1 user,  load average: 3.91, 3.65, 3.52
+Tasks: 285 total,   5 running, 280 sleeping,   0 stopped,   0 zombie
+%Cpu(s): 33.0 us, 34.4 sy,  5.2 ni,  0.0 id,  0.0 wa, 27.0 hi,  0.4 si,  0.0 st
+MiB Mem :   1790.0 total,     94.6 free,   1286.7 used,    408.7 buff/cache
+MiB Swap:   2048.0 total,   1006.0 free,   1042.0 used.    311.2 avail Mem 
+
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND                                                                
+  74744 root      20   0    7328    912    848 R  45.2   0.0  25:31.63 dd                                                                     
+
+
+load average: 3.91, 3.65, 3.52
+                1min 5min 15min
+load average = number of processes in runnable state + uninterruptable sleep 
+i.e running + waiting for I/O
+
+
+Alternative command to read load avaerage
+[root@localhost lisa]# uptime
+ 22:43:06 up 1 day,  2:01,  1 user,  load average: 3.78, 3.76, 3.72
+ 
+ 
+If it's larger than the # of COPU cores, it's a performance issue
+
+[root@localhost lisa]# man -k cpu | grep lscpu
+lscpu (1)            - display information about the CPU architecture
+
+
+[root@localhost lisa]# lscpu
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+CPU(s):              2
+On-line CPU(s) list: 0,1
+Thread(s) per core:  1
+Core(s) per socket:  1
+Socket(s):           2
+NUMA node(s):        1
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               142
+Model name:          Intel(R) Core(TM) i7-7660U CPU @ 2.50GHz
+Stepping:            9
+CPU MHz:             2495.999
+BogoMIPS:            4991.99
+Hypervisor vendor:   VMware
+Virtualization type: full
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            256K
+L3 cache:            4096K
+...
+
+
+
+
+[root@localhost lisa]# ps aux | grep "dd if"
+root       67875 73.7  0.0   7328   916 pts/0    RN   14:59 344:01 dd if=/dev/zero of=/dev/null
+root       74737 67.5  0.0   7328   924 pts/0    R    21:40  44:15 dd if=/dev/zero of=/dev/null
+root       74744 67.4  0.0   7328   912 pts/0    R    21:40  44:07 dd if=/dev/zero of=/dev/null
+
+
+
+[root@localhost lisa]# dd if=/dev/zero of=/dev/null
+^Z
+[1]+  Stopped                 dd if=/dev/zero of=/dev/null
+[root@localhost lisa]# uptime
+ 22:50:28 up 1 day,  2:08,  1 user,  load average: 0.61, 2.55, 3.33
+[root@localhost lisa]# top
+
+top - 22:50:37 up 1 day,  2:08,  1 user,  load average: 0.52, 2.47, 3.30
+Tasks: 282 total,   1 running, 280 sleeping,   1 stopped,   0 zombie
+%Cpu(s):  0.3 us,  0.0 sy,  0.0 ni, 98.8 id,  0.0 wa,  0.7 hi,  0.2 si,  0.0 st
+MiB Mem :   1790.0 total,     69.7 free,   1305.0 used,    415.3 buff/cache
+MiB Swap:   2048.0 total,   1003.5 free,   1044.5 used.    297.1 avail Mem 
+
+[root@localhost lisa]# killall dd

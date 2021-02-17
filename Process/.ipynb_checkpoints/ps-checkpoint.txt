@@ -1,0 +1,95 @@
+[root@localhost ~]# ps aux | head
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.6 245312 11516 ?        Ss   04:30   0:24 /usr/lib/systemd/systemd --system --deserialize 21
+root           2  0.0  0.0      0     0 ?        S    04:30   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   04:30   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   04:30   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   04:30   0:00 [kworker/0:0H-kblockd]
+root           9  0.0  0.0      0     0 ?        I<   04:30   0:00 [mm_percpu_wq]
+root          10  0.0  0.0      0     0 ?        S    04:30   0:09 [ksoftirqd/0]
+root          11  0.0  0.0      0     0 ?        I    04:30   0:27 [rcu_sched]
+root          12  0.0  0.0      0     0 ?        S    04:30   0:00 [migration/0]      => kernel threads, names between []
+
+
+[root@localhost ~]# ps -ef | head
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 04:30 ?        00:00:24 /usr/lib/systemd/systemd --system --deserialize 21
+root           2       0  0 04:30 ?        00:00:00 [kthreadd]
+root           3       2  0 04:30 ?        00:00:00 [rcu_gp]
+root           4       2  0 04:30 ?        00:00:00 [rcu_par_gp]
+root           6       2  0 04:30 ?        00:00:00 [kworker/0:0H-kblockd]
+root           9       2  0 04:30 ?        00:00:00 [mm_percpu_wq]
+root          10       2  0 04:30 ?        00:00:09 [ksoftirqd/0]
+root          11       2  0 04:30 ?        00:00:27 [rcu_sched]
+root          12       2  0 04:30 ?        00:00:00 [migration/0]
+
+
+[root@localhost ~]# ps fax | head
+    PID TTY      STAT   TIME COMMAND
+      2 ?        S      0:00 [kthreadd]
+      3 ?        I<     0:00  \_ [rcu_gp]
+      4 ?        I<     0:00  \_ [rcu_par_gp]
+      6 ?        I<     0:00  \_ [kworker/0:0H-kblockd]
+      9 ?        I<     0:00  \_ [mm_percpu_wq]
+     10 ?        S      0:09  \_ [ksoftirqd/0]
+     11 ?        R      0:27  \_ [rcu_sched]
+     12 ?        S      0:00  \_ [migration/0]
+     13 ?        S      0:00  \_ [watchdog/0]
+
+
+[root@localhost ~]# man ps
+
+NAME
+       ps - report a snapshot of the current processes.
+
+SYNOPSIS
+       ps [options]
+
+DESCRIPTION
+       ps displays information about a selection of the active processes.  If you want a repetitive update of the selection and the
+       displayed information, use top(1) instead.
+
+       This version of ps accepts several kinds of options:
+
+       1   UNIX options, which may be grouped and must be preceded by a dash.
+       2   BSD options, which may be grouped and must not be used with a dash.
+       3   GNU long options, which are preceded by two dashes.
+
+EXAMPLES
+       To see every process on the system using standard syntax:
+          ps -e
+          ps -ef
+          ps -eF
+          ps -ely
+
+       To see every process on the system using BSD syntax:
+          ps ax
+          ps axu
+
+       To print a process tree:
+          ps -ejH
+          ps axjf
+
+
+
+[root@localhost ~]# man -k process | grep pgrep
+pgrep (1)            - look up or signal processes based on name and other attributes
+
+[root@localhost ~]# pgrep dd
+2
+192
+2776
+2808
+65528
+[root@localhost ~]# ps aux | grep dd
+root           2  0.0  0.0      0     0 ?        S    Feb15   0:00 [kthreadd]
+root         192  0.0  0.0      0     0 ?        I<   Feb15   0:00 [ipv6_addrconf]
+dbus         982  0.0  0.3  94508  6600 ?        Ssl  Feb15   0:22 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+gdm         1683  0.0  0.2 150564  4056 ?        Ssl  Feb15   0:00 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+gdm         1974  0.0  0.2 150164  3924 ?        Sl   Feb15   0:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 3
+lisa        2403  0.0  0.2 151104  4256 ?        Ssl  Feb15   0:02 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+lisa        2519  0.0  0.2 150292  3928 ?        Sl   Feb15   0:00 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 3
+lisa        2776  0.0  0.2 835904  4832 ?        Ssl  Feb15   0:00 /usr/libexec/evolution-addressbook-factory
+lisa        2808  0.0  0.3 1044568 6300 ?        Sl   Feb15   0:00 /usr/libexec/evolution-addressbook-factory-subprocess --factory all --bus-name org.gnome.evolution.dataserver.Subprocess.Backend.AddressBookx2776x2 --own-path /org/gnome/evolution/dataserver/Subprocess/Backend/AddressBook/2776/2
+root       65528 89.5  0.0   7328   916 pts/0    R    07:51  92:41 dd if=/dev/zero of=/dev/null
+root       67452  0.0  0.0  12112   992 pts/0    R+   09:35   0:00 grep --color=auto dd
