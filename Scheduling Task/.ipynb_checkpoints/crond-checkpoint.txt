@@ -1,0 +1,228 @@
+[root@localhost ~]# man -k cron
+anacrontab (5)       - configuration file for Anacron
+anacron (8)          - runs commands periodically
+cron (8)             - daemon to execute scheduled commands
+crond (8)            - daemon to execute scheduled commands
+cronnext (1)         - time of next job cron will execute
+crontab (1)          - maintains crontab files for individual users
+crontab (1p)         - schedule periodic background work
+crontab (5)          - files used to schedule the execution of programs
+crontabs (4)         - configuration and scripts for running periodical jobs
+
+
+$ man cron
+
+CRON(8)                                                    System Administration                                                   CRON(8)
+
+NAME
+       crond - daemon to execute scheduled commands
+
+SYNOPSIS
+       crond [-c | -h | -i | -n | -p | -P | -s | -m<mailcommand>]
+       crond -x [ext,sch,proc,pars,load,misc,test,bit]
+       crond -V
+
+DESCRIPTION
+       Cron  is  started  from  /etc/rc.d/init.d or /etc/init.d when classical sysvinit scripts are used. In case systemd is enabled, then
+       unit file is installed into /lib/systemd/system/crond.service and daemon is started by systemctl start  crond.service  command.  It
+       returns immediately, thus, there is no need to need to start it with the '&' parameter.
+
+       Cron  searches  /var/spool/cron for crontab files which are named after accounts in /etc/passwd; The found crontabs are loaded into
+       the memory.  Cron also searches for /etc/anacrontab and any files in the /etc/cron.d directory, which have a different format  (see
+       crontab(5)).   Cron examines all stored crontabs and checks each job to see if it needs to be run in the current minute.  When exe‐
+       cuting commands, any output is mailed to the owner of the crontab (or to the user specified in the MAILTO environment  variable  in
+       the crontab, if such exists).  Any job output can also be sent to syslog by using the -s option.
+
+       There  are  two ways how changes in crontables are checked.  The first method is checking the modtime of a file.  The second method
+       is using the inotify support.  Using of inotify is logged in the /var/log/cron log after the daemon is started.  The  inotify  sup‐
+       port checks for changes in all crontables and accesses the hard disk only when a change is detected.
+
+       When  using  the modtime option, Cron checks its crontables' modtimes every minute to check for any changes and reloads the cronta‐
+       bles which have changed.  There is no need to restart Cron after some of the crontables were modified.  The modtime option is  also
+       used when inotify can not be initialized.
+
+
+SEE ALSO
+       crontab(1), crontab(5), inotify(7), pam(8)
+
+# in other words, there's no need to activate crond service
+# crond looks every minute to see whether there's work to do
+
+[root@localhost ~]# systemctl -l status crond.service   
+● crond.service - Command Scheduler
+   Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; vendor preset: enabled)
+   Active: active (running) (thawing) since Sun 2021-02-14 10:51:52 MST; 6 days ago
+ Main PID: 13581 (crond)
+    Tasks: 1 (limit: 11073)
+   Memory: 5.0M
+   CGroup: /system.slice/crond.service
+           └─13581 /usr/sbin/crond -n
+
+Feb 19 18:01:01 localhost.localdomain CROND[96394]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 19 19:01:01 localhost.localdomain CROND[97324]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 19 20:01:01 localhost.localdomain CROND[98249]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 19 21:01:02 localhost.localdomain CROND[99176]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 19 22:01:01 localhost.localdomain CROND[100114]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 19 23:01:01 localhost.localdomain CROND[101038]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 20 00:01:01 localhost.localdomain CROND[101952]: (root) CMD (run-parts /etc/cron.hourly)
+Feb 20 00:01:02 localhost.localdomain anacron[101961]: Anacron started on 2021-02-20
+Feb 20 00:01:02 localhost.localdomain anacron[101961]: Normal exit (0 jobs run)
+Feb 20 01:01:01 localhost.localdomain CROND[102887]: (root) CMD (run-parts /etc/cron.hourly)
+
+
+
+$ man 5 crontab
+       cron(8) examines cron entries every minute.
+
+       The time and date fields are:
+
+              field          allowed values
+              -----          --------------
+              minute         0-59
+              hour           0-23
+              day of month   1-31
+              month          1-12 (or names, see below)
+              day of week    0-7 (0 or 7 is Sunday, or use names)
+
+       A field may contain an asterisk (*), which always stands for "first-last".
+
+EXAMPLE CRON FILE
+       # use /bin/sh to run commands, no matter what /etc/passwd says
+       SHELL=/bin/sh
+       # mail any output to `paul', no matter whose crontab this is
+       MAILTO=paul
+       #
+       CRON_TZ=Japan
+       # run five minutes after midnight, every day
+       5 0 * * *       $HOME/bin/daily.job >> $HOME/tmp/out 2>&1
+       # run at 2:15pm on the first of every month -- output mailed to paul
+       15 14 1 * *     $HOME/bin/monthly
+       # run at 10 pm on weekdays, annoy Joe
+       0 22 * * 1-5    mail -s "It's 10pm" joe%Joe,%%Where are your kids?%
+       23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
+       5 4 * * sun     echo "run at 5 after 4 every sunday"
+
+
+$ man cron
+       
+       Cron checks these files and directories:
+
+       /etc/crontab
+              system  crontab.  Nowadays the file is empty by default.  Originally it was usually used to run daily, weekly, monthly jobs.
+              By default these jobs are now run through anacron which reads /etc/anacrontab configuration  file.   See  anacrontab(5)  for
+              more details.
+
+       /etc/cron.d/
+              directory that contains system cronjobs stored for different users.
+
+       /var/spool/cron
+              directory that contains user crontables created by the crontab command.
+              
+
+# 1st config file
+
+[root@localhost ~]# cat /etc/crontab
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+
+
+$ man 5 crontab
+
+CRONTAB(5)                                                     File Formats                                                     CRONTAB(5)
+
+NAME
+       crontab - files used to schedule the execution of programs
+
+DESCRIPTION
+       A  crontab  file contains instructions for the cron(8) daemon in the following simplified manner: "run this command at this time on
+       this date".  Each user can define their own crontab.  Commands defined in any given crontab are executed under the  user  who  owns
+       that  particular crontab.  Uucp and News usually have their own crontabs, eliminating the need for explicitly running su(1) as part
+       of a cron command.
+
+       Blank lines, leading spaces, and tabs are ignored.  Lines whose first non-white space character is a pound-sign (#)  are  comments,
+       and  are  not processed.  Note that comments are not allowed on the same line as cron commands, since they are considered a part of
+       the command.  Similarly, comments are not allowed on the same line as environment variable settings.
+
+       An active line in a crontab is either an environment setting or a cron command.  An environment setting is of the form:
+
+          name = value
+
+       where the white spaces around the equal-sign (=) are optional, and any subsequent non-leading white spaces in value is  a  part  of
+       the  value  assigned  to  name.   The  value string may be placed in quotes (single or double, but matching) to preserve leading or
+       trailing white spaces.
+
+       Several environment variables are set up automatically by the cron(8) daemon.  SHELL is set to /bin/sh, and LOGNAME  and  HOME  are
+       set  from  the  /etc/passwd  line of the crontab´s owner.  HOME and SHELL can be overridden by settings in the crontab; LOGNAME can
+       not.
+
+       In addition to LOGNAME, HOME, and SHELL, cron(8) looks at the MAILTO variable if a mail needs to be send as a result of running any
+       commands  in  that  particular crontab.  If MAILTO is defined (and non-empty), mail is sent to the specified address.  If MAILTO is
+       defined but empty (MAILTO=""), no mail is sent.  Otherwise, mail is sent to the owner of the crontab.  This option is useful if you
+       decide  to  use /bin/mail instead of /usr/lib/sendmail as your mailer.  Note that /bin/mail does not provide aliasing and UUCP usu‐
+       ally does not read its mail.  If MAILFROM is defined (and non-empty), it  is  used  as  the  envelope  sender  address,  otherwise,
+       ``root'' is used.
+
+
+
+# 2nd config file
+
+[root@localhost ~]# ls -al /etc | grep cron
+-rw-r--r--.   1 root root       541 Nov  8  2019 anacrontab
+drwxr-xr-x.   2 root root        39 Jan 22 23:47 cron.d
+drwxr-xr-x.   2 root root        23 Jan 22 23:39 cron.daily
+-rw-r--r--.   1 root root         0 Nov  8  2019 cron.deny
+drwxr-xr-x.   2 root root        22 Jan 22 23:39 cron.hourly
+drwxr-xr-x.   2 root root         6 May 11  2019 cron.monthly
+-rw-r--r--.   1 root root       451 May 11  2019 crontab
+drwxr-xr-x.   2 root root         6 May 11  2019 cron.weekly
+
+# 3d config file
+
+$ man crontab
+
+DESCRIPTION
+       Crontab  is  the program used to install a crontab table file, remove or list the existing tables used to serve the cron(8) daemon.
+       Each user can have their own crontab, and though these are files in /var/spool/, they are not intended to be edited directly.   For
+       SELinux in MLS mode, you can define more crontabs for each range.  For more information, see selinux(8).
+
+OPTIONS
+       -u     Appends the name of the user whose crontab is to be modified.  If this option is not used, crontab examines "your"  crontab,
+              i.e.,  the  crontab of the person executing the command.  Note that su(8) may confuse crontab, thus, when executing commands
+              under su(8) you should always use the -u option.  If no crontab exists for a particular user, it  is  created  for  him  the
+              first time the crontab -u command is used under his username.
+
+       -l     Displays the current crontab on standard output.
+
+       -r     Removes the current crontab.
+
+       -e     Edits the current crontab using the editor specified by the VISUAL or EDITOR environment variables.  After you exit from the
+              editor, the modified crontab will be installed automatically.
+[root@localhost ~]# ls -al /var/spool/
+total 4
+drwxr-xr-x. 10 root root  106 Jan 22 23:52 .
+drwxr-xr-x. 22 root root 4096 Jan 25 00:57 ..
+drwxr-xr-x.  2 root root   63 Jan 22 23:39 anacron
+drwx------.  3 root root   31 Jan 22 23:52 at
+drwx------.  2 root root    6 Nov  8  2019 cron
+drwx--x---.  3 root lp     17 Jan 22 23:48 cups
+drwxr-xr-x.  2 root root    6 Nov  3 08:22 lpd
+drwxrwxr-x.  2 root mail   82 Jan 23 15:48 mail
+drwxr-xr-x.  2 root root    6 Oct  6 08:53 plymouth
+drwxr-xr-x.  3 root root   19 Jan 22 23:49 rhsm
+[root@localhost ~]# cd /var/spool/cron/
+[root@localhost cron]# ls -al
+total 0
+drwx------.  2 root root   6 Nov  8  2019 .
+drwxr-xr-x. 10 root root 106 Jan 22 23:52 ..

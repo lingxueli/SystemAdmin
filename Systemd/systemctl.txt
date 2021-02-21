@@ -362,7 +362,7 @@ $ systemctl edit httpd.service	write to /etc/systemd/system/httpd.service.d/over
 
 $ systemctl cat httpd.service 	you see default config + custom config, where custom overwrites the default config
 
-			systemctl daemon-reload			reload systemd to pick up the new configuration(reload: process the unit files) 
+$ systemctl daemon-reload			reload systemd to pick up the new configuration(reload: process the unit files) 
             
             
        reload PATTERN...
@@ -372,7 +372,14 @@ $ systemctl cat httpd.service 	you see default config + custom config, where cus
            server, not the apache.service systemd unit file.
 
            This command should not be confused with the daemon-reload command.
+           
+       daemon-reload
+           Reload the systemd manager configuration. This will rerun all generators (see systemd.generator(7)), reload all unit files, and
+           recreate the entire dependency tree. While the daemon is being reloaded, all sockets systemd listens on behalf of user
+           configuration will stay accessible.
 
-			systemctl restart httpd			restart the service
-			systemctl status httpd			verify it's active	
+           This command should not be confused with the reload command.
 
+
+$ systemctl restart httpd			restart the service
+$ systemctl status httpd			verify it's active

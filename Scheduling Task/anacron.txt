@@ -1,0 +1,63 @@
+[root@localhost ~]# man -k cron
+anacrontab (5)       - configuration file for Anacron
+anacron (8)          - runs commands periodically
+
+ANACRONTAB(5)                                                  File Formats                                                  ANACRONTAB(5)
+
+NAME
+       /etc/anacrontab - configuration file for Anacron
+
+
+ANACRON(8)                                                 System Administration                                                ANACRON(8)
+
+NAME
+       anacron - runs commands periodically
+
+
+[root@localhost ~]# cat /etc/anacrontab 
+# /etc/anacrontab: configuration file for anacron
+
+# See anacron(8) and anacrontab(5) for details.
+
+SHELL=/bin/sh
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+# the maximal random delay added to the base delay of the jobs
+RANDOM_DELAY=45
+# the jobs will be started during the following hours only
+START_HOURS_RANGE=3-22
+
+#period in days   delay in minutes   job-identifier   command
+1	5	cron.daily		nice run-parts /etc/cron.daily
+7	25	cron.weekly		nice run-parts /etc/cron.weekly
+@monthly 45	cron.monthly		nice run-parts /etc/cron.monthly
+
+
+
+ANACRONTAB(5)                                                  File Formats                                                  ANACRONTAB(5)
+
+NAME
+       /etc/anacrontab - configuration file for Anacron
+
+DESCRIPTION
+       The  /etc/anacrontab  configuration  file  describes  the jobs controlled by anacron(8).  It can contain three types of lines: job-
+       description lines, environment assignments, or empty lines.
+
+       Job-description lines can have the following format:
+
+          period in days   delay in minutes   job-identifier   command
+
+       The period in days variable specifies the frequency of execution of a job in days.  This variable can be represented by an  integer
+       or  a  macro (@daily, @weekly, @monthly), where @daily denotes the same value as the integer 1, @weekly the same as 7, and @monthly
+       specifies that the job is run once a month, independent on the length of the month.
+
+       The delay in minutes variable specifies the number of minutes anacron waits, if necessary, before executing a job.   This  variable
+       is represented by an integer where 0 means no delay.
+
+       The job-identifier variable specifies a unique name of a job which is used in the log files.
+
+       The command variable specifies the command to execute.  The command can either be a command such as ls /proc >> /tmp/proc or a com‐
+       mand to execute a custom script.
+
+
+# /etc/cron.hourly or daily or weekly or montnly files executes the command periodically. The exact time of execution doesn't matter.
