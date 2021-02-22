@@ -1,0 +1,78 @@
+$ man -k log | grep logger
+closelog (3)         - send messages to the system logger
+logger (1)           - enter messages into the system log
+logger (1p)          - log messages
+openlog (3)          - send messages to the system logger
+plymouth (8)         - A graphical boot system and logger
+syslog (3)           - send messages to the system logger
+
+
+LOGGER(1)                               User Commands                               LOGGER(1)
+
+NAME
+       logger - enter messages into the system log
+
+SYNOPSIS
+       logger [options] [message]
+
+DESCRIPTION
+       logger makes entries in the system log.
+
+       When the optional message argument is present, it is written to the log.  If it is not
+       present, and the -f option is not given either, then standard input is logged.
+
+       -P, --port port
+              Use the specified port.  When this option is not specified, the  port  defaults
+              to syslog for udp and to syslog-conn for tcp connections.
+
+       -p, --priority priority
+              Enter  the  message into the log with the specified priority.  The priority may
+              be specified  numerically  or  as  a  facility.level  pair.   For  example,  -p
+              local3.info  logs  the  message  as  informational in the local3 facility.  The
+              default is user.notice.
+
+FACILITIES AND LEVELS
+       Valid facility names are:
+
+              auth
+              authpriv   for security information of a sensitive nature
+              cron
+              daemon
+              ftp
+              kern       cannot be generated from userspace process, automatically converted to 
+user
+              lpr
+              mail
+              news
+              syslog
+              user
+              uucp
+              local0
+                to
+              local7
+              security   deprecated synonym for auth
+
+       Valid level names are:
+
+              emerg
+              alert
+              crit
+              err
+              warning
+              notice
+              info
+              debug
+              panic     deprecated synonym for emerg
+              error     deprecated synonym for err
+              warn      deprecated synonym for warning
+
+       For the priority order and intended purposes of these facilities and levels, see  sys‐
+       log(3).
+
+EXAMPLES
+       logger System rebooted
+       logger -p local0.notice -t HOSTIDM -f /dev/idmc
+       logger -n loghost.example.com System rebooted
+
+# write error msg to kernel facility
+$ logger -p kern.err hello

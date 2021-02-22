@@ -1,0 +1,126 @@
+Three sources of logging
+	1. direct write from services
+    
+	2. rsyslogd:
+		centralized logging
+		modules to filtering the msg
+		addition modules such output module to store msg in a database
+		persistent between reboots
+		allow remote logging and log servers
+        
+$ man -k syslog
+rsyslog.conf (5)     - rsyslogd(8) configuration file
+rsyslogd (8)         - reliable and extended syslogd
+syslog (2)           - read and/or clear kernel message ring buffer; set cons...
+syslog (3)           - send messages to the system logger
+syslog (3p)          - log a message
+syslog.h (0p)        - definitions for system error logging
+vsyslog (3)          - send messages to the system logger        
+
+
+rsyslogd (8)         - reliable and extended syslogd
+
+FILES
+       /etc/rsyslog.conf
+              Configuration file for rsyslogd.  See rsyslog.conf(5) for  exact
+              information.
+       /dev/log
+              The  Unix  domain socket to from where local syslog messages are
+              read.
+       /var/run/rsyslogd.pid
+              The file containing the process id of rsyslogd.
+       prefix/lib/rsyslog
+              Default directory for rsyslogd modules. The prefix is  specified
+              during compilation (e.g. /usr/local).
+
+$ vi /etc/rsyslog.conf
+#### RULES ####
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+
+	3. journald: 
+		integrated with Systemd, so it logs everything that your service is doing
+		journald is not persistent between reboots. So msg are forwarded to rsyslogd service, which writes to /var/log(file in this directory is presitent between reboots)
+		msg is stored in binary format, which can be processed by journalctl command
+
+
+$ man -k journal
+gnome-logs (1)       - log viewer for the systemd journal
+journalctl (1)       - Query the systemd journal
+journald.conf (5)    - Journal service configuration files
+journald.conf.d (5)  - Journal service configuration files
+systemd-cat (1)      - Connect a pipeline or program's output with the journal
+systemd-journald (8) - Journal service
+systemd-journald-audit.socket (8) - Journal service
+systemd-journald-dev-log.socket (8) - Journal service
+systemd-journald.service (8) - Journal service
+systemd-journald.socket (8) - Journal service
+systemd.journal-fields (7) - Special journal fields
+
+
+JOURNALD.CONF(5)                 journald.conf                JOURNALD.CONF(5)
+
+NAME
+       journald.conf, journald.conf.d - Journal service configuration files
+
+SYNOPSIS
+       /etc/systemd/journald.conf
+
+       /etc/systemd/journald.conf.d/*.conf
+
+       /run/systemd/journald.conf.d/*.conf
+
+       /usr/lib/systemd/journald.conf.d/*.conf
+
+
+
+FORWARDING TO TRADITIONAL SYSLOG DAEMONS
+       Journal events can be transferred to a different logging daemon in two
+       different ways. With the first method, messages are immediately
+       forwarded to a socket (/run/systemd/journal/syslog), where the
+       traditional syslog daemon can read them. This method is controlled by
+       the ForwardToSyslog= option. With a second method, a syslog daemon
+       behaves like a normal journal client, and reads messages from the
+       journal files, similarly to journalctl(1). With this, messages do not
+       have to be read immediately, which allows a logging daemon which is
+       only started late in boot to access all messages since the start of the
+       system. In addition, full structured meta-data is available to it. This
+       method of course is available only if the messages are stored in a
+       journal file at all. So it will not work if Storage=none is set. It
+       should be noted that usually the second method is used by syslog
+       daemons, so the Storage= option, and not the ForwardToSyslog= option,
+       is relevant for them.
+
+Auditd service
+	more in-depth trace of the activities than logging service
+	SELinux logs detailed messages to the auditd service
+
+Administrator can access the log in three ways
+	1. monitor /var/log written mostly by rsyslogd, or by specific services
+	2. use journalctl to get info from journald
+	3. use systemctl status <unit> to get a short overview of the last significant events that have been logged. You'll see the last couple lines of the log there.

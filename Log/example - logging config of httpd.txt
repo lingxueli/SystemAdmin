@@ -1,0 +1,174 @@
+# this tutorial forward httpd log to rsyslogd. Httpd was to send the logs directly to the file. Now it's configured to send to the facility as well.
+# Configuration needs to be done on both sides: httpd and rsyslog
+# httpd sends the log to the rsyslog facility, local1
+# rsyslog receives the log from the facility and forward the log to the local directories: /var/log
+
+# install httpd, installed
+
+
+# config httpd service to use the log service in a desired way
+
+[root@localhost ~]# man -k httpd
+httpd (8)            - Apache Hypertext Transfer Protocol Server
+httpd-init.service (8) - httpd unit files for systemd
+httpd.conf (5)       - Configuration files for httpd
+httpd.service (8)    - httpd unit files for systemd
+httpd.socket (8)     - httpd unit files for systemd
+httpd@.service (8)   - httpd unit files for systemd
+ostree-trivial-httpd (1) - Simple webserver
+
+
+HTTPD.CONF(5)                        httpd.conf                       HTTPD.CONF(5)
+
+NAME
+       httpd.conf - Configuration files for httpd
+
+SYNOPSIS
+       /etc/httpd/conf/httpd.conf, /etc/httpd/conf.modules.d, /etc/httpd/conf.d
+
+
+# locate the lines to config logging
+
+[root@localhost ~]# grep -B10 log /etc/httpd/conf/httpd.conf
+# <URL:http://httpd.apache.org/docs/2.4/mod/directives.html>
+# for a discussion of each configuration directive.
+#
+# See the httpd.conf(5) man page for more information on this configuration,
+# and httpd.service(8) on using and configuring the httpd service.
+#
+# Do NOT simply read the instructions in here without understanding
+# what they do.  They're here only as hints or reminders.  If you are unsure
+# consult the online docs. You have been warned.  
+#
+# Configuration and logfile names: If the filenames you specify for many
+# of the server's control files begin with "/" (or "drive:/" for Win32), the
+# server will use that explicit path.  If the filenames do *not* begin
+# with "/", the value of ServerRoot is prepended -- so 'log/access_log'
+# with ServerRoot set to '/www' will be interpreted by the
+# server as '/www/log/access_log', where as '/log/access_log' will be
+# interpreted as '/log/access_log'.
+
+
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog "logs/error_log"
+
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel warn
+
+
+
+# update httpd to send the log to rsyslog local1
+$ vi /etc/httpd/conf/httpd.conf
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog "logs/error_log"
+ErrorLog syslog:local1
+
+
+
+$ man httpd.conf
+
+   Configuration structure
+       The main configuration file (httpd.conf) sets up various defaults and
+       includes configuration files from two directories -
+       /etc/httpd/conf.modules.d and /etc/httpd/conf.d. Packages containing
+       loadable modules (like mod_ssl.so) place files in the conf.modules.d
+       directory with the appropriate LoadModule directive so that module is loaded
+       by default.
+
+       Some notable configured defaults are:.
+
+       DocumentRoot /var/www/html
+           The default document root from which content is served.
+
+       Listen 80
+           The daemon lists on TCP port 80.
+
+       ErrorLog "logs/error_log"
+           Error messages are logged to /var/log/httpd/error_log.
+
+
+# restart the service to reload the config
+[root@localhost ~]# systemctl restart httpd
+
+
+
+# rsyslog forwards the log from local1 to /var/log
+[root@localhost ~]# man 5 rsyslog.conf
+
+FILES
+       /etc/rsyslog.conf
+              Configuration file for rsyslogd
+
+[root@localhost ~]# cd /etc/rsyslog.d
+[root@localhost rsyslog.d]# ls -al
+total 12
+drwxr-xr-x.   2 root root    6 Jul 20  2020 .
+drwxr-xr-x. 144 root root 8192 Feb 21 21:46 ..
+[root@localhost rsyslog.d]# vi rsyslog-httpd.conf
+
+local1.error    /var/log/httpd-error.log
+
+
+# example from /etc/rsyslog.conf
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+
+
+# rsyslog reloads config
+$ systemctl restart rsyslog
+
+# test
+# visit a page that doesn't exist
+$ curl http://localhost | less
+
+# test
+# errror msg sent to the newly created log file
+[root@localhost rsyslog.d]# cat /var/log/httpd-error.log
+Feb 21 21:49:29 localhost httpd[12754]: [authz_core:error] [pid 12754:tid 140161543264000] [client ::1:35604] AH01630: client denied by server configuration: /webfiles/
+Feb 21 21:49:51 localhost httpd[12756]: [authz_core:error] [pid 12756:tid 140161895626496] [client ::1:35606] AH01630: client denied by server configuration: /webfiles/test
+Feb 21 21:49:59 localhost httpd[12754]: [authz_core:error] [pid 12754:tid 140161710855936] [client ::1:35608] AH01630: client denied by server configuration: /webfiles/
+Feb 21 21:50:01 localhost httpd[12756]: [authz_core:error] [pid 12756:tid 140161878841088] [client ::1:35610] AH01630: client denied by server configuration: /webfiles/
+
+
+Another example - config the log msg forwarding based on priority rather than facility
+
+
+# forward debug msg to a new file
+$ echo "*.debug /var/log/messages-debug" > /etc/rsyslog.d/debug.conf
+$ systemctl restart rsyslog
+
+[root@localhost rsyslog.d]# tail -f /var/log/messages-debug 
+Feb 21 21:52:39 localhost systemd[1]: Stopping System Logging Service...
+Feb 21 21:52:39 localhost rsyslogd[13352]: [origin software="rsyslogd" swVersion="8.1911.0-6.el8" x-pid="13352" x-info="https://www.rsyslog.com"] exiting on signal 15.
+Feb 21 21:52:39 localhost systemd[1]: rsyslog.service: Succeeded.
+Feb 21 21:52:39 localhost systemd[1]: Stopped System Logging Service.
+Feb 21 21:52:39 localhost systemd[1]: Starting System Logging Service...
+Feb 21 21:52:39 localhost rsyslogd[13472]: [origin software="rsyslogd" swVersion="8.1911.0-6.el8" x-pid="13472" x-info="https://www.rsyslog.com"] start
+Feb 21 21:52:39 localhost systemd[1]: Started System Logging Service.
+Feb 21 21:52:39 localhost rsyslogd[13472]: imjournal: journal files changed, reloading...  [v8.1911.0-6.el8 try https://www.rsyslog.com/e/0 ]
+
+
+# send the debug msg from another terminal
+[root@localhost lisa]# logger -p daemon.debug "Daemon Debug Message"
+
+# notice there're new lines in the log file
+Feb 21 21:54:40 localhost su[13558]: pam_unix(su:session): session opened for user root by (uid=1000)
+Feb 21 21:54:58 localhost lisa[13604]: Daemon Debug Message
+Feb 21 21:55:08 localhost systemd[1]: fprintd.service: Succeeded.

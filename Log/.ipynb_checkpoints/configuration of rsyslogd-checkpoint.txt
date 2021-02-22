@@ -1,0 +1,134 @@
+rsyslogd (8)         - reliable and extended syslogd
+
+FILES
+       /etc/rsyslog.conf
+              Configuration file for rsyslogd.  See rsyslog.conf(5) for  exact
+              information.
+       /dev/log
+              The  Unix  domain socket to from where local syslog messages are
+              read.
+       /var/run/rsyslogd.pid
+              The file containing the process id of rsyslogd.
+       prefix/lib/rsyslog
+              Default directory for rsyslogd modules. The prefix is  specified
+              during compilation (e.g. /usr/local).
+
+
+Another config file is /etc/sysconfig/rsyslog file
+
+It defines the startup parameter of rsyslogd. It's defined by systemd. By default it contains only one line.
+
+SYSLOGD_OPTIONS="" 	specify startup parameter here.... It's not recommended to modify it here because this opetion is included in Systemd confg file that starts rsyslogd
+
+
+
+
+$ less /etc/rsyslog.conf
+
+#### GLOBAL DIRECTIVES ####
+
+# Where to place auxiliary files
+global(workDirectory="/var/lib/rsyslog")
+
+# Use default timestamp format
+module(load="builtin:omfile" Template="RSYSLOG_TraditionalFileFormat")
+
+# Include all config files in /etc/rsyslog.d/
+include(file="/etc/rsyslog.d/*.conf" mode="optional")
+
+
+
+/etc/rsyslog.d could be populated by installing RPM packages on the server. The content in that directory is also included in the config.
+
+$ less /etc/rsyslog.conf
+
+#### RULES ####
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+
+format of rules
+facility.priority  location
+
+location = -/var/log/maillog; the hyphen in the front means it's not directly written to the file. There's a buffer used to make write more efficient.
+
+
+
+LOGGER(1)                               User Commands                               LOGGER(1)
+
+NAME
+       logger - enter messages into the system log
+
+SYNOPSIS
+       logger [options] [message]
+
+DESCRIPTION
+       logger makes entries in the system log.
+
+       When the optional message argument is present, it is written to the log.  If it is not
+       present, and the -f option is not given either, then standard input is logged.
+
+       -P, --port port
+              Use the specified port.  When this option is not specified, the  port  defaults
+              to syslog for udp and to syslog-conn for tcp connections.
+
+       -p, --priority priority
+              Enter  the  message into the log with the specified priority.  The priority may
+              be specified  numerically  or  as  a  facility.level  pair.   For  example,  -p
+              local3.info  logs  the  message  as  informational in the local3 facility.  The
+              default is user.notice.
+
+FACILITIES AND LEVELS
+       Valid facility names are:
+
+              auth
+              authpriv   for security information of a sensitive nature
+              cron
+              daemon
+              ftp
+              kern       cannot be generated from userspace process, automatically converted to 
+user
+              lpr
+              mail
+              news
+              syslog
+              user
+              uucp
+              local0
+                to
+              local7
+              security   deprecated synonym for auth
+
+       Valid level names are:
+
+              emerg
+              alert
+              crit
+              err
+              warning
+              notice
+              info
+              debug
+              panic     deprecated synonym for emerg
+              error     deprecated synonym for err
+              warn      deprecated synonym for warning
+
+       For the priority order and intended purposes of these facilities and levels, see  sys‐
+       log(3).
+
