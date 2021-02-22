@@ -9,8 +9,6 @@ rsyslogd Log rotation
 
 
 	/etc/logrotate.conf 	rotate weekly, keep 4 weeks => log file in the last 4 week are kept, rotated weekly
-	/etc/logroate.d 		you can configure logrotate for specific file with special cases
-	man logrotate			obtain info about parameters in this logrotate config file
 -----------------------------------------------------------    
 Use journald
 	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
