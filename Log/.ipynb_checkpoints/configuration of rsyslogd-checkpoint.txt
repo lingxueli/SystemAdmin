@@ -22,6 +22,13 @@ SYSLOGD_OPTIONS="" 	specify startup parameter here.... It's not recommended to m
 
 
 
+Understand rsyslogd config file /etc/rsyslog.conf
+
+	Modules					rsyslogd is modular, add enhanced supported feature here	
+	GLOBAL DIRECTIVES		define global parameters
+	RULES					the most important part. It specify what should be logged to which destination.
+
+
 
 $ less /etc/rsyslog.conf
 
@@ -63,11 +70,23 @@ mail.*                                                  -/var/log/maillog
 cron.*                                                  /var/log/cron
 
 
+	In rules, you'll define
+
+	facility:
+		this is the category of information. Facilities' list is fixed for backward compatibility with legacy syslog service. Msg from one facility will be written to the corresponding log files in /var
+
+	priority:
+		all msg with that priority and all that with higher priorities are logged
+
+	destination:
+		usually it's file: /var or device file /dev
+		it could be rsyslogd modules, that way it will be further processed by rsyslogd modules
+
+
 format of rules
 facility.priority  location
 
 location = -/var/log/maillog; the hyphen in the front means it's not directly written to the file. There's a buffer used to make write more efficient.
-
 
 
 LOGGER(1)                               User Commands                               LOGGER(1)
@@ -132,3 +151,14 @@ user
        For the priority order and intended purposes of these facilities and levels, see  sys‐
        log(3).
 
+
+Understand rsyslogd facilites
+    
+	Fixed set of facilities here to work with legacy syslog service.
+
+	To support new services, you can use 
+		1. daemon facility of daemon services
+		2. local0-local7
+
+	The service writes msg to a facility, so the loggging service can collect the msg from a facility and write it to a specific file.
+    

@@ -1,0 +1,164 @@
+# make a directory in the disk
+[root@localhost ~]# mkdir /var/log/journal
+
+
+# update the directory's owner
+[root@localhost ~]# grep systemd /etc/group
+systemd-journal:x:190:
+systemd-coredump:x:997:
+systemd-resolve:x:193:
+
+
+[root@localhost ~]# man -k owner
+chgrp (1)            - change group ownership
+chgrp (1p)           - change the file group ownership
+chown (1)            - change file owner and group
+chown (1p)           - change the file ownership
+chown (2)            - change ownership of a file
+chown (3p)           - change owner and group of a file relative to directory...
+chown32 (2)          - change ownership of a file
+fchown (2)           - change ownership of a file
+fchown (3p)          - change owner and group of a file
+fchown32 (2)         - change ownership of a file
+fchownat (2)         - change ownership of a file
+fchownat (3p)        - change owner and group of a file relative to directory...
+lchown (2)           - change ownership of a file
+lchown (3p)          - change the owner and group of a symbolic link
+lchown32 (2)         - change ownership of a file
+ownership (8)        - Compaq ownership tag retriever
+quot (8)             - summarize filesystem ownership
+sg_emc_trespass (8)  - change ownership of SCSI LUN from another Service-Proc...
+tpm2_clear (1)       - Clears lockout, endorsement and owner hierarchy author...
+tpm2_setprimarypolicy (1) - Sets the authorization policy for the lockout (lo...
+[root@localhost ~]# man chown
+CHOWN(1)                         User Commands                        CHOWN(1)
+
+NAME
+       chown - change file owner and group
+
+SYNOPSIS
+       chown [OPTION]... [OWNER][:[GROUP]] FILE...
+       chown [OPTION]... --reference=RFILE FILE...
+
+
+[root@localhost ~]# chown root:systemd-journal /var/log/journal
+[root@localhost ~]# chmod 2755 /var/log/journal
+
+[root@localhost ~]# ls -al /var/log | grep systemd
+drwxr-sr-x.  3 root   systemd-journal      46 Feb 22 15:35 journal
+
+
+#  who's in this group: systemd-journal
+
+# /etc/group list the user where the user has it as a secondary group
+[root@localhost ~]# cat /etc/group  | grep syste
+systemd-journal:x:190:
+systemd-coredump:x:997:
+systemd-resolve:x:193:
+
+# /etc/passwd list primary group
+[root@localhost ~]# cat /etc/passwd | grep systemd
+systemd-coredump:x:999:997:systemd Core Dumper:/:/sbin/nologin
+systemd-resolve:x:193:193:systemd Resolver:/:/sbin/nologin
+
+
+# nobody is in the gorup: systemd-journal
+
+
+# reboot the system or send the USR1 signal to service journald
+
+KILLALL(1)                       User Commands                      KILLALL(1)
+
+NAME
+       killall - kill processes by name
+
+SYNOPSIS
+       killall [-Z, --context pattern] [-e, --exact] [-g, --process-group]
+       [-i, --interactive] [-n, --ns PID] [-o, --older-than TIME]
+       [-q, --quiet] [-r, --regexp] [-s, --signal SIGNAL, -SIGNAL] [-u, --user
+       user] [-v, --verbose] [-w, --wait] [-y, --younger-than TIME]
+       [-I, --ignore-case] [-V, --version] [--] name ...
+       killall -l
+       killall -V, --version
+
+DESCRIPTION
+       killall  sends  a  signal to all processes running any of the specified
+       commands.  If no signal name is specified, SIGTERM is sent.
+
+       Signals can be specified either by name (e.g.  -HUP or -SIGHUP)  or  by
+       number (e.g.  -1) or by option -s.
+
+
+       -l, --list
+              List all known signal names.
+
+[root@localhost ~]# killall -l
+HUP INT QUIT ILL TRAP ABRT BUS FPE KILL USR1 SEGV USR2 PIPE ALRM TERM STKFLT
+CHLD CONT STOP TSTP TTIN TTOU URG XCPU XFSZ VTALRM PROF WINCH POLL PWR SYS
+
+
+SIGNAL(7)                  Linux Programmer's Manual                 SIGNAL(7)
+
+NAME
+       signal - overview of signals
+
+DESCRIPTION
+       Linux  supports both POSIX reliable signals (hereinafter "standard sig‐
+
+
+
+       First the signals described in the original POSIX.1-1990 standard.
+
+       Signal     Value     Action   Comment
+       ──────────────────────────────────────────────────────────────────────
+       SIGHUP        1       Term    Hangup detected on controlling terminal
+                                     or death of controlling process
+       SIGINT        2       Term    Interrupt from keyboard
+       SIGQUIT       3       Core    Quit from keyboard
+       SIGILL        4       Core    Illegal Instruction
+       SIGABRT       6       Core    Abort signal from abort(3)
+       SIGFPE        8       Core    Floating-point exception
+       SIGKILL       9       Term    Kill signal
+       SIGSEGV      11       Core    Invalid memory reference
+       SIGPIPE      13       Term    Broken pipe: write to pipe with no
+                                     readers; see pipe(7)
+       SIGALRM      14       Term    Timer signal from alarm(2)
+       SIGTERM      15       Term    Termination signal
+       SIGUSR1   30,10,16    Term    User-defined signal 1
+       SIGUSR2   31,12,17    Term    User-defined signal 2
+       SIGCHLD   20,17,18    Ign     Child stopped or terminated
+       SIGCONT   19,18,25    Cont    Continue if stopped
+       SIGSTOP   17,19,23    Stop    Stop process
+       SIGTSTP   18,20,24    Stop    Stop typed at terminal
+
+
+[root@localhost ~]# killall -USR1 systemd-journald 
+
+Inform systemd-journald that the new location should be used by sending a USR1 signal to it. A reboot will also suffice.
+
+As suggested by several other locations, use killall -USR1 systemd-journald instead of restarting the service. This way you get to keep all the logging of the current session: the memory log gets copied to the new disk location as well as all subsequent events.
+
+
+
+JOURNALCTL(1)                     journalctl                     JOURNALCTL(1)
+
+NAME
+       journalctl - Query the systemd journal
+
+SYNOPSIS
+       journalctl [OPTIONS...] [MATCHES...]
+
+DESCRIPTION
+       journalctl may be used to query the contents of the systemd(1) journal
+       as written by systemd-journald.service(8).
+
+       -b [ID][±offset], --boot=[ID][±offset]
+           Show messages from a specific boot. This will add a match for
+           "_BOOT_ID=".
+
+           The argument may be empty, in which case logs for the current boot
+           will be shown.
+
+
+
+$ journalctl -b

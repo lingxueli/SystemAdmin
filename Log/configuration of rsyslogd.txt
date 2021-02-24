@@ -89,9 +89,6 @@ facility.priority  location
 location = -/var/log/maillog; the hyphen in the front means it's not directly written to the file. There's a buffer used to make write more efficient.
 
 
-
-
-
 LOGGER(1)                               User Commands                               LOGGER(1)
 
 NAME

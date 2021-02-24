@@ -1,0 +1,114 @@
+How to config journald log to be persisitent?
+
+Configure the service writting log to /var/log/journal/, instead of /run/log/journal/
+
+
+$ man 8 systemd-journald
+SYSTEMD-JOURNALD.SERVICE(8)                                  systemd-journald.service                                  SYSTEMD-JOURNALD.SERVICE(8)
+
+NAME
+       systemd-journald.service, systemd-journald.socket, systemd-journald - Journal service
+
+SYNOPSIS
+       systemd-journald.service
+
+       systemd-journald.socket
+
+       /usr/lib/systemd/systemd-journald
+
+DESCRIPTION
+       systemd-journald is a system service that collects and stores logging data. It creates and maintains structured, indexed journals based on
+       logging information that is received from a variety of sources:
+
+       ·   Kernel log messages, via kmsg
+
+       ·   Simple system log messages, via the libc syslog(3) call
+
+       ·   Structured system log messages via the native Journal API, see sd_journal_print(4)
+
+       ·   Standard output and standard error of system services
+
+       ·   Audit records, via the audit subsystem
+
+FILES
+       /etc/systemd/journald.conf
+           Configure systemd-journald behaviour. See journald.conf(5).
+
+       /run/log/journal/machine-id/*.journal, /run/log/journal/machine-id/*.journal~, /var/log/journal/machine-id/*.journal,
+       /var/log/journal/machine-id/*.journal~
+           systemd-journald writes entries to files in /run/log/journal/machine-id/ or /var/log/journal/machine-id/ with the ".journal" suffix. If
+           the daemon is stopped uncleanly, or if the files are found to be corrupted, they are renamed using the ".journal~" suffix, and
+           systemd-journald starts writing to a new file.  /run is used when /var/log/journal is not available, or when Storage=volatile is set in
+           the journald.conf(5) configuration file.
+
+
+JOURNALD.CONF(5)                                                   journald.conf                                                  JOURNALD.CONF(5)
+
+NAME
+       journald.conf, journald.conf.d - Journal service configuration files
+
+SYNOPSIS
+       /etc/systemd/journald.conf
+
+       /etc/systemd/journald.conf.d/*.conf
+
+       /run/systemd/journald.conf.d/*.conf
+
+       /usr/lib/systemd/journald.conf.d/*.conf
+
+OPTIONS
+       All options are configured in the "[Journal]" section:
+
+       Storage=
+           Controls where to store journal data. One of "volatile", "persistent", "auto" and "none". If "volatile", journal log data will be
+           stored only in memory, i.e. below the /run/log/journal hierarchy (which is created if needed). If "persistent", data will be stored
+           preferably on disk, i.e. below the /var/log/journal hierarchy (which is created if needed), with a fallback to /run/log/journal (which
+           is created if needed), during early boot and if the disk is not writable.  "auto" is similar to "persistent" but the directory
+           /var/log/journal is not created if needed, so that its existence controls where log data goes.  "none" turns off all storage, all log
+           data received will be dropped. Forwarding to other targets, such as the console, the kernel log buffer, or a syslog socket will still
+           work however. Defaults to "auto".
+
+
+# change preference: Storage = auto
+
+$ cat /etc/systemd/journald.conf
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+#
+# Entries in this file show the compile time defaults.
+# You can change settings by editing this file.
+# Defaults can be restored by simply deleting this file.
+#
+# See journald.conf(5) for details.
+
+[Journal]
+#Storage=auto
+#Compress=yes
+#Seal=yes
+#SplitMode=uid
+#SyncIntervalSec=5m
+#RateLimitInterval=30s
+#RateLimitBurst=1000
+#SystemMaxUse=
+#SystemKeepFree=
+#SystemMaxFileSize=
+#RuntimeMaxUse=
+#RuntimeKeepFree=
+#RuntimeMaxFileSize=
+#MaxRetentionSec=
+#MaxFileSec=1month
+#ForwardToSyslog=yes
+#ForwardToKMsg=no
+#ForwardToConsole=no
+#ForwardToWall=yes
+#TTYPath=/dev/console
+#MaxLevelStore=debug
+#MaxLevelSyslog=debug
+#MaxLevelKMsg=notice
+#MaxLevelConsole=info
+#MaxLevelWall=emerg
+#LineMax=48K

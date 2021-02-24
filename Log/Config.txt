@@ -1,15 +1,3 @@
-
-
-
-
-
------------------------------------------------------------
-rsyslogd Log rotation
-	Old log file will be removed from the system. To keep them, you can either back up the log file, or use a centralized log server to keep it for a significantly longer period
-
-
-	/etc/logrotate.conf 	rotate weekly, keep 4 weeks => log file in the last 4 week are kept, rotated weekly
------------------------------------------------------------    
 Use journald
 	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
 
