@@ -1,6 +1,14 @@
+	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
+
+	Because it works with systemd, it logs everything happening on the server but the log is not persistent between reboots. To keep them, you can forward the msg from journald to rsyslogd. rsyslogd will keep it in /var/log.
+
+
 How to config journald log to be persisitent?
 
 Configure the service writting log to /var/log/journal/, instead of /run/log/journal/
+
+
+
 
 
 $ man 8 systemd-journald
