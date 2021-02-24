@@ -1,3 +1,97 @@
+# create a partition first, and then format it as swap space.
+
+
+[root@localhost ~]# man -k swap
+mkswap (8)           - set up a Linux swap area
+swaplabel (8)        - print or change the label or UUID of a swap area
+swapoff (2)          - start/stop swapping to file/device
+swapoff (8)          - enable/disable devices and files for paging and swapping
+swapon (2)           - start/stop swapping to file/device
+swapon (8)           - enable/disable devices and files for paging and swapping
+
+MKSWAP(8)                                  System Administration                                  MKSWAP(8)
+
+NAME
+       mkswap - set up a Linux swap area
+
+SYNOPSIS
+       mkswap [options] device [size]
+
+DESCRIPTION
+       mkswap sets up a Linux swap area on a device or in a file.
+
+# to check memory and swap space
+
+FREE(1)                                        User Commands                                        FREE(1)
+
+NAME
+       free - Display amount of free and used memory in the system
+
+SYNOPSIS
+       free [options]
+
+DESCRIPTION
+       free  displays  the total amount of free and used physical and swap memory in the system, as well as
+       the buffers and caches used by the kernel. The information is gathered by parsing /proc/meminfo. The
+       displayed columns are:
+
+       total  Total installed memory (MemTotal and SwapTotal in /proc/meminfo)
+
+       used   Used memory (calculated as total - free - buffers - cache)
+
+       free   Unused memory (MemFree and SwapFree in /proc/meminfo)
+
+       shared Memory used (mostly) by tmpfs (Shmem in /proc/meminfo)
+
+       buffers
+              Memory used by kernel buffers (Buffers in /proc/meminfo)
+
+       cache  Memory used by the page cache and slabs (Cached and SReclaimable in /proc/meminfo)
+
+       buff/cache
+              Sum of buffers and cache
+              
+       available
+              Estimation  of  how much memory is available for starting new applications, without swapping.
+              Unlike the data provided by the cache or free fields, this  field  takes  into  account  page
+              cache  and also that not all reclaimable memory slabs will be reclaimed due to items being in
+              use (MemAvailable in /proc/meminfo, available on kernels 3.14, emulated on  kernels  2.6.27+,
+              otherwise the same as free)
+              
+       -m, --mebi
+              Display the amount of memory in mebibytes.
+
+
+FILES
+       /proc/meminfo
+              memory information
+
+
+
+
+SWAPON(8)                                  System Administration                                  SWAPON(8)
+
+NAME
+       swapon, swapoff - enable/disable devices and files for paging and swapping
+
+SYNOPSIS
+       swapon [options] [specialfile...]
+       swapoff [-va] [specialfile...]
+
+DESCRIPTION
+       swapon is used to specify devices on which paging and swapping are to take place.
+
+       The device or file used is given by the specialfile parameter.  It may be of the form -L label or -U
+       uuid to indicate a device by label or uuid.
+
+       Calls to swapon normally occur in the system boot scripts making all swap devices available, so that
+       the paging and swapping activity is interleaved across several devices and files.
+
+       swapoff  disables  swapping on the specified devices and files.  When the -a flag is given, swapping
+       is disabled on all known swap devices and files (as found in /proc/swaps or /etc/fstab).
+
+
+
 [root@localhost lisa]# parted /dev/nvme0n2
 GNU Parted 3.2
 Using /dev/nvme0n2
@@ -93,16 +187,20 @@ Do you want to proceed? (Y/N): Y
 OK; writing new GUID partition table (GPT) to /dev/nvme0n2.
 The operation has completed successfully.
 
+# make swap space on top of a partition
 [root@localhost lisa]# mkswap /dev/nvme0n2p1
 mkswap: /dev/nvme0n2p1: warning: wiping old ext4 signature.
 Setting up swapspace version 1, size = 99 MiB (103804928 bytes)
 no label, UUID=ec04a5aa-2f37-4c0e-a36b-3365862aae7c
 
+# check swap space
+# newly created swap space is not available until activated
 [root@localhost lisa]# free -m
               total        used        free      shared  buff/cache   available
 Mem:           3709        1478        1505          27         725        1967
 Swap:          1023           0        1023
 
+# activate the new swap
 [root@localhost lisa]# swapon
 NAME           TYPE       SIZE USED PRIO
 /dev/nvme0n1p3 partition 1024M   0B   -2
@@ -113,23 +211,3 @@ NAME           TYPE       SIZE USED PRIO
               total        used        free      shared  buff/cache   available
 Mem:           3709        1479        1504          27         725        1967
 Swap:          1122           0        1122
-
-#####        different session: add swap space from a swap file  ### 
-[root@ip-172-31-9-71 ec2-user]# free -m
-              total        used        free      shared  buff/cache   available
-Mem:            815         137         375          22         302         533
-Swap:             0           0           0
-[root@ip-172-31-9-71 ec2-user]# dd if=/dev/zero of=/swapfile bs=1M count=100
-100+0 records in
-100+0 records out
-104857600 bytes (105 MB, 100 MiB) copied, 0.0419012 s, 2.5 GB/s
-[root@ip-172-31-9-71 ec2-user]# mkswap /swapfile
-mkswap: /swapfile: insecure permissions 0644, 0600 suggested.
-Setting up swapspace version 1, size = 100 MiB (104853504 bytes)
-no label, UUID=00f39609-ae1f-4b7d-a797-eac238f7f153
-[root@ip-172-31-9-71 ec2-user]# swapon /swapfile
-swapon: /swapfile: insecure permissions 0644, 0600 suggested.
-[root@ip-172-31-9-71 ec2-user]# free -m
-              total        used        free      shared  buff/cache   available
-Mem:            815         137         274          22         403         533
-Swap:            99           0          99

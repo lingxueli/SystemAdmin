@@ -1,7 +1,49 @@
-[root@localhost lisa]# blkid
-/dev/nvme0n1p5: UUID="9d2fd572-f810-481a-a737-1d90c25d1141" BLOCK_SIZE="512" TYPE="xfs" PARTUUID="39947a2a-05"
-/dev/nvme0n2p1: UUID="21ff5b69-ca81-4399-ad85-e49ab628b02a" BLOCK_SIZE="4096" TYPE="ext4" PARTLABEL="part1" PARTUUID="22f65af7-45e4-4561-ae7f-ec7c8095474a"
+# different file system provides different tools to change properties
 
+# ext4/3/2 file system: default file system in previous versions of RHEL
+
+[root@localhost ~]# man -k filesystem | grep ext4
+mke2fs (8)           - create an ext2/ext3/ext4 filesystem
+mkfs.ext2 (8)        - create an ext2/ext3/ext4 filesystem
+mkfs.ext3 (8)        - create an ext2/ext3/ext4 filesystem
+mkfs.ext4 (8)        - create an ext2/ext3/ext4 filesystem
+tune2fs (8)          - adjust tunable filesystem parameters on ext2/ext3/ext4 filesystems
+
+
+TUNE2FS(8)                                System Manager's Manual                                TUNE2FS(8)
+
+NAME
+       tune2fs - adjust tunable filesystem parameters on ext2/ext3/ext4 filesystems
+
+SYNOPSIS
+       tune2fs  [ -l ] [ -c max-mount-counts ] [ -e errors-behavior ] [ -f ] [ -i interval-between-checks ]
+       [ -I new_inode_size ] [ -j ] [ -J journal-options ] [ -m reserved-blocks-percentage ] [ -o [^]mount-
+       options[,...]   ]  [  -r  reserved-blocks-count  ]  [ -u user ] [ -g group ] [ -C mount-count ] [ -E
+       extended-options ] [ -L volume-label ] [ -M last-mounted-directory ] [ -O [^]feature[,...]  ]  [  -Q
+       quota-options ] [ -T time-last-checked ] [ -U UUID ] [ -z undo_file ] device
+
+DESCRIPTION
+       tune2fs  allows  the  system  administrator to adjust various tunable filesystem parameters on Linux
+       ext2, ext3, or ext4 filesystems.  The current values of these options can be displayed by using  the
+       -l option to tune2fs(8) program, or by using the dumpe2fs(8) program.
+
+       The  device  specifier  can  either  be  a filename (i.e., /dev/sda1), or a LABEL or UUID specifier:
+       "LABEL=volume-label"   or    "UUID=uuid".     (i.e.,    LABEL=home    or    UUID=e40486c6-84d5-4f2f-
+       b99c-032281799c9d).
+       
+       -l     List the contents of the filesystem superblock, including the current values of  the  parame‐
+              ters that can be set via this program.
+
+       -L volume-label
+              Set  the volume label of the filesystem.  Ext2 filesystem labels can be at most 16 characters
+              long; if volume-label is longer than 16 characters, tune2fs will  truncate  it  and  print  a
+              warning.   The volume label can be used by mount(8), fsck(8), and /etc/fstab(5) (and possibly
+              others) by specifying  LABEL=volume-label  instead  of  a  block  special  device  name  like
+              /dev/hda5.
+
+        volume-label = Filesystem volume name
+
+# list all the properties
 [root@localhost lisa]# tune2fs -l /dev/nvme0n2p1
 tune2fs 1.45.6 (20-Mar-2020)
 Filesystem volume name:   <none>
@@ -54,16 +96,70 @@ Checksum:                 0x677189f2
 [root@localhost lisa]# tune2fs -L ext4_disk2 /dev/nvme0n2p1
 tune2fs 1.45.6 (20-Mar-2020)
 
+
+       -o [^]mount-option[,...]
+              Set  or  clear  the indicated default mount options in the filesystem.  Default mount options
+              can be overridden by mount options specified either in /etc/fstab(5) or on the  command  line
+              arguments  to  mount(8).   Older kernels may not support this feature; in particular, kernels
+              which predate 2.4.20 will almost certainly ignore the default  mount  options  field  in  the
+              superblock.
+
+              More  than  one mount option can be cleared or set by separating features with commas.  Mount
+              options prefixed with a caret character ('^') will be cleared in the filesystem's superblock;
+              mount  options  without  a  prefix  character or prefixed with a plus character ('+') will be
+              added to the filesystem.
+
+              The following mount options can be set or cleared using tune2fs:
+
+                   debug  Enable debugging code for this filesystem.
+
+                   bsdgroups
+                          Emulate BSD behavior when creating new files: they will take the group-id of  the
+                          directory  in  which  they  were  created.  The standard System V behavior is the
+                          default, where newly created files take on the  fsgid  of  the  current  process,
+                          unless  the directory has the setgid bit set, in which case it takes the gid from
+                          the parent directory, and also gets the setgid bit  set  if  it  is  a  directory
+                          itself.
+
+                   user_xattr
+                          Enable user-specified extended attributes.
+
+                   acl    Enable Posix Access Control Lists.
+
 [root@localhost lisa]# tune2fs -o ^user_xattr,acl /dev/nvme0n2p1    # These mount options would be switched off
 tune2fs 1.45.6 (20-Mar-2020)
 [root@localhost lisa]# tune2fs -o user_xattr,acl /dev/nvme0n2p1     # These mount options would be switched on
 tune2fs 1.45.6 (20-Mar-2020)
+
+
+       -O [^]feature[,...]
+              Set or clear the indicated filesystem features (options) in the filesystem.   More  than  one
+              filesystem feature can be cleared or set by separating features with commas.  Filesystem fea‐
+              tures prefixed with a caret character ('^') will be cleared in the  filesystem's  superblock;
+              filesystem  features  without a prefix character or prefixed with a plus character ('+') will
+              be added to the filesystem.  For a detailed description of the file system  features,  please
+              see the man page ext4(5).
+
+              The following filesystem features can be set or cleared using tune2fs:
+
+                   has_journal
+                          Use  a  journal  to  ensure filesystem consistency even across unclean shutdowns.
+                          Setting the filesystem feature is equivalent to using the -j option.
 
 [root@localhost lisa]# tune2fs -O ^has_journal /dev/nvme0n2p1               # turn off file system features
 tune2fs 1.45.6 (20-Mar-2020)
 [root@localhost lisa]# tune2fs -O has_journal /dev/nvme0n2p1
 tune2fs 1.45.6 (20-Mar-2020)
 Creating journal inode: done
+
+
+# XFS file system (default in RHEL8)
+
+[root@localhost ~]# man -k filesystem | grep xfs
+mkfs.xfs (8)         - construct an XFS filesystem
+xfs (5)              - layout, mount options, and supported file attributes for the XFS filesystem
+xfs_admin (8)        - change parameters of an XFS filesystem
+
 
 [root@localhost lisa]# xfs_admin -L xfs_disk1 /dev/nvme0n1p5
 writing all SBs

@@ -1,3 +1,51 @@
+[root@localhost ~]# man -k "file system"
+[root@localhost ~]# man -k filesystem
+mkfs (8)             - build a Linux filesystem
+mkfs.ext2 (8)        - create an ext2/ext3/ext4 filesystem
+mkfs.ext3 (8)        - create an ext2/ext3/ext4 filesystem
+mkfs.ext4 (8)        - create an ext2/ext3/ext4 filesystem
+mkfs.fat (8)         - create an MS-DOS filesystem under Linux
+mkfs.minix (8)       - make a Minix filesystem
+mkfs.msdos (8)       - create an MS-DOS filesystem under Linux
+mkfs.vfat (8)        - create an MS-DOS filesystem under Linux
+mkfs.xfs (8)         - construct an XFS filesystem
+
+[root@localhost ~]# man mkfs
+MKFS(8)                                    System Administration                                    MKFS(8)
+
+NAME
+       mkfs - build a Linux filesystem
+
+SYNOPSIS
+       mkfs [options] [-t type] [fs-options] device [size]
+
+DESCRIPTION
+       This mkfs frontend is deprecated in favour of filesystem specific mkfs.<type> utils.
+
+
+OPTIONS
+       -t, --type type
+              Specify  the  type  of filesystem to be built.  If not specified, the default filesystem type
+              (currently ext2) is used.
+              
+              
+[root@localhost ~]# man mkfs.ext4
+
+DESCRIPTION
+       mke2fs  is  used  to create an ext2, ext3, or ext4 filesystem, usually in a disk partition (or file)
+       named by device.
+
+       The file system size is specified by fs-size.  If fs-size does not have a suffix, it is  interpreted
+       as  power-of-two  kilobytes,  unless  the -b blocksize option is specified, in which case fs-size is
+       interpreted as the number of blocksize blocks.   If the fs-size is suffixed by 'k',  'm',  'g',  't'
+       (either  upper-case  or  lower-case),  then  it is interpreted in power-of-two kilobytes, megabytes,
+       gigabytes, terabytes, etc.  If fs-size is omitted, mke2fs will create the file system based  on  the
+       device size.
+
+       If  mke2fs  is  run  as  mkfs.XXX  (i.e.,  mkfs.ext2,  mkfs.ext3, or mkfs.ext4) the option -t XXX is
+       implied; so mkfs.ext3 will create a file system for use with ext3, mkfs.ext4 will create a file sys‐
+       tem for use with ext4, and so on.
+
 [root@localhost lisa]# blkid
 /dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
 /dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
@@ -83,5 +131,3 @@ Allocating group tables: done
 Writing inode tables: done                            
 Creating journal (4096 blocks): done
 Writing superblocks and filesystem accounting information: done
-
-

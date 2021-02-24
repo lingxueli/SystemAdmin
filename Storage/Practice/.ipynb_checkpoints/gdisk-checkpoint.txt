@@ -98,6 +98,8 @@ Warning: The kernel is still using the old partition table.
 The new table will be used at the next reboot or after you
 run partprobe(8) or kpartx(8)
 The operation has completed successfully.
+
+# partprobe - inform the OS of partition table changes
 [root@ip-172-31-9-71 ec2-user]# partprobe
 [root@ip-172-31-9-71 ec2-user]# blkid
 /dev/xvda2: UUID="3510a17e-27dc-4ae2-9243-d600c16f4106" TYPE="xfs" PTUUID="965e49e0-ec69-4f6f-a7b6-d7d014d1eed0" PTTYPE="gpt" PARTUUID="d00a186f-02"

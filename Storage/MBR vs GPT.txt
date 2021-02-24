@@ -1,0 +1,43 @@
+Why use partitions
+
+	Distinguish between different types of data, you can create backup strategy which treats each partitions differently
+	Avoid single point of failure(e.g. accidentally filled up on one partition)
+	Enhance security or performance from mounting options
+
+MBR partions(Master Boot Record)
+    It works with BIOS(Basic Input Output System).
+    
+    load BIOS to access hardware
+    BIOS read the bootable device
+    MBR is located on bootable device. It contains the OS boot loader and partition table.
+    
+    1 sector = 512 bytes
+    1 KiB = 1024 bytes
+    
+
+    One of the partion is made active, the boot loader will read the code in the first sector of that partion. That code would load the rest of the OS.
+
+    MBR has size limit. one partition <= 2TiB
+    Only up to 4 primary partions is allowed. 
+    Or up to 15 partitions. To do this, you can create one partion as an extended partition. Multip logical partition can be created in extended partion. Other praritions are primary partions. 
+    3 primary paritions + 1 extended partition (which contains up to 12 logical partitions)
+    
+    
+GPT partions(GUID partition table)
+    GUID stands for global unique ID.It uses a 128-bit GUID to identify parition.
+    
+    It works with both BIOS and UEFI(Unified Extensible Firmware Interface).
+    
+    
+    Size limit:
+    One partition <= 8 Zib               Kb < MB < GB < TB < PB < EB < ZB < YB
+    up to 128 partitions
+    
+    Backup of the parition table exists by default at the end of the disk.
+    
+    
+
+Tools
+MBR - fdisk
+GPT - gdisk
+parted

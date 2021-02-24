@@ -22,12 +22,6 @@ major minor  #blocks  name
 /dev/sr0: BLOCK_SIZE="2048" UUID="2020-07-01-14-18-37-00" LABEL="RHEL-8-3-0-BaseOS-x86_64" TYPE="iso9660" PTUUID="304890b8" PTTYPE="dos"
 /dev/mapper/rhel-root: UUID="e1ba3ec0-b483-486f-9f80-253616c07782" BLOCK_SIZE="512" TYPE="xfs"
 
-[root@localhost lisa]# fdisk -l /dev/nvme0n2
-Disk /dev/nvme0n2: 1 GiB, 1073741824 bytes, 2097152 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-
 [root@localhost lisa]# gdisk -l /dev/nvme0n2
 GPT fdisk (gdisk) version 1.0.3
 

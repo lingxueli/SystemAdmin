@@ -1,0 +1,94 @@
+# backup before making the change
+dd if=/dev/sda of=/root/diskfile bs=1M count=1
+# 1M is enough to cover the first 512 bytes which contains boot loader and partition table
+
+cp /dec/fstab /root/fstab
+
+
+# display a list of devices (and partition if they have it)
+$ fdisk -l
+
+# device with partition nvme0n1p1/p2/p3
+
+[root@localhost lisa]# fdisk -l /dev/nvme0n1
+Disk /dev/nvme0n1: 20 GiB, 21474836480 bytes, 41943040 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0x39947a2a
+
+Device         Boot    Start      End  Sectors  Size Id Type
+/dev/nvme0n1p1 *        2048  1050623  1048576  512M 83 Linux
+/dev/nvme0n1p2       1050624 22030335 20979712   10G 8e Linux LVM
+/dev/nvme0n1p3      22030336 24127487  2097152    1G 82 Linux swap / Solaris
+
+# create partition on device nvme0n1
+fdisk /dev/nvme0n1
+
+
+
+$ fdisk -l
+
+       -l, --list
+              List  the  partition  tables  for the specified devices and then
+              exit.  If no devices are given, those mentioned in  /proc/parti‐
+              tions (if that file exists) are used.
+              
+# after using fdisk to make the partition
+# in memory kernal partiton is not updated until further action 
+[root@localhost ~]# cat /proc/partitions
+major minor  #blocks  name
+
+  11        0    9047040 sr0
+   8        0   20971520 sda
+   8        1    1048576 sda1
+   8        2   19921920 sda2
+   8       16   20971520 sdb
+   8       17    4194304 sdb1
+   8       32   10485760 sdc
+ 253        0   17821696 dm-0
+ 253        1    2097152 dm-1
+ 253        2    1048576 dm-2
+
+
+
+PROC(5)                    Linux Programmer's Manual                   PROC(5)
+
+NAME
+       proc - process information pseudo-filesystem
+
+DESCRIPTION
+       The  proc filesystem is a pseudo-filesystem which provides an interface
+       to kernel data structures.  It is commonly  mounted  at  /proc.   Typi‐
+       cally,  it  is  mounted automatically by the system, but it can also be
+       mounted manually using a command such as:
+
+           mount -t proc proc /proc
+
+       Most of the files in the proc filesystem are read-only, but some  files
+       are writable, allowing kernel variables to be changed.
+       
+       
+       /proc/partitions
+              Contains  the  major and minor numbers of each partition as well
+              as the number of 1024-byte blocks and the partition name.
+
+
+PARTPROBE(8)                   GNU Parted Manual                  PARTPROBE(8)
+
+NAME
+       partprobe - inform the OS of partition table changes
+
+SYNOPSIS
+       partprobe [-d] [-s] [devices...]
+
+DESCRIPTION
+       This manual page documents briefly the partprobe command.
+
+       partprobe is a program that informs the operating system kernel of par‐
+       tition table changes.
+
+# push the change of partition table to kernel
+# if it doesn't work, reboot
+$ partprobe /dev/sda
