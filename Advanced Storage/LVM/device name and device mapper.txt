@@ -1,0 +1,34 @@
+device mapper is an kernel interface used to access the device. e.g. /dev/dm-2
+
+To make it easier to access, there're symbolic links to the device mapper:
+1. /dev/mapper/vgname-lvname
+2. device name: /dev/vgdata/lvdata
+
+Both are symbolic links to the device mapper
+
+
+Example:
+
+
+[root@localhost vg-test]# ls -al  /dev/dm-2
+brw-rw----. 1 root disk 253, 2 Feb 23 20:10 /dev/dm-2
+
+[root@localhost mapper]# pwd
+/dev/mapper
+[root@localhost mapper]# ls -al
+total 0
+drwxr-xr-x.  2 root root     120 Feb 23 20:10 .
+drwxr-xr-x. 21 root root    3360 Feb 23 20:10 ..
+lrwxrwxrwx.  1 root root       7 Feb 23 20:10 cl-root -> ../dm-0
+lrwxrwxrwx.  1 root root       7 Feb 23 20:10 cl-swap -> ../dm-1
+crw-------.  1 root root 10, 236 Feb 23 20:10 control
+lrwxrwxrwx.  1 root root       7 Feb 23 20:10 vg--test-myfiles -> ../dm-2
+
+
+[root@localhost vg-test]# pwd
+/dev/vg-test
+[root@localhost vg-test]# ls -al
+total 0
+drwxr-xr-x.  2 root root   60 Feb 23 20:10 .
+drwxr-xr-x. 21 root root 3360 Feb 23 20:10 ..
+lrwxrwxrwx.  1 root root    7 Feb 23 20:10 myfiles -> ../dm-2

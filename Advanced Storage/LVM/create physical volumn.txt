@@ -1,6 +1,9 @@
+# how to find the right command and options when create LVM
+# pv, vg, lv
+
+# pv tab
 [root@localhost ~]# pv
 pvchange   pvck       pvcreate   pvdisplay  pvmove     pvremove   pvresize   pvs        pvscan     
-
 [root@localhost ~]# pvcreate --help
   pvcreate - Initialize physical volume(s) for use by LVM
 
@@ -44,6 +47,25 @@ pvchange   pvck       pvcreate   pvdisplay  pvmove     pvremove   pvresize   pvs
 GNU Parted 3.2
 Using /dev/nvme0n2
 Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) help                                                             
+  align-check TYPE N                        check partition N for TYPE(min|opt) alignment
+  help [COMMAND]                           print general help, or help on COMMAND
+  mklabel,mktable LABEL-TYPE               create a new disklabel (partition table)
+  mkpart PART-TYPE [FS-TYPE] START END     make a partition
+  name NUMBER NAME                         name partition NUMBER as NAME
+  print [devices|free|list,all|NUMBER]     display the partition table, available devices, free space, all
+        found partitions, or a particular partition
+  quit                                     exit program
+  rescue START END                         rescue a lost partition near START and END
+  resizepart NUMBER END                    resize partition NUMBER
+  rm NUMBER                                delete partition NUMBER
+  select DEVICE                            choose the device to edit
+  disk_set FLAG STATE                      change the FLAG on selected device
+  disk_toggle [FLAG]                       toggle the state of FLAG on selected device
+  set NUMBER FLAG STATE                    change the FLAG on partition NUMBER
+  toggle [NUMBER [FLAG]]                   toggle the state of FLAG on partition NUMBER
+  unit UNIT                                set the default unit to UNIT
+  version                                  display the version number and copyright information of GNU Parted
 (parted) print                                                            
 Error: /dev/nvme0n2: unrecognised disk label
 Model: NVMe Device (nvme)                                                 
@@ -57,18 +79,30 @@ Partition type?  primary/extended? primary
 File system type?  [ext2]? xfs                                            
 Start? 1MiB                                                               
 End? 1GiB                                                                 
-(parted) set 1 lvm on
+(parted) set 1 lvm on             => enable LVM on the partition
 (parted) quit                                                             
 Information: You may need to update /etc/fstab.
 
 [root@localhost ~]# pvcreate /dev/nvme0n2p1
   Physical volume "/dev/nvme0n2p1" successfully created.
 
+PVS(8)                                    System Manager's Manual                                    PVS(8)
+
+NAME
+       pvs - Display information about physical volumes
+
+
 [root@localhost ~]# pvs
   PV             VG   Fmt  Attr PSize    PFree   
   /dev/nvme0n1p2 rhel lvm2 a--    10.00g       0 
   /dev/nvme0n2p1      lvm2 ---  1023.00m 1023.00m
 
+PVDISPLAY(8)                              System Manager's Manual                              PVDISPLAY(8)
+
+NAME
+       pvdisplay - Display various attributes of physical volume(s)
+
+# more details
 [root@localhost ~]# pvdisplay 
   --- Physical volume ---
   PV Name               /dev/nvme0n1p2
@@ -93,6 +127,7 @@ Information: You may need to update /etc/fstab.
   Allocated PE          0
   PV UUID               RqlP5P-Ni7P-FOEK-0VuU-mFhS-1SxQ-nioHgt
 
+# hierarchy of lvm
 [root@localhost ~]# lsblk
 NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
 sr0            11:0    1  8.5G  0 rom  /run/media/lisa/RHEL-8-3-0-BaseOS-x86_64
