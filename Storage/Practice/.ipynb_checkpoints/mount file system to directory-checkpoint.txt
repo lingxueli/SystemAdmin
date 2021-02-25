@@ -1,13 +1,274 @@
-[root@localhost ~]# mount /dev/nvme0n1p5 /mnt
+$ man -k mount
+mount.cifs (8)       - mount using the Common Internet File System (CIFS)
+mount (2)            - mount file system
+mount (8)            - mount a filesystem
+mount.fuse (8)       - format and options for the fuse file systems
+mountpoint (1)       - see if a directory is a mountpoint
+systemd-remount-fs (8) - Remount root and kernel file systems
+systemd-remount-fs.service (8) - Remount root and kernel file systems
+systemd.automount (5) - Automount unit configuration
+systemd.mount (5)    - Mount unit configuration
+umount (2)           - unmount file system
+umount (8)           - unmount file systems
+umount2 (2)          - unmount file system
+xfs (5)              - layout, mount options, and supported file attributes for the XFS filesystem
 
-[root@localhost mnt]# mount LABEL="xfs_disk1" /mnt       # these are preferred because dev name can be changed after the next reboot
+
+$ man 8 mount
+MOUNT(8)                                                       System Administration                                                      MOUNT(8)
+
+NAME
+       mount - mount a filesystem
+
+SYNOPSIS
+       mount [-lhV]
+
+       mount -a [-fFnrsvw] [-t vfstype] [-O optlist]
+
+       mount [-fnrsvw] [-o option[,option]...]  device|dir
+
+       mount [-fnrsvw] [-t vfstype] [-o options] device dir
+
+DESCRIPTION       
+       All  files  accessible  in a Unix system are arranged in one big tree, the file hierarchy, rooted at /.  These files can be spread out over
+       several devices. The mount command serves to attach the filesystem found on some device to the big file  tree.  Conversely,  the  umount(8)
+       command will detach it again.
+
+       The standard form of the mount command, is
+
+              mount -t type device dir
+
+       This  tells  the  kernel  to attach the filesystem found on device (which is of type type) at the directory dir.  The previous contents (if
+       any) and owner and mode of dir become invisible, and as long as this filesystem remains mounted, the pathname dir refers to the root of the
+       filesystem on device.
+
+       If only directory or device is given, for example:
+
+              mount /dir
+
+       then  mount  looks  for  a  mountpoint and if not found then for a device in the /etc/fstab file.
+
+       The device indication.
+              Most  devices are indicated by a file name (of a block special device), like /dev/sda1, but there are other possibilities. For exam‐
+              ple, in the case of an NFS mount, device may look like knuth.cwi.nl:/dir.  It is possible to indicate a block special  device  using
+              its  filesystem  LABEL or UUID (see the -L and -U options below) and partition PARTUUID or PARTLABEL (partition identifiers are sup‐
+              ported for GUID Partition Table (GPT) and MAC partition tables only).
+
+              The recommended setup is to use tags (e.g. LABEL=<label>) rather than /dev/disk/by-{label,uuid,partuuid,partlabel} udev symlinks  in
+              the /etc/fstab file. The tags are more readable, robust and portable. The mount(8) command internally uses udev symlinks, so use the
+              symlinks in /etc/fstab has no advantage over the tags.  For more details see libblkid(3).
+
+              Note that mount(8) uses UUIDs as strings. The UUIDs from command line or fstab(5) are not converted to internal  binary  representa‐
+              tion. The string representation of the UUID should be based on lower case characters.
+
+              The  proc  filesystem  is not associated with a special device, and when mounting it, an arbitrary keyword, such as proc can be used
+              instead of a device specification.  (The customary choice none is less fortunate: the error message `none busy' from umount  can  be
+              confusing.)
+
+
+       -L, --label label
+              Mount the partition that has the specified label.
+
+       -U, --uuid uuid
+              Mount the partition that has the specified uuid.  These two options require the file /proc/partitions (present since Linux  2.1.116)
+              to exist.              
+
+
+$ man 8  umount
+UMOUNT(8)                                                      System Administration                                                     UMOUNT(8)
+
+NAME
+       umount - unmount file systems
+
+SYNOPSIS
+       umount [-hV]
+
+       umount -a [-dflnrv] [-t vfstype] [-O options]
+       umount [-dflnrv] {dir|device}...
+
+DESCRIPTION
+       The umount command detaches the file system(s) mentioned from the file hierarchy.  A file system is specified by giving the directory where
+       it has been mounted.  Giving the special device on which the file system lives may also work, but is obsolete, mainly because it will  fail
+       in case this device was mounted on more than one directory.
+
+      
+$ mount /dev/nvme0n1p5 /mnt
+
+$ mount LABEL="xfs_disk1" /mnt       # these are preferred because dev name can be changed after the next reboot
 mount: /mnt: /dev/nvme0n1p5 already mounted on /mnt.
-[root@localhost mnt]# mount UUID="9d2fd572-f810-481a-a737-1d90c25d1141" /mnt
+
+$ mount UUID="9d2fd572-f810-481a-a737-1d90c25d1141" /mnt
 mount: /mnt: /dev/nvme0n1p5 already mounted on /mnt.
 
-[root@localhost /]# umount /mnt
+$ umount /mnt
 
-[root@localhost /]# blkid
+
+# to check the UUID and labal, use these commands
+
+[root@localhost ~]# man -k block device | grep lsblk
+lsblk (8)            - list block devices
+[root@localhost ~]# man -k block device | grep blkid
+blkid (8)            - locate/print block device attributes
+
+
+BLKID(8)                                   System Administration                                   BLKID(8)
+
+NAME
+       blkid - locate/print block device attributes
+
+SYNOPSIS
+       blkid  --label label | --uuid uuid
+
+       blkid  [--no-encoding --garbage-collect --list-one --cache-file file] [--output format] [--match-tag
+              tag] [--match-token NAME=value] [device ...]
+
+       blkid  --probe [--offset offset] [--output format] [--size size]  [--match-tag  tag]  [--match-types
+              list] [--usages list] [--no-part-details] device ...
+
+       blkid  --info [--output format] [--match-tag tag] device ...
+
+DESCRIPTION
+       The  blkid  program  is  the command-line interface to working with the libblkid(3) library.  It can
+       determine the type of content (e.g. filesystem or swap) that a block  device  holds,  and  also  the
+       attributes (tokens, NAME=value pairs) from the content metadata (e.g. LABEL or UUID fields).
+
+       It  is  recommended to use lsblk(8) command to get information about block devices, or lsblk --fs to
+       get an overview of filesystems, or findmnt(8) to search in already mounted filesystems.
+
+              lsblk(8) provides more information, better control on  output  formatting,  easy  to  use  in
+              scripts  and  it  does  not  require root permissions to get actual information.  blkid reads
+              information directly from devices and for non-root users it returns cached unverified  infor‐
+              mation.  blkid is mostly designed for system services and to test libblkid functionality.
+
+
+LSBLK(8)                                   System Administration                                   LSBLK(8)
+
+NAME
+       lsblk - list block devices
+
+SYNOPSIS
+       lsblk [options] [device...]
+
+DESCRIPTION
+       lsblk lists information about all available or the specified block devices.  The lsblk command reads
+       the sysfs filesystem and udev db to gather information. If the udev db is not available or lsblk  is
+       compiled  without  udev  support  than  it tries to read LABELs, UUIDs and filesystem types from the
+       block device. In this case root permissions are necessary.
+
+       The command prints all block devices (except RAM disks) in a tree-like format by default.  Use lsblk
+       --help to get a list of all available columns.
+
+       -f, --fs
+              Output info about filesystems.  This option is equivalent to -o NAME,FSTYPE,LABEL,UUID,MOUNT‐
+              POINT.  The authoritative information about filesystems and raids is provided by the blkid(8)
+              command.
+       -o, --output list
+              Specify which output columns to print.  Use --help to get a list of all supported columns.
+
+              The  default  list  of columns may be extended if list is specified in the format +list (e.g.
+              lsblk -o +UUID).
+
+
+
+[root@localhost ~]# lsblk --help
+
+Usage:
+ lsblk [options] [<device> ...]
+
+List information about block devices.
+
+Options:
+ -a, --all            print all devices
+ -b, --bytes          print SIZE in bytes rather than in human readable format
+ -d, --nodeps         don't print slaves or holders
+ -D, --discard        print discard capabilities
+ -z, --zoned          print zone model
+ -e, --exclude <list> exclude devices by major number (default: RAM disks)
+ -f, --fs             output info about filesystems
+ -i, --ascii          use ascii characters only
+ -I, --include <list> show only devices with specified major numbers
+ -J, --json           use JSON output format
+ -l, --list           use list format output
+ -T, --tree           use tree format output
+ -m, --perms          output info about permissions
+ -n, --noheadings     don't print headings
+ -o, --output <list>  output columns
+ -O, --output-all     output all columns
+ -p, --paths          print complete device path
+ -P, --pairs          use key="value" output format
+ -r, --raw            use raw output format
+ -s, --inverse        inverse dependencies
+ -S, --scsi           output info about SCSI devices
+ -t, --topology       output info about topology
+ -x, --sort <column>  sort output by <column>
+
+ -h, --help           display this help
+ -V, --version        display version
+
+Available output columns:
+        NAME  device name
+       KNAME  internal kernel device name
+     MAJ:MIN  major:minor device number
+      FSTYPE  filesystem type
+  MOUNTPOINT  where the device is mounted
+       LABEL  filesystem LABEL
+        UUID  filesystem UUID
+    PARTTYPE  partition type UUID
+   PARTLABEL  partition LABEL
+    PARTUUID  partition UUID
+   PARTFLAGS  partition flags
+          RA  read-ahead of the device
+          RO  read-only device
+          RM  removable device
+     HOTPLUG  removable or hotplug device (usb, pcmcia, ...)
+       MODEL  device identifier
+      SERIAL  disk serial number
+        SIZE  size of the device
+       STATE  state of the device
+       OWNER  user name
+       GROUP  group name
+        MODE  device node permissions
+   ALIGNMENT  alignment offset
+      MIN-IO  minimum I/O size
+      OPT-IO  optimal I/O size
+     PHY-SEC  physical sector size
+     LOG-SEC  logical sector size
+        ROTA  rotational device
+       SCHED  I/O scheduler name
+     RQ-SIZE  request queue size
+        TYPE  device type
+    DISC-ALN  discard alignment offset
+   DISC-GRAN  discard granularity
+    DISC-MAX  discard max bytes
+   DISC-ZERO  discard zeroes data
+       WSAME  write same max bytes
+         WWN  unique storage identifier
+        RAND  adds randomness
+      PKNAME  internal parent kernel device name
+        HCTL  Host:Channel:Target:Lun for SCSI
+        TRAN  device transport type
+  SUBSYSTEMS  de-duplicated chain of subsystems
+         REV  device revision
+      VENDOR  device vendor
+       ZONED  zone model
+
+For more details see lsblk(8).
+
+[root@localhost ~]# lsblk -o NAME,UUID,LABEL
+NAME                 UUID                                   LABEL
+sda                                                         
+├─sda1               ac852133-2d9c-4580-af07-faaadbf3e8f0   
+└─sda2               xSu98o-6nBy-TjVi-IrQx-1QFQ-VyX8-itZGtx 
+  ├─cl-root          5ee78fe9-7731-4a07-9525-7ac7e03e85b5   
+  └─cl-swap          5c7272a6-e5d3-467d-a4db-824d19cd10dd   
+sdb                                                         
+└─sdb1               7xUI0d-McRB-CBkF-HI37-wKG8-dOPv-gO1JWb 
+  └─vg--test-myfiles 916b19d6-a562-43aa-a7ed-11f11f313bda   
+sdc                                                         
+sr0                  2020-11-18-21-39-52-00                 CentOS-8-3-2011-x86_64-dvd
+
+
+$ blkid
 /dev/nvme0n1p1: UUID="5c786174-e864-4c37-a912-b92b4a4b138e" BLOCK_SIZE="4096" TYPE="ext4" PARTUUID="39947a2a-01"
 /dev/nvme0n1p2: UUID="kGln2P-dcGK-y2I4-Izd1-cH9v-s1iu-cZ0ppd" TYPE="LVM2_member" PARTUUID="39947a2a-02"
 /dev/nvme0n1p3: UUID="5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d" TYPE="swap" PARTUUID="39947a2a-03"
@@ -36,7 +297,124 @@ UUID=5c786174-e864-4c37-a912-b92b4a4b138e /boot                   ext4    defaul
 UUID=5bf6a3dc-0a2f-4ca8-b2e9-787052b37f7d none                    swap    defaults        0 0
 UUID="9d2fd572-f810-481a-a737-1d90c25d1141"	/mounts/data	xfs	defaults	1	2
 
+
+[root@localhost ~]# man -k filesystem table | grep fstab
+fstab (5)            - static information about the filesystems
+
+
+FSTAB(5)                                        File Formats                                       FSTAB(5)
+
+NAME
+       fstab - static information about the filesystems
+
+SYNOPSIS
+       /etc/fstab
+
+DESCRIPTION
+       The  file  fstab contains descriptive information about the filesystems the system can mount.  fstab
+       is only read by programs, and not written; it is the duty of the system  administrator  to  properly
+       create  and  maintain  this  file.   The  order  of  records  in fstab is important because fsck(8),
+       mount(8), and umount(8) sequentially iterate through fstab doing their thing.
+
+       Each filesystem is described on a separate line.  Fields on each line are separated by tabs or  spa‐
+       ces.  Lines starting with '#' are comments.  Blank lines are ignored.
+
+       The following is a typical example of an fstab entry:
+
+              LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2
+
+       The first field (fs_spec).
+              This field describes the block special device or remote filesystem to be mounted.
+
+              For  ordinary  mounts,  it  will  hold (a link to) a block special device node (as created by
+              mknod(8)) for the device to be mounted, like `/dev/cdrom' or `/dev/sdb7'.   For  NFS  mounts,
+              this  field  is  <host>:<dir>,  e.g., `knuth.aeb.nl:/'.  For filesystems with no storage, any
+              string can be used, and will show up in df(1) output, for example.  Typical usage  is  `proc'
+              for  procfs;  `mem',  `none', or `tmpfs' for tmpfs.  Other special filesystems, like udev and
+              sysfs, are typically not listed in fstab.
+
+              LABEL=<label> or UUID=<uuid> may be given instead of a device name.  This is the  recommended
+              method,  as  device names are often a coincidence of hardware detection order, and can change
+              when other disks are added or removed.  For  example,  `LABEL=Boot'  or  `UUID=3e6be9de-8139‐
+              -11d1-9106-a43f08d823a6'.   (Use a filesystem-specific tool like e2label(8), xfs_admin(8), or
+              fatlabel(8) to set LABELs on filesystems).
+
+              It's also possible to use PARTUUID= and PARTLABEL=. These  partitions  identifiers  are  sup‐
+              ported for example for GUID Partition Table (GPT).
+
+              See mount(8), blkid(8) or lsblk(8) for more details about device identifiers.
+
+              Note  that  mount(8)  uses  UUIDs as strings. The string representation of the UUID should be
+              based on lower case characters.
+
+       The second field (fs_file).
+              This field describes the mount point (target) for the filesystem.  For swap partitions,  this
+              field  should  be specified as `none'. If the name of the mount point contains spaces or tabs
+              these can be escaped as `\040' and '\011' respectively.
+
+       The third field (fs_vfstype).
+              This field describes the type of the filesystem.  Linux supports many filesystem types: ext4,
+              xfs, btrfs, f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs,
+              and many more.  For more details, see mount(8).
+
+              An entry swap denotes a file or partition to be used for swapping, cf. swapon(8).   An  entry
+              none is useful for bind or move mounts.
+
+              More than one type may be specified in a comma-separated list.
+
+              mount(8)  and  umount(8)  support  filesystem subtypes.  The subtype is defined by '.subtype'
+              suffix.  For example 'fuse.sshfs'. It's recommended to use subtype notation rather  than  add
+              any prefix to the first fstab field (for example 'sshfs#example.com' is deprecated).
+
+       The fourth field (fs_mntops).
+              This field describes the mount options associated with the filesystem.
+
+              It is formatted as a comma-separated list of options.  It contains at least the type of mount
+              (ro or rw), plus any additional options appropriate to the filesystem type (including perfor‐
+              mance-tuning options).  For details, see mount(8) or swapon(8).
+
+              Basic filesystem-independent options are:
+
+              defaults
+                     use default options: rw, suid, dev, exec, auto, nouser, and async.
+
+              noauto do not mount when "mount -a" is given (e.g., at boot time)
+
+              user   allow a user to mount
+
+              owner  allow device owner to mount
+
+              comment
+                     or x-<name> for use by fstab-maintaining programs
+
+              nofail do not report errors for this device if it does not exist.
+
+       The fifth field (fs_freq).
+              This  field is used by dump(8) to determine which filesystems need to be dumped.  Defaults to
+              zero (don't dump) if not present.
+
+       The sixth field (fs_passno).
+              This field is used by fsck(8) to determine the order in which filesystem checks are  done  at
+              boot time.  The root filesystem should be specified with a fs_passno of 1.  Other filesystems
+              should have a fs_passno of 2.  Filesystems within a drive will be checked  sequentially,  but
+              filesystems  on  different  drives  will  be  checked at the same time to utilize parallelism
+              available in the hardware.  Defaults to zero (don't fsck) if not present.
+
+
 [root@localhost /]# mount -a
+
+
+       -a, --all
+              Mount all filesystems (of the given types) mentioned in fstab (except for  those  whose  line
+              contains  the  noauto  keyword).  The filesystems are mounted following their order in fstab.
+              The mount command compares filesystem source, target (and fs root for bind mount or btrfs) to
+              detect  already  mounted  filesystems.  The  kernel table with already mounted filesystems is
+              cached during mount --all. It means that all duplicated fstab entries will be mounted.
+
+              Note that it is a bad practice to use mount -a for fstab checking. The  recommended  solution
+              is findmnt --verify.
+
+
 
 [root@localhost mounts]# df -h
 Filesystem             Size  Used Avail Use% Mounted on
@@ -51,6 +429,14 @@ tmpfs                  371M  4.6M  367M   2% /run/user/1000
 /dev/sr0               8.5G  8.5G     0 100% /run/media/lisa/RHEL-8-3-0-BaseOS-x86_64
 /dev/nvme0n1p5          95M  6.0M   89M   7% /mounts/data
 
+DF(1)                                          User Commands                                          DF(1)
+
+NAME
+       df - report file system disk space usage
+
+SYNOPSIS
+       df [OPTION]... [FILE]...
 
 
-
+       -h, --human-readable
+              print sizes in powers of 1024 (e.g., 1023M)

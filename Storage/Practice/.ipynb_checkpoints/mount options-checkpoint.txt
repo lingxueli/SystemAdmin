@@ -1,0 +1,87 @@
+MOUNT(8)                                   System Administration                                   MOUNT(8)
+
+NAME
+       mount - mount a filesystem
+
+SYNOPSIS
+       mount [-l|-h|-V]
+
+       mount -a [-fFnrsvw] [-t fstype] [-O optlist]
+
+       mount [-fnrsvw] [-o options] device|dir
+
+       mount [-fnrsvw] [-t fstype] [-o options] device dir
+
+COMMAND-LINE OPTIONS
+       The full set of mount options used by an invocation of mount is determined by first  extracting  the
+       mount options for the filesystem from the fstab table, then applying any options specified by the -o
+       argument, and finally applying a -r or -w option, when present.
+
+
+FSTAB(5)                                        File Formats                                       FSTAB(5)
+
+NAME
+       fstab - static information about the filesystems
+
+SYNOPSIS
+       /etc/fstab
+
+DESCRIPTION
+
+              This field describes the mount options associated with the filesystem.
+
+              It is formatted as a comma-separated list of options.  It contains at least the type of mount
+              (ro or rw), plus any additional options appropriate to the filesystem type (including perfor‐
+              mance-tuning options).  For details, see mount(8) or swapon(8).
+
+              Basic filesystem-independent options are:
+
+              defaults
+                     use default options: rw, suid, dev, exec, auto, nouser, and async.
+
+              noauto do not mount when "mount -a" is given (e.g., at boot time)
+
+              user   allow a user to mount
+
+              owner  allow device owner to mount
+
+              comment
+                     or x-<name> for use by fstab-maintaining programs
+
+              nofail do not report errors for this device if it does not exist.
+
+
+
+   Mount options for reiserfs
+       Reiserfs is a journaling filesystem.
+
+       user_xattr
+              Enable Extended User Attributes.  See the attr(5) manual page.
+
+       acl    Enable POSIX Access Control Lists.  See the acl(5) manual page.
+
+FILESYSTEM-INDEPENDENT MOUNT OPTIONS
+       Some of these options are only useful when they appear in the /etc/fstab file.
+
+       ro     Mount the filesystem read-only.
+
+       rw     Mount the filesystem read-write.
+    
+        ### enable/disable access time modification
+       atime  Do  not  use  the noatime feature, so the inode access time is controlled by kernel defaults.
+              See also the descriptions of the relatime and strictatime mount options.
+
+       noatime
+              Do not update inode access times on this filesystem (e.g. for faster access on the news spool
+              to  speed  up news servers).  This works for all inode types (directories too), so it implies
+              nodiratime.
+              
+        ### allow/disallow execution of program files
+       exec   Permit execution of binaries.
+
+       noexec Do not permit direct execution of any binaries on the mounted filesystem.
+
+        ### to mount a network file system
+       _netdev
+              The filesystem resides on a device that requires network access (used to prevent  the  system
+              from attempting to mount these filesystems until the network has been enabled on the system).
