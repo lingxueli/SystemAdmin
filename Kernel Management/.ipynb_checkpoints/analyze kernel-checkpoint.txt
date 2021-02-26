@@ -1,0 +1,258 @@
+# kernel threads are those with names surrounded by []
+[root@localhost lisa]# ps aux | head -n 20
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.2  0.5 179756  9324 ?        Ss   17:06   0:04 /usr/lib/systemd/systemd --switched-root --system --deserialize 18
+root           2  0.0  0.0      0     0 ?        S    17:06   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   17:06   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   17:06   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   17:06   0:00 [kworker/0:0H-kblockd]
+root           8  0.0  0.0      0     0 ?        I<   17:06   0:00 [mm_percpu_wq]
+root           9  0.0  0.0      0     0 ?        S    17:06   0:00 [ksoftirqd/0]
+root          10  0.0  0.0      0     0 ?        I    17:06   0:00 [rcu_sched]
+root          11  0.0  0.0      0     0 ?        S    17:06   0:00 [migration/0]
+root          12  0.0  0.0      0     0 ?        S    17:06   0:00 [watchdog/0]
+root          13  0.0  0.0      0     0 ?        S    17:06   0:00 [cpuhp/0]
+root          14  0.0  0.0      0     0 ?        S    17:06   0:00 [cpuhp/1]
+root          15  0.0  0.0      0     0 ?        S    17:06   0:00 [watchdog/1]
+root          16  0.0  0.0      0     0 ?        S    17:06   0:00 [migration/1]
+root          17  0.0  0.0      0     0 ?        S    17:06   0:00 [ksoftirqd/1]
+root          19  0.0  0.0      0     0 ?        I<   17:06   0:00 [kworker/1:0H-kblockd]
+root          21  0.0  0.0      0     0 ?        S    17:06   0:00 [kdevtmpfs]
+root          22  0.0  0.0      0     0 ?        I<   17:06   0:00 [netns]
+root          23  0.0  0.0      0     0 ?        S    17:06   0:00 [kauditd]
+
+$ man ps
+
+       To see every process on the system using BSD syntax:
+          ps ax
+          ps axu
+
+       a      Lift the BSD-style "only yourself" restriction, which is imposed upon the set of all
+              processes when some BSD-style (without "-") options are used or when the ps personality
+              setting is BSD-like.  The set of processes selected in this manner is in addition to the set
+              of processes selected by other means.  An alternate description is that this option causes ps
+              to list all processes with a terminal (tty), or to list all processes when used together with
+              the x option.
+
+       x      Lift the BSD-style "must have a tty" restriction, which is imposed upon the set of all
+              processes when some BSD-style (without "-") options are used or when the ps personality
+              setting is BSD-like.  The set of processes selected in this manner is in addition to the set
+              of processes selected by other means.  An alternate description is that this option causes ps
+              to list all processes owned by you (same EUID as ps), or to list all processes when used
+              together with the a option.
+
+       u      Display user-oriented format.
+
+
+[root@localhost vg-test]# ps axu | head -n 5
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.5 245716 10860 ?        Ss   09:13   0:18 /usr/lib/systemd/systemd --switched-root --system --deserialize 17
+root           2  0.0  0.0      0     0 ?        S    09:13   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   09:13   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   09:13   0:00 [rcu_par_gp]
+[root@localhost vg-test]# ps ax | head -n 5
+    PID TTY      STAT   TIME COMMAND
+      1 ?        Ss     0:18 /usr/lib/systemd/systemd --switched-root --system --deserialize 17
+      2 ?        S      0:00 [kthreadd]
+      3 ?        I<     0:00 [rcu_gp]
+      4 ?        I<     0:00 [rcu_par_gp]
+
+
+
+
+kernel driver: used by kernel to access the hardware
+
+open source driver: public support; but it may not contains all the desired functionality exists on the hardware.
+
+closed source driver: it's provided by the vendor of the hardware. Not supported by the Linux kernel community: a bad functionting driver may crush the system. And no one from the linux community can help with that.
+
+tainted kernel: It's the kernel that contains closed source drivers. Red Hat support helps to identify the issue if somethings wents wrong, they might ask you to remove the driver that tainted the kernel.
+
+How to analyze kernel
+
+1. 
+dmesg (1)            - print or control the kernel ring buffer
+
+Kernel ring buffer is where kernel keeps the recent log info
+2.
+
+PROC(5)                                  Linux Programmer's Manual                                  PROC(5)
+
+NAME
+       proc - process information pseudo-filesystem
+
+DESCRIPTION
+       The  proc  filesystem  is a pseudo-filesystem which provides an interface to kernel data structures.
+       It is commonly mounted at /proc.  
+
+3.
+UNAME(1)                                       User Commands                                       UNAME(1)
+
+NAME
+       uname - print system information
+
+SYNOPSIS
+       uname [OPTION]...
+
+# kernel ring buffer
+[lisa@localhost ~]$ dmesg
+[    0.000000] Linux version 4.18.0-193.el8.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 8.3.1 20191121 (Red Hat 8.3.1-5) (GCC)) #1 SMP Fri May 8 10:59:10 UTC 2020
+[    0.000000] Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-193.el8.x86_64 root=/dev/mapper/cl-sda2 ro crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82f6b65 rd.lvm.lv=cl/sda2 rhgb quiet
+[    0.000000] Disabled fast string operations
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+
+
+
+NAME
+       dmesg - print or control the kernel ring buffer
+
+SYNOPSIS
+       dmesg [options]
+
+       dmesg --clear
+       dmesg --read-clear [options]
+       dmesg --console-level level
+       dmesg --console-on
+       dmesg --console-off
+
+DESCRIPTION
+       dmesg is used to examine or control the kernel ring buffer.
+
+       The default action is to display all messages from the kernel ring buffer.
+
+
+JOURNALCTL(1)                                    journalctl                                   JOURNALCTL(1)
+
+NAME
+       journalctl - Query the systemd journal
+
+SYNOPSIS
+       journalctl [OPTIONS...] [MATCHES...]
+
+DESCRIPTION
+       journalctl may be used to query the contents of the systemd(1) journal as written by systemd-
+       journald.service(8).
+
+       -k, --dmesg
+           Show only kernel messages. This implies -b and adds the match "_TRANSPORT=kernel".
+
+[lisa@localhost ~]$ journalctl -k
+-- Logs begin at Sun 2020-09-27 17:06:58 MDT, end at Sun 2020-09-27 17:30:06 MDT. --
+Sep 27 17:06:58 localhost.localdomain kernel: Linux version 4.18.0-193.el8.x86_64 (mockbuild@kbuilder.bsy>
+Sep 27 17:06:58 localhost.localdomain kernel: Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-193.el>
+Sep 27 17:06:58 localhost.localdomain kernel: Disabled fast string operations
+Sep 27 17:06:58 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating poin>
+Sep 27 17:06:58 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+
+[lisa@localhost ~]$ journalctl --dmesg
+-- Logs begin at Sun 2020-09-27 17:06:58 MDT, end at Sun 2020-09-27 17:30:06 MDT. --
+Sep 27 17:06:58 localhost.localdomain kernel: Linux version 4.18.0-193.el8.x86_64 (mockbuild@kbuilder.bsy>
+Sep 27 17:06:58 localhost.localdomain kernel: Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-193.el>
+Sep 27 17:06:58 localhost.localdomain kernel: Disabled fast string operations
+Sep 27 17:06:58 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating poin>
+Sep 27 17:06:58 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+
+# first column of the output is the seconds passed since the start of the kernel
+[root@localhost ~]# dmesg | head
+[    0.000000] Linux version 4.18.0-240.10.1.el8_3.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 8.3.1 20191121 (Red Hat 8.3.1-5) (GCC)) #1 SMP Mon Jan 18 17:05:51 UTC 2021
+[    0.000000] Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-240.10.1.el8_3.x86_64 root=/dev/mapper/cl-root ro crashkernel=auto resume=/dev/mapper/cl-swap rd.lvm.lv=cl/root rd.lvm.lv=cl/swap rhgb quiet
+[    0.000000] Disabled fast string operations
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+[    0.000000] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+
+
+# /proc: an interface to kernel data structures
+
+PROC(5)                                  Linux Programmer's Manual                                  PROC(5)
+
+NAME
+       proc - process information pseudo-filesystem
+
+DESCRIPTION
+       The  proc  filesystem  is a pseudo-filesystem which provides an interface to kernel data structures.
+       It is commonly mounted at /proc.  
+
+   Files and directories
+       The following list describes many of the files and directories under the /proc hierarchy.
+
+
+
+example
+
+       /proc/meminfo
+              This file reports statistics about memory usage on the system.  It  is  used  by  free(1)  to
+              report  the  amount of free and used memory (both physical and swap) on the system as well as
+              the shared memory and buffers used by the kernel.  Each line of the file consists of a param‐
+              eter name, followed by a colon, the value of the parameter, and an option unit of measurement
+              (e.g., "kB").  The list below describes the parameter names and the format specifier required
+              to read the field value.  Except as noted below, all of the fields have been present since at
+              least Linux 2.6.0.  Some fields are displayed only if the kernel was configured with  various
+              options; those dependencies are noted in the list.
+
+              MemTotal %lu
+                     Total  usable  RAM (i.e., physical RAM minus a few reserved bits and the kernel binary
+                     code).
+
+              MemFree %lu
+                     The sum of LowFree+HighFree.
+
+              MemAvailable %lu (since Linux 3.14)
+                     An estimate of how much memory is available for  starting  new  applications,  without
+                     swapping.
+
+              Buffers %lu
+                     Relatively temporary storage for raw disk blocks that shouldn't get tremendously large
+                     (20MB or so).
+
+              Cached %lu
+                     In-memory cache for files read from the disk (the page cache).  Doesn't include  Swap‐
+                     Cached.
+
+
+[root@localhost ~]# cat /proc/meminfo
+MemTotal:        1833008 kB
+MemFree:           80080 kB
+MemAvailable:     337172 kB
+Buffers:           10172 kB
+Cached:           361824 kB
+SwapCached:        36856 kB
+Active:           686580 kB
+Inactive:         622852 kB
+Active(anon):     464800 kB
+Inactive(anon):   487420 kB
+
+# uname
+UNAME(1)                                       User Commands                                       UNAME(1)
+
+NAME
+       uname - print system information
+
+       -a, --all
+              print all information, in the following order, except omit -p and -i if unknown:
+
+       -r, --kernel-release
+              print the kernel release
+
+
+[root@localhost ~]# uname -a
+Linux localhost.localdomain 4.18.0-240.10.1.el8_3.x86_64 #1 SMP Mon Jan 18 17:05:51 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+
+[root@localhost ~]# uname -r
+4.18.0-240.10.1.el8_3.x86_64
+
+
+[root@localhost ~]# hostnamectl status
+   Static hostname: localhost.localdomain
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: ef42488fe41a4812a6a0ed66f48dd10b
+           Boot ID: eea5b3a1ecad4d468049c297f5d065cd
+    Virtualization: vmware
+  Operating System: CentOS Linux 8
+       CPE OS Name: cpe:/o:centos:centos:8
+            Kernel: Linux 4.18.0-240.10.1.el8_3.x86_64
+      Architecture: x86-64
+      
+[root@localhost ~]# cat /etc/redhat-release 
+CentOS Linux release 8.3.2011
