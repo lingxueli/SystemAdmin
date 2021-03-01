@@ -1,0 +1,142 @@
+device is not fully supported because its kernel module is not loaded
+
+identify this issue
+
+# list all devices conteted to pci bus along with the kernel modules that handles them
+
+# A PCI device is any piece of computer hardware that plugs directly into a PCI slot on a computer's motherboard. PCI, which stands for Peripheral Component Interconnect, was introduced to personal computers by the Intel Corporation in 1993.
+# Peripheral Component Interconnect is a local computer bus for attaching hardware devices in a computer and is part of the PCI Local Bus standard
+
+
+
+lspci(8)                                     The PCI Utilities                                     lspci(8)
+
+NAME
+       lspci - list all PCI devices
+
+SYNOPSIS
+       lspci [options]
+
+DESCRIPTION
+       lspci is a utility for displaying information about PCI buses in the system and devices connected to
+       them.
+
+   Display options
+       -k     Show kernel drivers handling each device and also kernel  modules  capable  of  handling  it.
+              Turned on by default when -v is given in the normal mode of output.  (Currently works only on
+              Linux with kernel 2.6 or newer.)
+
+   Simple format (-m)
+       In  the  simple  format, each device is described on a single line, which is formatted as parameters
+       suitable for passing to a shell script, i.e., values separated by whitespaces, quoted and escaped if
+       necessary.   Some  of the arguments are positional: slot, class, vendor name, device name, subsystem
+       vendor name and subsystem name (the last two are empty if the device has no subsystem); the  remain‐
+       ing arguments are option-like:
+
+       -rrev  Revision number.
+
+       -pprogif
+              Programming interface.
+              
+   Verbose format (-vmm)
+       The  verbose output is a sequence of records separated by blank lines.  Each record describes a sin‐
+       gle device by a sequence of lines, each line containing a single `tag: value' pair. The tag and  the
+       value  are  separated  by a single tab character.  Neither the records nor the lines within a record
+       are in any particular order.  Tags are case-sensitive.
+
+       The following tags are defined:
+
+       Slot   The name of the slot where the device resides ([domain:]bus:device.function).   This  tag  is
+              always the first in a record.
+
+       Class  Name of the class.
+
+       Vendor Name of the vendor.
+
+       Device Name of the device.
+
+       SVendor
+              Name of the subsystem vendor (optional).
+
+       SDevice
+              Name of the subsystem (optional).
+
+       PhySlot
+              The physical slot where the device resides (optional, Linux only).
+
+       Rev    Revision number (optional).
+
+       ProgIf Programming interface (optional).
+
+       Driver Kernel driver currently handling the device (optional, Linux only).
+
+       Module Kernel  module  reporting  that  it is capable of handling the device (optional, Linux only).
+              Multiple lines with this tag can occur.
+
+       NUMANode
+              NUMA node this device is connected to (optional, Linux only).
+
+       New tags can be added in future versions, so you should silently ignore any tags  you  don't  recog‐
+       nize.
+
+# example
+
+[root@localhost ~]# lspci -k
+00:00.0 Host bridge: Intel Corporation 440BX/ZX/DX - 82443BX/ZX/DX Host bridge (rev 01)
+	Subsystem: VMware Virtual Machine Chipset
+00:01.0 PCI bridge: Intel Corporation 440BX/ZX/DX - 82443BX/ZX/DX AGP bridge (rev 01)
+00:07.0 ISA bridge: Intel Corporation 82371AB/EB/MB PIIX4 ISA (rev 08)
+	Subsystem: VMware Virtual Machine Chipset
+00:07.1 IDE interface: Intel Corporation 82371AB/EB/MB PIIX4 IDE (rev 01)
+	Subsystem: VMware Virtual Machine Chipset
+	Kernel driver in use: ata_piix
+	Kernel modules: ata_piix, ata_generic
+00:07.3 Bridge: Intel Corporation 82371AB/EB/MB PIIX4 ACPI (rev 08)
+	Subsystem: VMware Virtual Machine Chipset
+	Kernel modules: i2c_piix4
+00:07.7 System peripheral: VMware Virtual Machine Communication Interface (rev 10)
+	Subsystem: VMware Virtual Machine Communication Interface
+	Kernel driver in use: vmw_vmci
+	Kernel modules: vmw_vmci
+00:0f.0 VGA compatible controller: VMware SVGA II Adapter
+	Subsystem: VMware SVGA II Adapter
+	Kernel driver in use: vmwgfx
+	Kernel modules: vmwgfx
+00:10.0 SCSI storage controller: Broadcom / LSI 53c1030 PCI-X Fusion-MPT Dual Ultra320 SCSI (rev 01)
+	Subsystem: VMware LSI Logic Parallel SCSI Controller
+	Kernel driver in use: mptspi
+	Kernel modules: mptspi
+00:11.0 PCI bridge: VMware PCI bridge (rev 02)
+00:15.0 PCI bridge: VMware PCI Express Root Port (rev 01)
+	Kernel driver in use: pcieport
+00:15.1 PCI bridge: VMware PCI Express Root Port (rev 01)
+	Kernel driver in use: pcieport
+00:15.2 PCI bridge: VMware PCI Express Root Port (rev 01)
+	Kernel driver in use: pcieport
+00:15.3 PCI bridge: VMware PCI Express Root Port (rev 01)
+	Kernel driver in use: pcieport
+00:15.4 PCI bridge: VMware PCI Express Root Port (rev 01)
+	Kernel driver in use: pcieport
+00:15.5 PCI bridge: VMware PCI Express Root Port (rev 01)
+02:00.0 USB controller: VMware USB1.1 UHCI Controller
+	DeviceName: usb
+	Subsystem: VMware Device 1976
+	Kernel driver in use: uhci_hcd
+02:01.0 Ethernet controller: Intel Corporation 82545EM Gigabit Ethernet Controller (Copper) (rev 01)
+	DeviceName: Ethernet0
+	Subsystem: VMware PRO/1000 MT Single Port Adapter
+	Kernel driver in use: e1000
+	Kernel modules: e1000
+02:02.0 Multimedia audio controller: Ensoniq ES1371/ES1373 / Creative Labs CT2518 (rev 02)
+	DeviceName: sound
+	Subsystem: Ensoniq Audio PCI 64V/128/5200 / Creative CT4810/CT5803/CT5806 [Sound Blaster PCI]
+	Kernel driver in use: snd_ens1371
+	Kernel modules: snd_ens1371
+02:03.0 USB controller: VMware USB2 EHCI Controller
+	DeviceName: ehci
+	Subsystem: VMware USB2 EHCI Controller
+	Kernel driver in use: ehci-pci
+
+
+# if there's no modules support the device, you may consider the closed source kernel module.
+# or before you purchase the hardware, confirm with the vendor that Linux is fully supported.

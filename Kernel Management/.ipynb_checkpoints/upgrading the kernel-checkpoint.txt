@@ -1,0 +1,27 @@
+$ yum upgrade kernel
+
+# this also work
+$ yum install kernel
+
+
+GRUB 2 boot loader will pick up all the kernel under this directory /boot, which gives you the chance to select the version
+
+
+[root@localhost ~]# man -k filesystem | grep hie
+hier (7)             - description of the filesystem hierarchy
+[root@localhost ~]# man 7 hier
+
+HIER(7)                                  Linux Programmer's Manual                                  HIER(7)
+
+NAME
+       hier - description of the filesystem hierarchy
+
+DESCRIPTION
+       A typical Linux system has, among others, the following directories:
+
+       /      This is the root directory.  This is where the whole tree starts.
+
+       /boot  Contains static files for the boot loader.  This directory holds only  the  files  which  are
+              needed during the boot process.  The map installer and configuration files should go to /sbin
+              and /etc.  The operating system kernel (initrd for example) must be located in  either  /  or
+              /boot.

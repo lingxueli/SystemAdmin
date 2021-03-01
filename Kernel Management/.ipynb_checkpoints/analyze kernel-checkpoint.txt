@@ -253,6 +253,27 @@ Linux localhost.localdomain 4.18.0-240.10.1.el8_3.x86_64 #1 SMP Mon Jan 18 17:05
        CPE OS Name: cpe:/o:centos:centos:8
             Kernel: Linux 4.18.0-240.10.1.el8_3.x86_64
       Architecture: x86-64
-      
+
+
+HOSTNAMECTL(1)                                  hostnamectl                                  HOSTNAMECTL(1)
+
+NAME
+       hostnamectl - Control the system hostname
+
+SYNOPSIS
+       hostnamectl [OPTIONS...] {COMMAND}
+
+DESCRIPTION
+       hostnamectl may be used to query and change the system hostname and related settings.
+
+COMMANDS
+       The following commands are understood:
+
+       status
+           Show current system hostname and related information. If no command is specified, this is the
+           implied default.
+
+
+# more specific info about release version
 [root@localhost ~]# cat /etc/redhat-release 
 CentOS Linux release 8.3.2011
