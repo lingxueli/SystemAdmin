@@ -1,0 +1,180 @@
+# understand systemd target
+
+SYSTEMCTL(1)                                     systemctl                                     SYSTEMCTL(1)
+
+NAME
+       systemctl - Control the systemd system and service manager
+
+SYNOPSIS
+       systemctl [OPTIONS...] COMMAND [UNIT...]
+
+
+       cat PATTERN...
+           Show backing files of one or more units. Prints the "fragment" and "drop-ins" (source files) of
+           units. Each file is preceded by a comment which includes the file name. Note that this shows the
+           contents of the backing files on disk, which may not match the system manager's understanding of
+           these units if any unit files were updated on disk and the daemon-reload command wasn't issued
+           since.
+
+
+
+[root@localhost ~]# systemctl cat multi-user.target 
+# /usr/lib/systemd/system/multi-user.target
+#  SPDX-License-Identifier: LGPL-2.1+
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Multi-User System
+Documentation=man:systemd.special(7)
+Requires=basic.target
+Conflicts=rescue.service rescue.target
+After=basic.target rescue.service rescue.target
+AllowIsolate=yes
+
+[root@localhost ~]# man -k systemd
+
+systemd.target (5)   - Target unit configuration
+systemd.time (7)     - Time and date specifications
+systemd.timer (5)    - Timer unit configuration
+systemd.unit (5)     - Unit configuration
+
+
+
+SYSTEMD.TARGET(5)                              systemd.target                             SYSTEMD.TARGET(5)
+
+NAME
+       systemd.target - Target unit configuration
+
+SYNOPSIS
+       target.target
+
+DESCRIPTION
+       A unit configuration file whose name ends in ".target" encodes information about a target unit of
+       systemd, which is used for grouping units and as well-known synchronization points during start-up.
+
+
+
+$ man 5 systemd.unit
+
+       Wants=
+           A weaker version of Requires=. Units listed in this option will be started if the configuring
+           unit is. However, if the listed units fail to start or cannot be added to the transaction, this
+           has no impact on the validity of the transaction as a whole. This is the recommended way to hook
+           start-up of one unit to the start-up of another unit.
+
+           Note that dependencies of this type may also be configured outside of the unit configuration
+           file by adding symlinks to a .wants/ directory accompanying the unit file. For details, see
+           above.
+
+[root@localhost system]# pwd
+/usr/lib/systemd/system
+[root@localhost system]# ls -al | grep want | head
+drwxr-xr-x.  2 root root     6 Dec 17 16:30 basic.target.wants
+drwxr-xr-x.  2 root root     6 Dec 17 16:30 dbus.target.wants
+drwxr-xr-x.  2 root root     6 Dec 17 16:30 default.target.wants
+drwxr-xr-x.  2 root root    50 Feb 14 10:53 graphical.target.wants
+drwxr-xr-x.  2 root root    81 Jan 22 23:39 halt.target.wants
+drwxr-xr-x.  2 root root    72 Jan 22 23:39 initrd-switch-root.target.wants
+drwxr-xr-x.  2 root root   225 Jan 22 23:38 initrd.target.wants
+drwxr-xr-x.  2 root root    36 Jan 22 23:39 kexec.target.wants
+drwxr-xr-x.  2 root root    40 Feb 14 10:53 local-fs.target.wants
+drwxr-xr-x.  2 root root    36 Feb 14 10:59 machines.target.wants
+
+[root@localhost system]# cd multi-user.target.wants/
+[root@localhost multi-user.target.wants]# ls
+dbus.service           plymouth-quit-wait.service      systemd-update-utmp-runlevel.service
+getty.target           systemd-ask-password-wall.path  systemd-user-sessions.service
+plymouth-quit.service  systemd-logind.service
+
+# example
+
+[root@localhost ~]# yum provides vsftpd
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:00:13 ago on Wed 03 Mar 2021 11:39:16 PM MST.
+vsftpd-3.0.3-32.el8.x86_64 : Very Secure Ftp Daemon
+Repo        : appstream
+Matched from:
+Provide    : vsftpd = 3.0.3-32.el8
+
+vsftpd-3.0.3-32.el8.x86_64 : Very Secure Ftp Daemon
+Repo        : AppStream-exercise
+Matched from:
+Provide    : vsftpd = 3.0.3-32.el8
+
+[root@localhost ~]# yum search vsftpd
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:01:27 ago on Wed 03 Mar 2021 11:39:16 PM MST.
+======================================== Name Exactly Matched: vsftpd ========================================
+vsftpd.x86_64 : Very Secure Ftp Daemon
+
+$ yum install vsftpd
+
+[root@localhost ~]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; disabled; vendor preset: disabled)
+   Active: inactive (dead)
+[root@localhost ~]# systemctl cat  vsftpd
+# /usr/lib/systemd/system/vsftpd.service
+[Unit]
+Description=Vsftpd ftp daemon
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+[root@localhost ~]# systemctl edit vsftpd
+Editing "/etc/systemd/system/vsftpd.service.d/override.conf" canceled: temporary file is empty.
+
+[root@localhost ~]# systemctl edit multi-user.target
+Editing "/etc/systemd/system/multi-user.target.d/override.conf" canceled: temporary file is empty.
+
+[root@localhost ~]# cd /etc/systemd/system
+[root@localhost system]# ls
+basic.target.wants                          getty.target.wants           remote-fs.target.wants
+bluetooth.target.wants                      graphical.target.wants       rpc-gssd.service.requires
+dbus-org.bluez.service                      multi-user.target.wants      rpc-statd-notify.service.requires
+dbus-org.fedoraproject.FirewallD1.service   network-online.target.wants  rpc-statd.service.requires
+dbus-org.freedesktop.Avahi.service          nfs-blkmap.service.requires  sockets.target.wants
+dbus-org.freedesktop.ModemManager1.service  nfs-idmapd.service.requires  sysinit.target.wants
+dbus-org.freedesktop.nm-dispatcher.service  nfs-mountd.service.requires  syslog.service
+dbus-org.freedesktop.timedate1.service      nfs-server.service.requires  systemd-timedated.service
+default.target                              nginx.service.d              timers.target.wants
+default.target.wants                        php-fpm.service.d            vmtoolsd.service.requires
+display-manager.service                     printer.target.wants
+[root@localhost system]# ls -al | grep multi-user.
+drwxr-xr-x.  2 root root 4096 Jan 25 01:05 multi-user.target.wants
+
+[root@localhost system]# cd multi-user.target.wants/
+[root@localhost multi-user.target.wants]# ls 
+atd.service           cups.service        ksmtuned.service        NetworkManager.service  smartd.service
+auditd.service        firewalld.service   libstoragemgmt.service  nfs-client.target       sshd.service
+avahi-daemon.service  httpd.service       libvirtd.service        remote-fs.target        sssd.service
+chronyd.service       irqbalance.service  mcelog.service          rhsmcertd.service       tuned.service
+crond.service         kdump.service       mdmonitor.service       rpcbind.service         vdo.service
+cups.path             ksm.service         ModemManager.service    rsyslog.service         vmtoolsd.service
+
+
+[root@localhost multi-user.target.wants]# systemctl enable vsftpd
+Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /usr/lib/systemd/system/vsftpd.service.
+
+# each time you enable a service, a symbolic link is created
