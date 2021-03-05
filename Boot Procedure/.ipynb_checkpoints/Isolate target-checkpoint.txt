@@ -1,0 +1,98 @@
+# isolate target = switch to that target
+
+$ man systemctl
+       isolate UNIT
+           Start the unit specified on the command line and its dependencies
+           and stop all others, unless they have IgnoreOnIsolate=yes (see
+           systemd.unit(5)). If a unit name with no extension is given, an
+           extension of ".target" will be assumed.
+
+           This is similar to changing the runlevel in a traditional init
+           system. The isolate command will immediately stop processes that
+           are not enabled in the new unit, possibly including the graphical
+           environment or terminal you are currently using.
+
+           Note that this is allowed only on units where AllowIsolate= is
+           enabled. See systemd.unit(5) for details.
+
+
+# what target is available?
+SYSTEMCTL(1)                       systemctl                      SYSTEMCTL(1)
+
+NAME
+       systemctl - Control the systemd system and service manager
+
+SYNOPSIS
+       systemctl [OPTIONS...] COMMAND [UNIT...]
+
+       -t, --type=
+           The argument should be a comma-separated list of unit types such as
+           service and socket.
+
+           If one of the arguments is a unit type, when listing units, limit
+           display to certain unit types. Otherwise, units of all types will
+           be shown.
+
+           As a special case, if one of the arguments is help, a list of
+           allowed values will be printed and the program will exit.
+
+
+$ systemctl -t target
+swap.target            loaded active active Swap                       
+sysinit.target         loaded active active System Initialization      
+timers.target          loaded active active Timers                     
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+25 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+
+
+# list all including inactive target
+$ systemctl -t target --all
+● syslog.target             not-found inactive dead   syslog.target            
+  time-sync.target          loaded    inactive dead   System Time Synchronized 
+  timers.target             loaded    active   active Timers                   
+  umount.target             loaded    inactive dead   Unmount All Filesystems  
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+38 loaded units listed.
+To show all installed unit files use 'systemctl list-unit-files'.
+
+
+# what target allows isolation
+
+[root@localhost system]# pwd
+/usr/lib/systemd/system
+
+[root@localhost system]# grep Isolate *.target
+anaconda.target:AllowIsolate=yes
+ctrl-alt-del.target:AllowIsolate=yes
+default.target:AllowIsolate=yes
+emergency.target:AllowIsolate=yes
+exit.target:AllowIsolate=yes
+graphical.target:AllowIsolate=yes
+halt.target:AllowIsolate=yes
+initrd-switch-root.target:AllowIsolate=yes
+initrd.target:AllowIsolate=yes
+kexec.target:AllowIsolate=yes
+multi-user.target:AllowIsolate=yes
+poweroff.target:AllowIsolate=yes
+reboot.target:AllowIsolate=yes
+rescue.target:AllowIsolate=yes
+runlevel0.target:AllowIsolate=yes
+runlevel1.target:AllowIsolate=yes
+runlevel2.target:AllowIsolate=yes
+runlevel3.target:AllowIsolate=yes
+runlevel4.target:AllowIsolate=yes
+runlevel5.target:AllowIsolate=yes
+runlevel6.target:AllowIsolate=yes
+system-update.target:AllowIsolate=yes
+
+# reboots the system
+$ systemctl isolate reboot.target
