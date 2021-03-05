@@ -1,5 +1,47 @@
+$ man systemctl
+
+
+       get-default
+           Return the default target to boot into. This returns the target
+           unit name default.target is aliased (symlinked) to.
+
+       set-default TARGET
+           Set the default target to boot into. This sets (symlinks) the
+           default.target alias to the given target unit.
+
+
 [root@localhost lisa]# systemctl get-default
 graphical.target
+
+# install dependencies before making the change
+$ man yum
+   Group Command
+       Groups are virtual collections of packages. DNF keeps track  of  groups
+       that the user selected ("marked") installed and can manipulate the com‐
+       prising packages with simple commands.
+
+       dnf [options] group [summary] <group-spec>
+              Display overview of how many groups are installed and available.
+              With a spec, limit the output to the matching groups. summary is
+              the default groups subcommand.
+
+       dnf [options] group info <group-spec>
+              Display package lists of  a  group.  Shows  which  packages  are
+              installed or available from a repository when -v is used.
+
+       dnf [options] group install [--with-optional] <group-spec>...
+              Mark  the specified group installed and install packages it con‐
+              tains.  Also  include  optional  packages  of   the   group   if
+
+       dnf [options] group list <group-spec>...
+              List  all  matching  groups, either among installed or available
+              groups.  If  nothing  is  specified,  list  all  known   groups.
+              --installed  and  --available  options narrow down the requested
+              list.  Records are ordered by the display_order tag  defined  in
+              comps.xml  file.   Provides a list of all hidden groups by using
+              option --hidden.  Provides  group  IDs  when  the  -v  or  --ids
+              options are used.
+
 
 [root@localhost lisa]# yum group list
 Last metadata expiration check: 1 day, 1:40:39 ago on Mon 28 Sep 2020 09:18:14 PM MDT.
@@ -25,4 +67,9 @@ Available Groups:
    Security Tools
    Smart Card Support
    System Tools
+
+# if it's not installed
+$ yum group install "Server with GUI"
+
+# change default target
 [root@localhost lisa]# systemctl set-default graphical.target
