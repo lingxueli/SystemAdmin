@@ -1,44 +1,37 @@
-1. POST(power-on self-test)
+1. Firmware executes POST check on hardware. 
+POST = power-on self-test
 
-Firmware executes POST check on hardware.
 The firmware can be UEFI(Universal Extended Firmware Interface) or BIOS(Basic Input Output System).
 Firmware initializes the hardware.
 
-2. Select the bootable device
-
-From UEFI boot firmware or BIOS, a bootable device is located.
-
-3. Load the boot loader
+2. Firmware finds the bootable device and loads the boot loader
 
 From bootable device, a boot loader is located. on RHEL it's GRUB 2.
 
-4. Load the kernel
+3. Boot loaders loads kernel and initramfs into memory
 
-On boot menu, you can choose the operating system to load. 
+At this phase, it's the minimal operating system. On boot menu, you can choose the operating system to load.
 
-To load linux, kernel is loaded together with the initramfs into the memory. 
+initramfs = initial ram disk, also known as initrd
 
-initramfs contains kernel modules for all hardware that is required to boot, as well as the initial scripts required for the next stage of booting. 
+    What does initramfs do?
 
-In RHEL 8, initframs = a complete operating system
+        initramfs loads kernel modules for hardwares, as well as the initial scripts. 
 
-5. Start /sbin/init
+         - kernel modules for hardwares: it loads udev deamon to take care of the hardware initialization
+         - initial scripts: it loads the first process /sbin/init . This process is linked to Systemd.
 
-This is the first process loaded from initramfs. This process is linked to Systemd.
-udev deamon is loaded as well to take care of the hardware initialization.
+    What does kernel do?
 
-6. Process initrd.target
+        In the minimal operating environment, kernel finds the file system image from /boot, and mount it on the /sysroot directory. This is a temporay root file system.
+        Later, the kernel unmounts the initrd image, and mount the actual physical root file system on /.
 
-All units from this target are executed. Root file system on disk is mounted on the /sysroot directory.
+        After root file system is ready, kernel executes the Systemd process with PID 1 and passes control over to it.
 
-At this point, you're prepared fro a minimal operating environment. Enough is loaded to pass the system installation.
+4. Systemd run the default target
 
-7. Switch to root file system
+Systemd looks for the default target to execute and runs all of its units. All user space processes and network services are started from here. 
 
-System switches to the root file system and loads the Systemd process from disk as well.
+A login screen is presented, user can authenticate. 
 
-8. Run the default target
-
-Systemd look for the default target to execute and runs all of its units. A login screen is presented, user can authenticate.
-
-Login prompt can be prompted before all systemd unit files have been loaded succesfully. Login promt != fully operational
+Login prompt can be prompted before all systemd unit files have been loaded succesfully. Login prompt != fully operational
