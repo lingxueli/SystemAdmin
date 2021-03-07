@@ -1,0 +1,132 @@
+$ man 7 bootparam
+   The argument list
+       The kernel command line is parsed into a list of  strings  (boot  argu‐
+       ments) separated by spaces.  Most of the boot arguments have the form:
+
+           name[=value_1][,value_2]...[,value_10]
+
+   General non-device-specific boot arguments
+       'init=...'
+              This  sets the initial command to be executed by the kernel.  If
+              this is not set,  or  cannot  be  found,  the  kernel  will  try
+              /sbin/init,  then  /etc/init,  then  /bin/init, then /bin/sh and
+              panic if all of this fails.
+
+
+dracut-cmdline.service (8) - runs the dracut hooks to parse the kernel comman...
+dracut.cmdline (7)   - dracut kernel command line options
+dracut.kernel (7)    - dracut kernel command line options
+
+# Dracut is a set of tools that provide enhanced functionality for automating the Linux boot process. The tool named dracut is used to create a Linux boot image (initramfs) by copying tools and files from an installed system and combining it with the Dracut framework, which is usually found in /usr/lib/dracut/modules.d.
+
+
+
+dracut.cmdline (7)   - dracut kernel command line options
+
+   Standard
+       init=<path to real init>
+           specify the path to the init program to be started after the
+           initramfs has finished
+
+       root=<path to blockdevice>
+           specify the block device to use as the root filesystem.
+
+           Example.
+
+               root=/dev/sda1
+               root=/dev/disk/by-path/pci-0000:00:1f.1-scsi-0:0:1:0-part1
+               root=/dev/disk/by-label/Root
+               root=LABEL=Root
+               root=/dev/disk/by-uuid/3f5ad593-4546-4a94-a374-bcfb68aa11f7
+               root=UUID=3f5ad593-4546-4a94-a374-bcfb68aa11f7
+               root=PARTUUID=3f5ad593-4546-4a94-a374-bcfb68aa11f7
+
+
+       rd.break
+           drop to a shell at the end
+
+
+# rd.break 
+
+it stops the boot procedure while it's still in the initramfs stage
+It's used in the process of recovering the root password
+
+# init=/bin/sh or init=/bin/bash
+
+it starts the shell imediately after loading the kernel and initramfs
+
+
+# systemd.unit=emergency.target
+# systemd.unit=rescue.target
+
+kernel-command-line (7) - Kernel command line parameters
+
+DESCRIPTION
+       The kernel, the initial RAM disk (initrd) and basic userspace
+       functionality may be configured at boot via kernel command line
+       arguments.
+
+       For command line parameters understood by the kernel, please see
+       kernel-parameters.html[1] and bootparam(7).
+
+       For command line parameters understood by the initial RAM disk, please
+       see dracut.cmdline(7), or the documentation of the specific initrd
+       implementation of your installation.
+
+
+
+CORE OS COMMAND LINE ARGUMENTS
+       systemd.unit=, rd.systemd.unit=, systemd.dump_core, systemd.crash_chvt,
+       systemd.crash_shell, systemd.crash_reboot, systemd.confirm_spawn,
+       systemd.service_watchdogs, systemd.show_status, systemd.log_target=,
+       systemd.log_level=, systemd.log_location=, systemd.log_color,
+       systemd.default_standard_output=, systemd.default_standard_error=,
+       systemd.setenv=, systemd.machine_id=, systemd.unified_cgroup_hierarchy,
+       systemd.legacy_systemd_cgroup_controller
+           Parameters understood by the system and service manager to control
+           system behavior. For details, see systemd(1).
+
+
+[root@localhost ~]# systemctl cat reboot.target 
+# /usr/lib/systemd/system/reboot.target
+[root@localhost ~]# cd /usr/lib/systemd/system/
+[root@localhost system]# ls -al | grep .target
+-rw-r--r--.  1 root root   481 May 28  2020 anaconda.target
+-rw-r--r--.  1 root root   956 Dec 17 16:29 basic.target
+drwxr-xr-x.  2 root root     6 Dec 17 16:30 basic.target.wants
+-rw-r--r--.  1 root root   419 Jun 22  2018 bluetooth.target
+-rw-r--r--.  1 root root   455 Dec 17 16:29 boot-complete.target
+-rw-r--r--.  1 root root   465 Jun 22  2018 cryptsetup-pre.target
+-rw-r--r--.  1 root root   412 Jun 22  2018 cryptsetup.target
+...
+
+[root@localhost system]# man 8 runlevel
+NAME
+       runlevel - Print previous and current SysV runlevel
+
+SYNOPSIS
+       runlevel [options...]
+
+OVERVIEW
+       "Runlevels" are an obsolete way to start and stop groups of services used in SysV init.
+       systemd provides a compatibility layer that maps runlevels to targets, and associated binaries
+       like runlevel. Nevertheless, only one runlevel can be "active" at a given time, while systemd
+       can activate multiple targets concurrently, so the mapping to runlevels is confusing and only
+       approximate. Runlevels should not be used in new code, and are mostly useful as a shorthand
+       way to refer the matching systemd targets in kernel boot parameters.
+
+       Table 1. Mapping between runlevels and systemd targets
+       ┌─────────┬───────────────────┐
+       │Runlevel │ Target            │
+       ├─────────┼───────────────────┤
+       │0        │ poweroff.target   │
+       ├─────────┼───────────────────┤
+       │1        │ rescue.target     │
+       ├─────────┼───────────────────┤
+       │2, 3, 4  │ multi-user.target │
+       ├─────────┼───────────────────┤
+       │5        │ graphical.target  │
+       ├─────────┼───────────────────┤
+       │6        │ reboot.target     │
+       └─────────┴───────────────────┘
+
