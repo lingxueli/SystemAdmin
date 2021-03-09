@@ -1,3 +1,10 @@
+If initramfs is broken, you will not be able to see:
+
+1. the root directory gets mounted on /
+2. systemd is started
+
+Assuming the bootloader is fine, these are the signs indicates the initramfs is broken, 
+
 $ man -k initram
 $ man dracut
 Name
@@ -6,9 +13,12 @@ Description
     Create a initramfs image for the kernel with the version <version>. If version is omitted, the version of the running kernel will be used...
     
 
+-f, --force
+overwrite existing initramfs file.
+
 FILES         
 
-       /etc/dracut.conf             ==> master config file  
+       /etc/dracut.conf             ==> master config file, you can modify the main file or the cutom file
            see dracut.conf5
 
        /etc/dracut.conf.d/*.conf    ==> custom config
@@ -19,7 +29,7 @@ FILES
 
 
 # reinstall to repair
-$ dracut
+$ dracut --force
 
 
-To install initramfs with options, you should look into dracut config files listed above.
+To install initramfs with extra setup, you should look into dracut config files listed above.
