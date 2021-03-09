@@ -1,0 +1,59 @@
+Ctrl + Alt for to escapte the focus of VM.
+
+The rescue disk is on the installation disk
+
+1. Boot form installation disk:
+    Press Esc from the very beginning. You need to do it quick, before the normal boot memu starts.
+    From the new boot menu, select "CD-ROM device"
+    
+2. Select "Troubleshooting" from the menu item, then select "rescue a Red Hat Enterpsise linux system"
+
+This option is used most frequently. Other options are:
+
+Install Red Hat Enterprise Linux 8 in Basic graphics mode: 
+    It reinstalls the machine. It's your last resort if all of the troubleshootings won't work.
+
+Run a Memory Test:
+    This is used to mark a bad memroy chip, so the machine can boot from other good areas in the memory.
+    
+Boot from Local Drive:
+    instead of the boot loader running on the hard disk, it will run on a different disk?
+
+3. After select "rescue a Red Hat Enterpsise linux system", Linux is going to find an installed linux system (rescue system) and mount it under /mnt/sysimage. 
+
+Here's the prompt showing up when it's finished loading:
+    The rescue environment will tempt to find linux installation and mount it under /mnt/sysroot. You can make any change, choose 1 to proceed with this step. if this doesn't work, choose 3 to skip directly to a shell 
+
+    1. continue
+    2. read only mount
+    3. skip to shell
+    4. quit / reboot
+    
+    
+Press 1 to accept the "Continue" option. 
+
+Here comes another prompt:
+    if you would like the root of your system to be the root of rescue system, run the following:
+        chroot /mnt/sysroot
+        
+    when finished please exit the shell and your system will reboot.
+    please press enter to get a shell.
+
+Enter to access the rescue shell.
+
+chroot(1) - Linux man page
+Name
+    chroot - run command or interactive shell with special root directory
+Synopsis
+    chroot [OPTION] NEWROOT [COMMAND [ARG]...]
+    chroot OPTION
+
+4. Now your system is accessible through /mnt/sysroot. 
+Type "chroot /mnt/sysroot" to run command with the new root directory and get in to the root shell.
+Now you can access all the tools that you need to repair the system.
+
+If you don't change the root directory, any configuration update would be made on the rescue disk, but it's read-only.
+
+5. Type Exit to exit the root shell. Type reboot to restart the machine in a normal mode.
+
+If you don't exit the shell first, reboot would be ignored with error "running in chroot, ignoring request"

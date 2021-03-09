@@ -59,6 +59,14 @@ it starts the shell imediately after loading the kernel and initramfs
 # systemd.unit=emergency.target
 # systemd.unit=rescue.target
 
+this starts a different operation mode. 
+
+You can use "systemctl list-units" to see the number of loaded unitds.
+
+It brings you to a shell where you still have access to the command line
+
+
+# man page for this command
 kernel-command-line (7) - Kernel command line parameters
 
 DESCRIPTION
@@ -86,7 +94,7 @@ CORE OS COMMAND LINE ARGUMENTS
            Parameters understood by the system and service manager to control
            system behavior. For details, see systemd(1).
 
-
+# what target is available
 [root@localhost ~]# systemctl cat reboot.target 
 # /usr/lib/systemd/system/reboot.target
 [root@localhost ~]# cd /usr/lib/systemd/system/
