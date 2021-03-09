@@ -1,0 +1,25 @@
+$ man -k initram
+$ man dracut
+Name
+    a low level tool to generate initramfs image
+Description
+    Create a initramfs image for the kernel with the version <version>. If version is omitted, the version of the running kernel will be used...
+    
+
+FILES         
+
+       /etc/dracut.conf             ==> master config file  
+           see dracut.conf5
+
+       /etc/dracut.conf.d/*.conf    ==> custom config
+           see dracut.conf5
+
+       /usr/lib/dracut/dracut.conf.d/*.conf       ==> system defaul config
+           see dracut.conf5
+
+
+# reinstall to repair
+$ dracut
+
+
+To install initramfs with options, you should look into dracut config files listed above.
