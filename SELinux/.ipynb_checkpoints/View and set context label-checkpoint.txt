@@ -1,0 +1,244 @@
+Context or context labels shows the category of SELinux objects. SELinux rules are created to match the context of source objects to the context of target objects.
+
+It can be used by: 
+    File and directories
+    Ports
+    Process
+    Users
+
+
+
+# see current context labels
+
+# use -Z option. many commands offer it.
+
+
+$ man ls
+       -Z, --context
+              print any security context of each file
+
+[root@localhost ~]# ls -Z
+unconfined_u:object_r:admin_home_t:s0 ACLdir
+    system_u:object_r:admin_home_t:s0 anaconda-ks.cfg
+unconfined_u:object_r:admin_home_t:s0 etc
+unconfined_u:object_r:admin_home_t:s0 file.acls
+    system_u:object_r:admin_home_t:s0 initial-setup-ks.cfg
+unconfined_u:object_r:admin_home_t:s0 suidfiles
+unconfined_u:object_r:admin_home_t:s0 suidfiles2
+
+$ man ps
+       Z      Add a column of security data.  Identical to -M (for SELinux).
+       
+[root@localhost ~]# ps auxZ | head
+LABEL                           USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+system_u:system_r:init_t:s0     root           1  0.0  0.3 245664  6164 ?        Ss   14:35   0:12 /usr/lib/systemd/systemd --switched-root --system --deserialize 18
+system_u:system_r:kernel_t:s0   root           2  0.0  0.0      0     0 ?        S    14:35   0:00 [kthreadd]
+system_u:system_r:kernel_t:s0   root           3  0.0  0.0      0     0 ?        I<   14:35   0:00 [rcu_gp]
+system_u:system_r:kernel_t:s0   root           4  0.0  0.0      0     0 ?        I<   14:35   0:00 [rcu_par_gp]
+system_u:system_r:kernel_t:s0   root           6  0.0  0.0      0     0 ?        I<   14:35   0:00 [kworker/0:0H-kblockd]
+system_u:system_r:kernel_t:s0   root           9  0.0  0.0      0     0 ?        I<   14:35   0:00 [mm_percpu_wq]
+system_u:system_r:kernel_t:s0   root          10  0.0  0.0      0     0 ?        S    14:35   0:00 [ksoftirqd/0]
+system_u:system_r:kernel_t:s0   root          11  0.0  0.0      0     0 ?        I    14:35   0:06 [rcu_sched]
+system_u:system_r:kernel_t:s0   root          12  0.0  0.0      0     0 ?        S    14:35   0:00 [migration/0]
+[root@localhost ~]# ps auxZ | tail
+system_u:system_r:kernel_t:s0   root       11160  0.0  0.0      0     0 ?        I    22:46   0:00 [kworker/1:3-mm_percpu_wq]
+system_u:system_r:kernel_t:s0   root       11479  0.0  0.0      0     0 ?        I    23:05   0:00 [kworker/1:1-cgroup_destroy]
+system_u:system_r:kernel_t:s0   root       11562  0.0  0.0      0     0 ?        I    23:07   0:00 [kworker/u256:2-events_unbound]
+system_u:system_r:kernel_t:s0   root       11619  0.1  0.0      0     0 ?        I    23:11   0:00 [kworker/0:1-events_freezable_power_]
+system_u:system_r:kernel_t:s0   root       11667  0.0  0.0      0     0 ?        I    23:13   0:00 [kworker/1:0-cgroup_destroy]
+system_u:system_r:kernel_t:s0   root       11689  0.0  0.0      0     0 ?        I    23:13   0:00 [kworker/u256:1-events_unbound]
+system_u:system_r:kernel_t:s0   root       11735  0.0  0.0      0     0 ?        I    23:14   0:00 [kworker/1:2]
+system_u:system_r:ksmtuned_t:s0 root       11783  0.0  0.0   7284   796 ?        S    23:15   0:00 sleep 60
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 root 11822 0.0  0.2 58692 3920 pts/0 R+ 23:16   0:00 ps auxZ
+unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 root 11823 0.0  0.0 7320 776 pts/0 R+ 23:16   0:00 tail
+
+
+$ man ss
+SS(8)                                                                System Manager's Manual                                                                SS(8)
+
+NAME
+       ss - another utility to investigate sockets
+
+SYNOPSIS
+       ss [options] [ FILTER ]
+
+DESCRIPTION
+       ss is used to dump socket statistics. It allows showing information similar to netstat.  It can display more TCP and state information than other tools.
+
+       -Z, --context
+              As the -p option but also shows process security context.
+
+              For netlink(7) sockets the initiating process context is displayed as follows:
+
+                     1.  If valid pid show the process context.
+
+                     2.  If destination is kernel (pid = 0) show kernel initial context.
+
+                     3.  If  a  unique  identifier  has been allocated by the kernel or netlink user, show context as "unavailable". This will generally indicate
+                         that a process has more than one netlink socket active.
+
+
+       -z, --contexts
+              As the -Z option but also shows the socket context. The socket context is taken from the associated inode and is not the actual socket context held by the kernel. Sockets are typically  labeled with the context of the creating process, however the context shown will reflect any policy role, type and/or range transition rules applied, and is therefore a useful reference.
+
+       -l, --listening
+              Display only listening sockets (these are omitted by default).
+              
+       -t, --tcp
+              Display TCP sockets.
+
+       -u, --udp
+              Display UDP sockets.
+
+[root@localhost ~]# ss -tulZ | head
+Netid  State   Recv-Q   Send-Q      Local Address:Port       Peer Address:Port                                                                                  
+udp    UNCONN  0        0               127.0.0.1:323             0.0.0.0:*      users:(("chronyd",pid=1012,proc_ctx=system_u:system_r:chronyd_t:s0,fd=6))      
+udp    UNCONN  0        0           192.168.122.1:domain          0.0.0.0:*      users:(("dnsmasq",pid=1955,proc_ctx=system_u:system_r:dnsmasq_t:s0-s0:c0.c1023,fd=5))
+udp    UNCONN  0        0          0.0.0.0%virbr0:bootps          0.0.0.0:*      users:(("dnsmasq",pid=1955,proc_ctx=system_u:system_r:dnsmasq_t:s0-s0:c0.c1023,fd=3))
+udp    UNCONN  0        0                 0.0.0.0:59471           0.0.0.0:*      users:(("avahi-daemon",pid=987,proc_ctx=system_u:system_r:avahi_t:s0,fd=17))   
+udp    UNCONN  0        0                 0.0.0.0:sunrpc          0.0.0.0:*      users:(("rpcbind",pid=953,proc_ctx=system_u:system_r:rpcbind_t:s0,fd=5),("systemd",pid=1,proc_ctx=system_u:system_r:init_t:s0,fd=42))
+
+
+Here's how to read a context label
+
+system_u:system_r:chronyd_t
+User:Role:Type
+
+
+How to set context types
+
+
+
+semanage(8)                                                                       semanage(8)
+
+NAME
+       semanage - SELinux Policy Management tool
+
+SYNOPSIS
+       semanage {import,export,login,user,port,interface,module,node,fcontext,boolean,permis‐
+       sive,dontaudit,ibpkey,ibendport}
+                       ...  positional arguments:
+       ...
+       fcontext Manage file context mapping definitions
+
+DESCRIPTION
+       semanage is used to configure certain elements of  SELinux  policy  without  requiring
+       modification  to or recompilation from policy sources.  This includes the mapping from
+       Linux usernames to SELinux user identities (which controls the initial  security  con‐
+       text  assigned to Linux users when they login and bounds their authorized role set) as
+       well as security context mappings for various kinds of objects, such as network ports,
+       interfaces,  infiniband pkeys and endports, and nodes (hosts) as well as the file con‐
+       text mapping. Note that the semanage login command deals with the mapping  from  Linux
+       usernames  (logins)  to SELinux user identities, while the semanage user command deals
+       with the mapping from SELinux user identities to authorized role sets.  In most cases,
+       only the former mapping needs to be adjusted by the administrator; the latter is prin‐
+       cipally defined by the base policy and usually does not require modification.
+
+
+OPTIONS
+       -h, --help
+              List help information
+
+SEE ALSO
+       selinux(8), semanage-boolean(8), semanage-dontaudit(8), semanage-export(8),  semanage-
+       fcontext(8),  semanage-import(8),  semanage-interface(8), semanage-login(8), semanage-
+       module(8),  semanage-node(8),  semanage-permissive(8),   semanage-port(8),   semanage-
+       user(8) semanage-ibkey(8), semanage-ibendport(8),
+
+
+semanage-fcontext(8)                                                     semanage-fcontext(8)
+
+NAME
+       semanage-fcontext - SELinux Policy Management file context tool
+
+SYNOPSIS
+       semanage  fcontext  [-h]  [-n]  [-N] [-S STORE] [ --add ( -t TYPE -f FTYPE -r RANGE -s
+       SEUSER | -e EQUAL ) FILE_SPEC ) | --delete ( -t TYPE -f FTYPE | -e EQUAL ) FILE_SPEC )
+       |  --deleteall  |  --extract  |  --list [-C] | --modify ( -t TYPE -f FTYPE -r RANGE -s
+       SEUSER | -e EQUAL ) FILE_SPEC ) ]
+
+DESCRIPTION
+       semanage is used to configure certain elements of  SELinux  policy  without  requiring
+       modification  to  or  recompilation from policy sources.  semanage fcontext is used to
+       manage the default file system labeling on an SELinux system.  This command maps  file
+       paths using regular expressions to SELinux labels.
+
+       -a, --add
+              Add a record of the specified object type
+
+       -t TYPE, --type TYPE
+              SELinux Type for the object
+
+EXAMPLE
+       remember to run restorecon after you set the file context
+       Add file-context for everything under /web
+       # semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+       # restorecon -R -v /web
+
+       Substitute /home1 with /home when setting file context
+       # semanage fcontext -a -e /home /home1
+       # restorecon -R -v /home1
+
+       For home directories under top level directory, for example /disk6/home,
+       execute the following commands.
+       # semanage fcontext -a -t home_root_t "/disk6"
+       # semanage fcontext -a -e /home /disk6/home
+       # restorecon -R -v /disk6
+
+
+How to find the context type to use
+
+1. look for the context label to use. Check out the existing items as reference.
+
+[root@localhost ~]# ls -Z /var/www
+system_u:object_r:httpd_sys_script_exec_t:s0 cgi-bin
+    system_u:object_r:httpd_sys_content_t:s0 html
+    
+Use "httpd_sys_content_t" for the context labels of any new directoy that should be accessible by Apache web server
+
+2. set the context/policy
+
+$ semanage fcontext -a -t httpd_sys_content_t "/mydir(/.*)?"
+
+3. apply the policy settings to file system
+
+$ restorecon -R -v /mydir
+
+restorecon(8)                        SELinux User Command                       restorecon(8)
+
+NAME
+       restorecon - restore file(s) default SELinux security contexts.
+
+SYNOPSIS
+       restorecon  [-r|-R]  [-m]  [-n]  [-p] [-v] [-i] [-F] [-W] [-I|-D] [-e directory] path‐
+       name ...
+
+       restorecon [-f infilename] [-e directory] [-r|-R] [-m] [-n] [-p] [-v] [-i]  [-F]  [-W]
+       [-I|-D]
+
+DESCRIPTION
+       This manual page describes the restorecon program.
+
+       This  program  is  primarily used to set the security context (extended attributes) on
+       one or more files.
+
+       It can also be run at any other time to correct inconsistent labels,  to  add  support
+       for  newly-installed policy or, by using the -n option, to passively check whether the
+       file contexts are all set as specified by the active policy (default behavior).
+
+       If a file object does not have a context, restorecon will write the default context to
+       the file object's extended attributes. If a file object has a context, restorecon will
+       only modify the type portion of the security context.  The  -F  option  will  force  a
+       replacement of the entire context.
+
+       If  a  file  is labeled with customizable SELinux type (for list of customizable types
+       see /etc/selinux/{SELINUXTYPE}/contexts/customizable_types),  restorecon  won't  reset
+       the label unless the -F option is used.
+
+       It  is  the  same  executable  as setfiles but operates in a slightly different manner
+       depending on its argv[0].
+
+       -R, -r change files and directories file labels recursively (descend directories).
+
+       -v     show  changes  in file labels. Multiple -v options increase the verbosity. Note
+              that the -v and -p options are mutually exclusive.
