@@ -1,0 +1,190 @@
+selinux(8)            SELinux Command Line documentation            selinux(8)
+
+NAME
+       SELinux - NSA Security-Enhanced Linux (SELinux)
+
+DESCRIPTION
+       NSA  Security-Enhanced Linux (SELinux) is an implementation of a flexi‐
+       ble mandatory access control architecture in the Linux  operating  sys‐
+       tem.   The  SELinux  architecture  provides  general  support  for  the
+       enforcement of many kinds of mandatory access control policies, includ‐
+       ing  those  based  on  the  concepts  of Type Enforcement®, Role- Based
+       Access Control, and Multi-Level Security.  Background  information  and
+       technical    documentation    about    SELinux    can   be   found   at
+       http://www.nsa.gov/research/selinux.
+
+       The /etc/selinux/config configuration file controls whether SELinux  is
+       enabled  or  disabled, and if enabled, whether SELinux operates in per‐
+       missive mode or enforcing mode.  The SELINUX variable may be set to any
+       one  of  disabled,  permissive,  or  enforcing  to  select one of these
+       options.  The disabled option completely disables  the  SELinux  kernel
+       and  application  code,  leaving the system running without any SELinux
+       protection.  The permissive option enables the SELinux code, but causes
+       it  to  operate in a mode where accesses that would be denied by policy
+       are permitted but audited.  The enforcing option  enables  the  SELinux
+       code  and causes it to enforce access denials as well as auditing them.
+       Permissive mode may yield a different set  of  denials  than  enforcing
+       mode,  both  because enforcing mode will prevent an operation from pro‐
+       ceeding past the first denial and because some  application  code  will
+       fall back to a less privileged mode of operation if denied access.
+
+
+
+getenforce (8)       - get the current mode of SELinux
+setenforce (8)       - modify the mode SELinux is running in
+
+[root@localhost ~]# getenforce
+Enforcing
+
+
+
+setenforce(8)         SELinux Command Line documentation         setenforce(8)
+
+NAME
+       setenforce - modify the mode SELinux is running in
+
+SYNOPSIS
+       setenforce [Enforcing|Permissive|1|0]
+
+DESCRIPTION
+       Use Enforcing or 1 to put SELinux in enforcing mode.
+       Use Permissive or 0 to put SELinux in permissive mode.
+
+       If SELinux is disabled and you want to enable it, or SELinux is enabled
+       and you want to disable it, please see selinux(8).
+
+
+sestatus (8)         - SELinux status tool
+sestatus(8)           SELinux command line documentation           sestatus(8)
+
+NAME
+       sestatus - SELinux status tool
+
+SYNOPSIS
+       sestatus [-v] [-b]
+
+       This tool is used to get the status of a system running SELinux.
+
+DESCRIPTION
+       This manual page describes the sestatus program.
+
+       This  tool  is  used  to get the status of a system running SELinux. It
+       displays data about whether SELinux is enabled or disabled, location of
+       key  directories, and the loaded policy with its status as shown in the
+       example:
+              > sestatus
+              SELinux status:              enabled
+              SELinuxfs mount:             /selinux
+              SELinux root directory:      /etc/selinux
+              Loaded policy name:          targeted
+              Current mode:                permissive
+              Mode from config file:       enforcing
+              Policy MLS status:           enabled
+              Policy deny_unknown status:  allow
+              Memory protection checking:  actual (secure)
+              Max kernel policy version:   26
+
+OPTIONS
+       -v
+              Displays the contexts of  files  and  processes  listed  in  the
+              /etc/sestatus.conf  file.  It  also checks whether the file is a
+              symbolic link, if so then the context of the target file is also
+              shown.
+
+              The following contexts will always be displayed:
+                     The current process context
+                     The init process context
+                     The controlling terminal file context
+
+
+[root@localhost ~]# sestatus
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      32
+
+
+[root@localhost ~]# sestatus -v
+SELinux status:                 enabled
+SELinuxfs mount:                /sys/fs/selinux
+SELinux root directory:         /etc/selinux
+Loaded policy name:             targeted
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled
+Policy deny_unknown status:     allowed
+Memory protection checking:     actual (secure)
+Max kernel policy version:      32
+
+Process contexts:
+Current context:                unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+Init context:                   system_u:system_r:init_t:s0
+/usr/sbin/sshd                  system_u:system_r:sshd_t:s0-s0:c0.c1023
+
+File contexts:
+Controlling terminal:           unconfined_u:object_r:user_devpts_t:s0
+/etc/passwd                     system_u:object_r:passwd_file_t:s0
+/etc/shadow                     system_u:object_r:shadow_t:s0
+/bin/bash                       system_u:object_r:shell_exec_t:s0
+/bin/login                      system_u:object_r:login_exec_t:s0
+/bin/sh                         system_u:object_r:bin_t:s0 -> system_u:object_r:shell_exec_t:s0
+/sbin/agetty                    system_u:object_r:getty_exec_t:s0
+/sbin/init                      system_u:object_r:bin_t:s0 -> system_u:object_r:init_exec_t:s0
+/usr/sbin/sshd                  system_u:object_r:sshd_exec_t:s0
+
+Example:
+
+# view current status of SELinux
+[root@localhost ~]# getenforce
+Enforcing
+
+
+# Enable SELinux for the current session
+
+$ setenforce 0
+$ getenforce
+
+# if it s disabled, edit the config file and change it to enforcing. The change would be persisitent between reboot. 
+
+# After change, reboot the system before continue. Because SELinux is part of the kernel.
+
+[root@localhost ~]# cat /etc/sysconfig/selinux
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+# SELINUXTYPE= can take one of these three values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected. 
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+
+Example
+
+1. disable SELinux
+
+set SELinux=disabled in the config file /etc/sysconfig/selinux
+$ reboot
+$ getenforce
+
+2. Change the status from disabled to enforcing for the current session
+
+$ setenforce 1
+You'll receive the error msg as stated in the man page of setenforce
+
+3. Make the change persistent
+set SELinux=enforcing in the config file /etc/sysconfig/selinux
+$ reboot
+$ sestatis -v
+
+Now the status is changed successfully.
