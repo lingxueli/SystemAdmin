@@ -1,0 +1,2 @@
+[root@localhost ~]# man -l _selinux
+man: _selinux: No such file or directory

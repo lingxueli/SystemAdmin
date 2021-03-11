@@ -1,0 +1,76 @@
+How to set a context label on apache's nondefault document root
+
+Besides the update in Apache config, you'll need to update SELinux. Because both SELinux and Apache can block the access to the document root.
+
+1. install dependencies
+$ yum install httpd curl -y
+
+2. set up new document root
+$ mkdir /web
+$ vim /web/index.html
+test
+
+$ vim /etc/httpd/conf/httpd.conf
+DocumentRoot "/web"
+
+3.  update Apache permission setting, allow access to the new directory
+
+$ vim /etc/httpd/conf/httpd.conf
+
+# <Directory> blocks below.
+#
+<Directory />
+    AllowOverride none
+    Require all denied
+</Directory>
+#
+# Relax access to content within /var/www.
+#
+<Directory "/var/www">
+    AllowOverride None
+    # Allow open access:
+    Require all granted
+</Directory>
+
+# Relax access to the new directory
+<Directory "/web">
+    AllowOverride None 
+    Require all granted
+</Directory>
+
+4. restart web service
+
+# if the service is already run, restart it
+$ systemctl restart httpd 
+
+# otherwise enable and start it now
+$ systemctl enable --now httpd
+
+5. test
+
+$ curl http://localhost
+
+# it shows the default web page; it's not the new web page that's just created
+# that's because the new web page is blocked by SELinux
+
+6. turn SELinux into permissive mode and verify that is SELinux blocking it
+
+# permissive mode
+$ setenforce 0
+
+$ curl http://localhost 
+# once SELinux allows the access, apache web server can access the new document root
+
+7. set up the correct policy so the web page is still accessible when SELinux becomes active
+
+apply the correct context label to the policy
+$ semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+
+apply the policy to the file system
+$ restorecon -R -v /web
+
+turn SELinux into enforcing mode
+$ setenforce 1
+
+8. test
+$ curl http://localhost
