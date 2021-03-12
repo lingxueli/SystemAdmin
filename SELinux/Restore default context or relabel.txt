@@ -1,0 +1,77 @@
+restorecon(8)           SELinux User Command          restorecon(8)
+
+NAME
+       restorecon  -  restore file(s) default SELinux security con‐
+       texts.
+
+SYNOPSIS
+       restorecon [-r|-R]  [-m]  [-n]  [-p]  [-v]  [-i]  [-F]  [-W]
+       [-I|-D] [-e directory] pathname ...
+
+       restorecon  [-f infilename] [-e directory] [-r|-R] [-m] [-n]
+       [-p] [-v] [-i] [-F] [-W] [-I|-D]
+
+DESCRIPTION
+       This manual page describes the restorecon program.
+
+       This program is primarily used to set the  security  context
+       (extended attributes) on one or more files.
+
+       It can also be run at any other time to correct inconsistent
+       labels, to add support for  newly-installed  policy  or,  by
+       using  the  -n  option,  to passively check whether the file
+       contexts are all set  as  specified  by  the  active  policy
+       (default behavior).
+
+       -R, -r change files and directories file  labels  recursively  (descend
+              directories).
+
+       -v     show  changes  in  file labels. Multiple -v options increase the
+              verbosity. Note that the -v and -p options are  mutually  exclu‐
+              sive.
+
+# take the context of /etc/hosts as an example. 
+# Show the original context
+[root@localhost ~]# ls -Z /etc/hosts
+system_u:object_r:net_conf_t:s0 /etc/hosts
+
+# the copy of this file takes a different context.
+# when the new file is created/copied, the file inherites the context from the parent directory
+[root@localhost ~]# cp /etc/hosts ~
+[root@localhost ~]# ls -Z ~/hosts
+unconfined_u:object_r:admin_home_t:s0 /root/hosts
+[root@localhost ~]# mv ~/hosts /etc
+mv: overwrite '/etc/hosts'? y
+[root@localhost ~]# ls -Z /etc/hosts
+unconfined_u:object_r:admin_home_t:s0 /etc/hosts
+
+# It's copied from root directory, when doing the cp, the context is not preserved.
+# If you want to preserve the context during the cp, use the option --perserve=context
+
+# restore the default context by restorecon
+# it restores the default context
+[root@localhost ~]# restorecon -v /etc/hosts
+Relabeled /etc/hosts from unconfined_u:object_r:admin_home_t:s0 to unconfined_u:object_r:net_conf_t:s0
+
+
+# relabel during the boot process, it restores the default context of all files after restart
+[root@localhost ~]# touch /.autorelabel
+$ reboot
+
+
+# how to relabel the file system
+$ restorecon -Rv /
+
+# auto relabel during the reboot
+# create a file /.autorelabel
+$ touch /.autorelabel
+
+selinux(8)            SELinux Command Line documentation            selinux(8)
+
+NAME
+       SELinux - NSA Security-Enhanced Linux (SELinux)
+
+       The  best  way  to  relabel  the file system is to create the flag file
+       /.autorelabel and reboot.  system-config-selinux, also has  this  capa‐
+       bility.   The restorecon/fixfiles commands are also available for rela‐
+       beling files.
