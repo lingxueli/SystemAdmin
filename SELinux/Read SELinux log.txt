@@ -1,0 +1,93 @@
+[root@localhost ~]# man -k audit | grep selinux
+auditadm_selinux (8) - Audit administrator role - Security Enhanced Linux Policy
+auditadm_screen_selinux (8) - Security Enhanced Linux Policy for the auditadm_screen processes
+auditadm_su_selinux (8) - Security Enhanced Linux Policy for the auditadm_su processes
+auditadm_sudo_selinux (8) - Security Enhanced Linux Policy for the auditadm_sudo processes
+auditctl_selinux (8) - Security Enhanced Linux Policy for the auditctl processes
+auditd_selinux (8)   - Security Enhanced Linux Policy for the auditd processes
+
+$ man 8 auditd_selinux
+
+PROCESS TYPES
+       SELinux defines process types (domains) for each process running on the system
+
+       You can see the context of a process using the -Z option to ps
+
+       Policy governs the access confined processes have to files.  SELinux auditd policy  is  very  flexible  allowing
+       users to setup their auditd processes in as secure a method as possible.
+
+       The following process types are defined for auditd:
+
+       auditd_t
+
+       Note: semanage permissive -a auditd_t can be used to make the process type auditd_t permissive. SELinux does not
+       deny access to permissive process types, but the AVC (SELinux denials) messages are still generated.
+
+MANAGED FILES
+       The SELinux process type auditd_t can manage files labeled with the following file types.  The paths listed  are
+       the default paths for these file types.  Note the processes UID still need to have DAC permissions.
+
+       anon_inodefs_t
+
+       auditd_log_t
+
+            /var/log/audit(/.*)?
+            /var/log/audit.log.*
+
+
+Example to analysi SELinux denial msg in the log file
+
+log file: /var/log/audit/audit.log
+type=AVC
+$ grep AVC /var/log/audit/audit.log | grep http
+
+avc: denied {map}
+# a map request was denied. the map request is to read attributes of a file, i.e. getattr
+
+comm="httpd" 
+# command that issues the getattr request
+
+path="web/index.html"
+# the file it tries to access
+
+
+scontext=system_u:system_r:httpd_t:s0  
+# source context is set to httpd_t
+
+tcontext=unconfined_u:object_r:default_t:s0  
+# target context is set to default_t
+
+SELinux disallow the access from the source context to the target context
+To fix this, relabel the file to use the default context
+
+
+[root@localhost ~]# yum whatprovides */sealert
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:12:29 ago on Sat 13 Mar 2021 08:43:37 PM MST.
+setroubleshoot-server-3.3.24-1.el8.x86_64 : SELinux troubleshoot server
+Repo        : @System
+Matched from:
+Filename    : /usr/bin/sealert
+
+$ yum install -y setroubleshoot-server
+
+[root@localhost ~]# man -k sealert
+sealert (8)          - setroubleshoot client tool
+
+sealert (8)          - setroubleshoot client tool
+
+NAME
+       sealert - setroubleshoot client tool
+
+SYNOPSIS
+       sealert [-b] [-f local_id] [-h] [-s] [-S] [-l id] [-a file] [-u] [-p] [-P plugin_name]
+
+DESCRIPTION
+       This manual page describes the sealert program.
+
+
+$ sealter
