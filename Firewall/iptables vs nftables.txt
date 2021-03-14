@@ -1,0 +1,36 @@
+# common tools to interact with netfilter are iptables, nftables
+
+# netfilter: what firewalld interacts with in order to control the traffic.
+
+# iptables is used before linux 8
+# nftables is the used after linux 8
+
+[root@localhost ~]# man -k iptables
+ip6tables-restore-translate (8) - translation tool to migrate from iptables t...
+ip6tables-save (8)   - dump iptables rules
+iptables (8)         - administration tool for IPv4/IPv6 packet filtering and...
+iptables-apply (8)   - a safer way to update iptables remotely
+iptables-extensions (8) - list of extensions in the standard iptables distrib...
+iptables-restore (8) - Restore IP Tables
+iptables-restore-translate (8) - translation tool to migrate from iptables to...
+iptables-save (8)    - dump iptables rules
+iptables-translate (8) - translation tool to migrate from iptables to nftables
+ip6tables (8)        - administration tool for IPv4/IPv6 packet filtering and...
+iptables_selinux (8) - Security Enhanced Linux Policy for the iptables processes
+tc-xt (8)            - tc iptables action
+xtables-nft (8)      - iptables using nftables kernel api
+xtables-translate (8) - translation tool to migrate from iptables to nftables
+
+# install nftables
+[root@localhost ~]# yum whatprovides */nftables
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 3:41:20 ago on Sat 13 Mar 2021 08:43:37 PM MST.
+nftables-1:0.9.3-16.el8.i686 : Netfilter Tables userspace utillites
+Repo        : baseos
+Matched from:
+Filename    : /etc/nftables
+Filename    : /usr/share/licenses/nftables

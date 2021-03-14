@@ -1,0 +1,113 @@
+[root@localhost ~]# man -k firewalld
+firewall-cmd (1)     - firewalld command line client
+firewall-offline-cmd (1) - firewalld offline command line client
+firewalld (1)        - Dynamic Firewall Manager
+firewalld.conf (5)   - firewalld configuration file
+firewalld.dbus (5)   - firewalld D-Bus interface description
+firewalld.direct (5) - firewalld direct configuration file
+firewalld.helper (5) - firewalld helper configuration files
+firewalld.icmptype (5) - firewalld icmptype configuration files
+firewalld.ipset (5)  - firewalld ipset configuration files
+firewalld.lockdown-whitelist (5) - firewalld lockdown whitelist configuration file
+firewalld.richlanguage (5) - Rich Language Documentation
+firewalld.service (5) - firewalld service configuration files
+firewalld.zone (5)   - firewalld zone configuration files
+firewalld.zones (5)  - firewalld zones
+firewalld_selinux (8) - Security Enhanced Linux Policy for the firewalld processes
+
+# what firewalld services are avaiable
+# it's not the service in systemd
+
+FIREWALL-CMD(1)                            firewall-cmd                            FIREWALL-CMD(1)
+
+NAME
+       firewall-cmd - firewalld command line client
+
+SYNOPSIS
+       firewall-cmd [OPTIONS...]
+
+DESCRIPTION
+       firewall-cmd is the command line client of the firewalld daemon. It provides interface to
+       manage runtime and permanent configuration.
+
+       The runtime configuration in firewalld is separated from the permanent configuration. This
+       means that things can get changed in the runtime or permanent configuration.
+
+       [--permanent] --get-services
+           Print predefined services as a space separated list.
+
+[root@localhost ~]# firewall-cmd --get-services
+RH-Satellite-6 amanda-client amanda-k5-client amqp amqps apcupsd audit bacula bacula-client bb bgp bitcoin bitcoin-rpc bitcoin-testnet bitcoin-testnet-rpc bittorrent-lsd ceph ceph-mon cfengine cockpit condor-collector ctdb dhcp dhcpv6 dhcpv6-client distcc dns dns-over-tls docker-registry docker-swarm dropbox-lansync elasticsearch etcd-client etcd-server finger freeipa-4 freeipa-ldap freeipa-ldaps freeipa-replication freeipa-trust ftp ganglia-client ganglia-master git grafana gre high-availability http https imap imaps ipp ipp-client ipsec irc ircs iscsi-target isns jenkins kadmin kdeconnect kerberos kibana klogin kpasswd kprop kshell kube-apiserver ldap ldaps libvirt libvirt-tls lightning-network llmnr managesieve matrix mdns memcache minidlna mongodb mosh mountd mqtt mqtt-tls ms-wbt mssql murmur mysql nfs nfs3 nmea-0183 nrpe ntp nut openvpn ovirt-imageio ovirt-storageconsole ovirt-vmconsole plex pmcd pmproxy pmwebapi pmwebapis pop3 pop3s postgresql privoxy prometheus proxy-dhcp ptp pulseaudio puppetmaster quassel radius rdp redis redis-sentinel rpc-bind rsh rsyncd rtsp salt-master samba samba-client samba-dc sane sip sips slp smtp smtp-submission smtps snmp snmptrap spideroak-lansync spotify-sync squid ssdp ssh steam-streaming svdrp svn syncthing syncthing-gui synergy syslog syslog-tls telnet tentacle tftp tftp-client tile38 tinc tor-socks transmission-client upnp-client vdsm vnc-server wbem-http wbem-https wsman wsmans xdmcp xmpp-bosh xmpp-client xmpp-local xmpp-server zabbix-agent zabbix-server
+
+
+# service config file
+FIREWALLD.SERVICE(5)                     firewalld.service                    FIREWALLD.SERVICE(5)
+
+NAME
+       firewalld.service - firewalld service configuration files
+
+SYNOPSIS
+       /etc/firewalld/services/service.xml          ### customized service
+       /usr/lib/firewalld/services/service.xml      ### default service
+
+DESCRIPTION
+       A firewalld service configuration file provides the information of a service entry for
+       firewalld. The most important configuration options are ports, modules and destination
+       addresses.
+
+       This example configuration file shows the structure of a service configuration file:
+
+
+[root@localhost ~]# cd /etc/firewalld/services/
+[root@localhost services]# ls -al
+total 0
+drwxr-x---. 2 root root   6 Aug 11  2020 .
+drwxr-x---. 7 root root 133 Jan 22 23:50 ..
+
+
+[root@localhost services]# cd /usr/lib/firewalld/services
+[root@localhost services]# ls -al | head
+total 688
+drwxr-xr-x. 2 root root 8192 Jan 22 23:50 .
+drwxr-xr-x. 7 root root   81 Jan 22 23:32 ..
+-rw-r--r--. 1 root root  399 Aug 11  2020 amanda-client.xml
+-rw-r--r--. 1 root root  427 Aug 11  2020 amanda-k5-client.xml
+-rw-r--r--. 1 root root  283 Aug 11  2020 amqps.xml
+-rw-r--r--. 1 root root  273 Aug 11  2020 amqp.xml
+-rw-r--r--. 1 root root  285 Aug 11  2020 apcupsd.xml
+-rw-r--r--. 1 root root  301 Aug 11  2020 audit.xml
+-rw-r--r--. 1 root root  320 Aug 11  2020 bacula-client.xml
+[root@localhost services]# ls -al | wc
+    172    1541    9396
+[root@localhost services]# ls -al | grep http
+-rw-r--r--. 1 root root  448 Aug 11  2020 https.xml
+-rw-r--r--. 1 root root  353 Aug 11  2020 http.xml
+-rw-r--r--. 1 root root  310 Aug 11  2020 wbem-https.xml
+-rw-r--r--. 1 root root  352 Aug 11  2020 wbem-http.xml
+
+
+[root@localhost services]# cat http.xml 
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>WWW (HTTP)</short>
+  <description>HTTP is the protocol used to serve Web pages. If you plan to make your Web server publicly available, enable this option. This option is not required for viewing pages locally or developing Web pages.</description>
+  <port protocol="tcp" port="80"/>
+</service>
+[root@localhost services]# cat https.xml 
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>Secure WWW (HTTPS)</short>
+  <description>HTTPS is a modified HTTP used to serve Web pages when security is important. Examples are sites that require logins like stores or web mail. This option is not required for viewing pages locally or developing Web pages. You need the httpd package installed for this option to be useful.</description>
+  <port protocol="tcp" port="443"/>
+</service>
+[root@localhost services]# cat ftp.xml 
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>FTP</short>
+  <description>FTP is a protocol used for remote file transfer. If you plan to make your FTP server publicly available, enable this option. You need the vsftpd package installed for this option to be useful.</description>
+  <port protocol="tcp" port="21"/>
+  <helper name="ftp"/>
+</service>
+
+
+# what matters is to add the serviece to the right zone
