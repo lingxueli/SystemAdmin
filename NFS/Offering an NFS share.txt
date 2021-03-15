@@ -1,0 +1,50 @@
+On NFS server - server2 (a minimal install is okay)
+1. define the NFS service and content that is intented to share
+2. start NFS service
+3. configure firewall to allow NFS traffic
+
+
+On NFS client - server1
+1. find what is exported from server2
+2. mount the export to the local root directory
+
+
+
+On NFS server - server2
+
+# create some content to share
+$ mkdir -p /nfsdata /users/user1 /users/user2
+$ cp /etc/[a-c]* /nfsdata
+
+# config the nfs export
+$ vi /etc/exports
+/nfsdata. *(rw,no_root_squash)
+/users. *(rw,no_root_squash)
+
+# start NFS service
+$ yum install -y nfs-utils
+$ systemctl enable --now nfs-server
+
+# config firewall
+$ firewall-cmd --add-service nfs --permanent
+$ firewall-cmd --add-service rpc-bind --permanent  # Remote Procedure Call (RPC) service
+$ firewall-cmd --add-service mountd --permanent
+
+$ firewall-cmd --reload
+
+
+On NFS client - server1
+
+# discover which share is available
+1. root mount: mount the root directory of NFS server, under the mount point, you'll only see the shares that you have access to.
+
+2. showmount -e nfsserver
+It require extra firewall setting. Because showmount depends on portmapper service, which users random UDP ports. firewalld nfs service open port 2049 only. It doesn't allow portmapper service.
+
+If the traffic is rejected by firewall, it returns nothing.
+
+
+
+showmount -e 192.168.219.133
+[root@localhost ~]# showmount -e 192.168.219.133
+clnt_create: RPC: Program not registered

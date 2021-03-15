@@ -146,7 +146,7 @@ public (active)
 success
 
 
-# add port to the current zone
+# add port to the current zone, allow the tcp traffic of these services on port 2020
 [root@localhost ~]# firewall-cmd --add-port=2022/tcp --permanent
 success
 [root@localhost ~]# firewall-cmd --reload
