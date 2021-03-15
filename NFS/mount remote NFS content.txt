@@ -1,1 +1,40 @@
 https://linuxize.com/post/how-to-mount-an-nfs-share-in-linux/
+
+[root@localhost ~]# yum whatprovides */nfs | less
+
+[root@localhost ~]# yum install -y nfs-utils
+
+
+MOUNT(8)                               System Administration                              MOUNT(8)
+
+NAME
+       mount - mount a filesystem
+
+SYNOPSIS
+       mount [-l|-h|-V]
+
+       mount -a [-fFnrsvw] [-t fstype] [-O optlist]
+
+       mount [-fnrsvw] [-o options] device|dir
+
+       mount [-fnrsvw] [-t fstype] [-o options] device dir
+
+       The standard form of the mount command is:
+
+              mount -t type device dir
+
+       This  tells  the kernel to attach the filesystem found on device (which is of type type) at
+       the directory dir.  The option -t type is optional.  The mount command is usually  able  to...
+
+Indicating the device and filesystem
+       Most  devices  are indicated by a filename (of a block special device), like /dev/sda1, but
+       there are other possibilities.  For example, in the case of an NFS mount, device  may  look
+       like  knuth.cwi.nl:/dir.  
+       
+
+       -t, --types fstype
+              The argument following the -t is used to indicate the filesystem type.  The filesys‐
+              tem  types  which  are  currently  supported  depend  on  the  running  kernel.  See
+              /proc/filesystems and /lib/modules/$(uname -r)/kernel/fs for a complete list of  the
+              filesystems.   The  most common are ext2, ext3, ext4, xfs, btrfs, vfat, sysfs, proc,
+              nfs and cifs.
