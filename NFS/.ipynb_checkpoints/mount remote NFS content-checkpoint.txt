@@ -38,3 +38,26 @@ Indicating the device and filesystem
               /proc/filesystems and /lib/modules/$(uname -r)/kernel/fs for a complete list of  the
               filesystems.   The  most common are ext2, ext3, ext4, xfs, btrfs, vfat, sysfs, proc,
               nfs and cifs.
+              
+              
+Mount nfs shares through fstab
+/etc/fstab
+10.10.0.10:/backups /var/backups  nfs      sync    0       0
+
+mount option: sync
+
+
+              It is formatted as a comma-separated list of options.  It contains at least the type
+              of  mount (ro or rw), plus any additional options appropriate to the filesystem type
+              (including performance-tuning options).  For details, see mount(8) or swapon(8).
+
+              Basic filesystem-independent options are:
+
+              defaults
+                     use default options: rw, suid, dev, exec, auto, nouser, and async.
+...
+mount(8)
+       sync   All I/O to the filesystem should be done synchronously.  In the case of media with a
+              limited  number  of write cycles (e.g. some flash drives), sync may cause life-cycle
+              shortening.
+
