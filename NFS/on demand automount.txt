@@ -37,7 +37,7 @@ $ ls /autodir
 $ mount | grep autodir
 
 
-2. indirect map - the local path is not root
+2. indirect map - the local path in the mapper is not root
 
 # define mapper
 $ vi /etc/auto.master
