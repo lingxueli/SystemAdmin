@@ -1,0 +1,97 @@
+autoFS(auto file system) service: mount the device upon an attempt to access it.
+
+$ yum whatprovides */autofs
+autofs-1:5.1.4-43.el8.x86_64 : A tool for automatically mounting and unmounting filesystems
+
+$ yum install -y autofs
+
+[root@localhost ~]# man -k autofs
+auto.master (5)      - Master Map for automounter consulted by autofs
+autofs (5)           - Format of the automounter maps
+autofs (8)           - Service control for the automounter
+autofs.conf (5)      - autofs configuration
+autofs_ldap_auth.conf (5) - autofs LDAP authentication configuration
+automount (8)        - manage autofs mount points
+
+
+# how to configure automount for NFS
+
+1. direct map
+
+$ mkdir /autodir
+
+# define mapper
+$ vi /ect/auto.master
+/- /ect/auto.master.d/auto.dir
+
+# specify mount detailes in the mapper file
+$ vi /ect/auto.master.d/auto.dir
+/autodir server20:/common
+
+# start autoFS service
+$ systemctl enable --now autofs
+$ systemctl status autofs
+
+# test, command such as ls, cd in the mount point will activate the automount
+$ ls /autodir
+$ mount | grep autodir
+
+
+2. indirect map - the local path is not root
+
+# define mapper
+$ vi /etc/auto.master
+/misc   /etc/auto.misc
+
+# specify mount detailes in the mapper file
+$ vi /etc/auto.misc
+autoindir   server20:/common
+
+# start autoFS service
+$ systemctl enable --now autofs
+$ systemctl status autofs
+
+# test, command such as ls, cd in the mount point will activate the automount
+$ ls /misc/autoindir
+$ mount | grep autoindir
+
+
+3. wildcard
+
+# define mapper
+$ vi /etc/auto.master
+/nfshome   /etc/auto.master.d/auto.home
+
+# specify mount detailes in the mapper file
+$ vi /etc/auto.misc
+*   -rw   server20:/home/&
+
+Anything under server20:/home will be mounted under local path /nfshome
+*: local path, anything
+&: the matching item in the remote server
+
+AUTO.MASTER(5)                          File Formats Manual                         AUTO.MASTER(5)
+
+NAME
+       auto.master - Master Map for automounter consulted by autofs
+
+DESCRIPTION
+       The  auto.master  map  is  consulted  to  set  up  automount  managed mount points when the
+       autofs(8) script is invoked or the automount(8) program is run. Each line describes a mount
+       point  and  refers  to  an autofs map describing file systems to be mounted under the mount
+       point.
+
+       The default location of the master map is /etc/auto.master but an  alternate  name  may  be..
+       
+       
+EXAMPLE
+         /-        auto.data
+         /home     /etc/auto.home
+         /mnt      yp:mnt.map
+
+       This will generate two mountpoints for /home and /mnt and install direct mount triggers for
+       each entry in the direct mount map auto.data.  All accesses to /home will lead to the  con‐
+       sultation  of  the  map in /etc/auto.home and all accesses to /mnt will consult the NIS map
+       mnt.map.  All accesses to paths in the map auto.data will trigger mounts when they are  ac‐
+       cessed  and  the Name Service Switch configuration will be used to locate the source of the
+       map auto.data.

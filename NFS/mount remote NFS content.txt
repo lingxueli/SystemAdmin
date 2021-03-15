@@ -1,5 +1,38 @@
 https://linuxize.com/post/how-to-mount-an-nfs-share-in-linux/
 
+# mount
+$ mkdir /var/backups
+$ mount -t nfs 10.10.0.10:/backups /var/backups
+
+# test
+$ mount
+
+
+Automatically Mounting NFS File Systems with /etc/fstab
+
+$ mkdir /var/backups
+$ nano /etc/fstab
+10.10.0.10:/backups /var/backups  nfs      sync    0       0
+
+mount option - sync
+
+              It is formatted as a comma-separated list of options.  It contains at least the type
+              of  mount (ro or rw), plus any additional options appropriate to the filesystem type
+              (including performance-tuning options).  For details, see mount(8) or swapon(8).
+
+              Basic filesystem-independent options are:
+
+              defaults
+                     use default options: rw, suid, dev, exec, auto, nouser, and async.
+                ...
+mount(8)
+       sync   All I/O to the filesystem should be done synchronously.  In the case of media with a
+              limited  number  of write cycles (e.g. some flash drives), sync may cause life-cycle
+              shortening.
+
+
+
+
 [root@localhost ~]# yum whatprovides */nfs | less
 
 [root@localhost ~]# yum install -y nfs-utils
@@ -43,21 +76,3 @@ Indicating the device and filesystem
 Mount nfs shares through fstab
 /etc/fstab
 10.10.0.10:/backups /var/backups  nfs      sync    0       0
-
-mount option: sync
-
-
-              It is formatted as a comma-separated list of options.  It contains at least the type
-              of  mount (ro or rw), plus any additional options appropriate to the filesystem type
-              (including performance-tuning options).  For details, see mount(8) or swapon(8).
-
-              Basic filesystem-independent options are:
-
-              defaults
-                     use default options: rw, suid, dev, exec, auto, nouser, and async.
-...
-mount(8)
-       sync   All I/O to the filesystem should be done synchronously.  In the case of media with a
-              limited  number  of write cycles (e.g. some flash drives), sync may cause life-cycle
-              shortening.
-
