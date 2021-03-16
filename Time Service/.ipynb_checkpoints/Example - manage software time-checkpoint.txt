@@ -1,0 +1,79 @@
+[root@localhost ~]# date
+Tue Mar 16 00:37:10 MDT 2021
+
+[root@localhost ~]# hwclock
+2021-03-16 00:37:13.206311-06:00
+
+[root@localhost ~]# timedatectl status
+               Local time: Tue 2021-03-16 00:37:27 MDT
+           Universal time: Tue 2021-03-16 06:37:27 UTC
+                 RTC time: Tue 2021-03-16 06:37:27
+                Time zone: America/Denver (MDT, -0600)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+
+[root@localhost ~]# timedatectl list-timezones | head
+Africa/Abidjan
+Africa/Accra
+Africa/Addis_Ababa
+Africa/Algiers
+Africa/Asmara
+Africa/Bamako
+Africa/Bangui
+Africa/Banjul
+Africa/Bissau
+Africa/Blantyre
+
+[root@localhost ~]# timedatectl list-timezones | grep Denver
+America/Denver
+[root@localhost ~]# timedatectl set-timezone America/Denver
+[root@localhost ~]# timedatectl show
+Timezone=America/Denver
+LocalRTC=no
+CanNTP=yes
+NTP=yes
+NTPSynchronized=no
+TimeUSec=Tue 2021-03-16 00:40:11 MDT
+RTCTimeUSec=Tue 2021-03-16 00:40:11 MDT
+
+
+       show
+           Show the same information as status, but in machine readable form. This command is
+           intended to be used whenever computer-parsable output is required. Use status if you
+           are looking for formatted human-readable output.
+
+           By default, empty properties are suppressed. Use --all to show those too. To select
+           specific properties to show, use --property=.
+
+
+# switch on NTP use
+[root@localhost ~]# timedatectl set-ntp 1
+# if it fails, install chrony
+
+# look up NTP server that is used
+[root@localhost ~]# less /etc/chrony.conf
+# Use public servers from the pool.ntp.org project.
+# Please consider joining the pool (http://www.pool.ntp.org/join.html).
+# pool 2.centos.pool.ntp.org iburst
+pool serverabc.example.com iburst
+
+# verify chronyd service status
+[root@localhost ~]# systemctl status chronyd
+● chronyd.service - NTP client/server
+   Loaded: loaded (/usr/lib/systemd/system/chronyd.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2021-03-13 21:23:54 MST; 2 days ago
+     Docs: man:chronyd(8)
+           man:chrony.conf(5)
+ Main PID: 1003 (chronyd)
+    Tasks: 1 (limit: 11099)
+   Memory: 1.6M
+   CGroup: /system.slice/chronyd.service
+           └─1003 /usr/sbin/chronyd
+
+Mar 13 21:23:53 localhost.localdomain systemd[1]: Starting NTP client/server...
+Mar 13 21:23:53 localhost.localdomain chronyd[1003]: chronyd version 3.5 starting (+CMDMON +NTP +REF>
+Mar 13 21:23:53 localhost.localdomain chronyd[1003]: Frequency 0.000 +/- 1000000.000 ppm read from />
+Mar 13 21:23:53 localhost.localdomain chronyd[1003]: Using right/UTC timezone to obtain leap second >
+Mar 13 21:23:54 localhost.localdomain systemd[1]: Started NTP client/server.
+Mar 14 21:22:27 localhost.localdomain chronyd[1003]: Forward time jump detected!
