@@ -37,12 +37,16 @@ In corporate environment, it's not always desirable for time client to go out to
 # server1 - time server - serverabc.example.com
 # server2 - time client
 
-# disable the default NTP server
+# disable the default NTP server, and enable the correct NTP server
 [root@localhost /]# vim /etc/chrony.conf
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
 # pool 2.centos.pool.ntp.org iburst
-pool serverabc.example.com iburst
+server server1.abc.com
+
+
+# restart chronyd service with the new settings
+$ systemctl restart chronyd
 
 
 # check NTP status
@@ -55,5 +59,9 @@ NTPSynchronized=no
 TimeUSec=Mon 2021-01-25 01:08:21 MST
 RTCTimeUSec=Mon 2021-01-25 01:08:21 MST
 
-# set up name resolution to serverabc.example.com if the time server exists
+$ chronyc sources 
+
+
+# set up name resolution to server1.abc.com if the time server exists
+# if name resolution is not set, use IP address instead
 /etc/hosts

@@ -1,4 +1,4 @@
-chrony is an implementation of the Network Time Protocol
+chrony is an implementation of the Network Time Protocol. It's to get the right time from the internet
 
 CHRONYD(8)                             System Administration                            CHRONYD(8)
 
@@ -27,6 +27,19 @@ SYNOPSIS
 DESCRIPTION
        This file configures the chronyd daemon. The compiled-in location is /etc/chrony.conf, but
        other locations can be specified on the chronyd command line with the -f option.
+
+           stratum stratum
+               This option sets the stratum of the server which will be reported to clients when
+               the local reference is active. The specified value is in the range 1 through 15,
+               and the default value is 10. It should be larger than the maximum expected stratum
+               in the network when external NTP servers are accessible.
+
+               Stratum 1 indicates a computer that has a true real-time reference directly
+               connected to it (e.g. GPS, atomic clock, etc.), such computers are expected to be
+               very close to real time. Stratum 2 computers are those which have a stratum 1
+               server; stratum 3 computers have a stratum 2 server and so on. A value of 10
+               indicates that the clock is so many hops away from a reference clock that its time
+               is fairly unreliable.
 
 
 DIRECTIVES
