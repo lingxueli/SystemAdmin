@@ -1,0 +1,92 @@
+[root@localhost ~]# man -k container | grep registry
+buildah-login (1)    - Login to a container registry
+buildah-logout (1)   - Logout of a container registry
+containers-auth.json (5) - syntax for the registry authentication file
+containers-certs.d (5) - Directory for storing custom container-registry TLS configurations
+containers-registries.conf (5) - Syntax of System Registry Configuration File
+containers-registries.conf.d (5) - directory for drop-in registries.conf files
+containers-registries.d (5) - Directory for various registries configurations
+podman-image-trust (1) - Manage container registry image trust policy
+podman-login (1)     - Login to a container registry
+podman-logout (1)    - Logout of a container registry
+skopeo-login (1)     - Login to a container registry
+skopeo-logout (1)    - Logout of a container registry
+skopeo-sync (1)      - Synchronize images between container registries and local directories.
+systemd-machined (8) - Virtual machine and container registration manager
+systemd-machined.service (8) - Virtual machine and container registration manager
+
+
+CONTAINERS-REGISTRIES.CONF(5)                          Aug 2017                          CONTAINERS-REGISTRIES.CONF(5)
+
+NAME
+       containers-registries.conf - Syntax of System Registry Configuration File
+
+DESCRIPTION
+       The CONTAINERS-REGISTRIES configuration file is a system-wide configuration file for container image
+       registries. The file format is TOML.
+
+       Container engines will use the $HOME/.config/containers/registries.conf if it exists, otherwise they will use
+       /etc/containers/registries.conf
+
+
+
+$ cat /etc/containers/registries.conf
+# The following registries are a set of secure defaults provided by Red Hat.
+# Each of these registries provides container images curated, patched
+# and maintained by Red Hat and its partners
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io']
+
+# To ensure compatibility with docker we've included docker.io in the default search list. However Red Hat
+# does not curate, patch or maintain container images from the docker.io registry.
+[registries.search]
+registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io']
+
+# The following registries entry can be used for convenience but includes
+# container images built by the community. This set of content comes with all
+# of the risks of any user generated content including security and performance
+# issues. To use this list first comment out the default list, then uncomment
+# the following list
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io', 'quay.io']
+
+# Registries that do not use TLS when pulling images or uses self-signed
+# certificates.
+[registries.insecure]
+registries = []
+
+# Blocked Registries, blocks the `docker daemon` from pulling from the blocked registry.  If you specify
+# "*", then the docker daemon will only be allowed to pull from registries listed above in the search
+# registries.  Blocked Registries is deprecated because other container runtimes and tools will not use it.
+# It is recommended that you use the trust policy file /etc/containers/policy.json to control which
+# registries you want to allow users to pull and push from.  policy.json gives greater flexibility, and
+# supports all container runtimes and tools including the docker daemon, cri-o, buildah ...
+# The atomic CLI `atomic trust` can be used to easily configure the policy.json file.
+[registries.block]
+registries = []
+
+
+
+CONTAINERS-REGISTRIES.CONF.D(5)                        Mar 2020                        CONTAINERS-REGISTRIES.CONF.D(5)
+
+NAME
+       containers-registries.conf.d - directory for drop-in registries.conf files
+
+DESCRIPTION
+       CONTAINERS-REGISTRIES.CONF.D is a system-wide directory for drop-in configuration files in the
+       containers-registries.conf(5) format.
+
+       By default, the directory is located at /etc/containers/registries.conf.d.
+
+CONFIGURATION PRECEDENCE
+       Once the main configuration at /etc/containers/registries.conf is loaded, the files in
+       /etc/containers/registries.conf.d are loaded in alpha-numerical order. Then the conf files in
+       $HOME/.config/containers/registries.conf.d are loaded in alpha-numerical order, if they exist. If the
+       $HOME/.config/containers/registries.conf is loaded, only the conf files under
+       $HOME/.config/containers/registries.conf.d are loaded in alpha-numerical order.  Specified fields in a conf
+       file will overwrite any previous setting.  Note that only files with the .conf prefix are loaded, other files
+       and sub-directories are ignored.
+
+
+[lisa@localhost ~]$ podman info | grep configFile
+  configFile: /home/lisa/.config/containers/storage.conf
