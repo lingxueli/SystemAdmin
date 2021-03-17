@@ -1,0 +1,190 @@
+How to download mysql image from registry - quay.io 
+
+# search for the image from registry
+[lisa@localhost ~]$ podman search mysql | grep docker.io | head
+docker.io   docker.io/library/mysql                               MySQL is a widely used, open-source relation...  10624   [OK]      
+docker.io   docker.io/mysql/mysql-server                          Optimized MySQL Server Docker images. Create...  779               [OK]
+docker.io   docker.io/bitnami/mysql                               Bitnami MySQL Docker Image                       49                [OK]
+docker.io   docker.io/circleci/mysql                              MySQL is a widely used, open-source relation...  20                
+docker.io   docker.io/mysql/mysql-cluster                         Experimental MySQL Cluster Docker images. Cr...  79                
+docker.io   docker.io/schickling/mysql-backup-s3                  Backup MySQL to S3 (supports periodic backup...  29                [OK]
+docker.io   docker.io/centos/mysql-57-centos7                     MySQL 5.7 SQL database server                    87                
+docker.io   docker.io/deitch/mysql-backup                         REPLACED! Please use http://hub.docker.com/r...  41                [OK]
+docker.io   docker.io/library/mariadb                             MariaDB Server is a high performing open sou...  3980    [OK]      
+docker.io   docker.io/ansibleplaybookbundle/mysql-apb             An APB which deploys RHSCL MySQL                 2                 [OK]
+[lisa@localhost ~]$ podman search mysql | grep quay.io
+
+
+# include the regitry in the search list
+
+[lisa@localhost ~]$ mkdir $HOME/.config/containers/
+[lisa@localhost ~]$ cp -f /etc/containers/registries.conf $HOME/.config/containers/registries.conf
+[lisa@localhost ~]$ vi $HOME/.config/containers/registries.conf
+
+# The following registries entry can be used for convenience but includes
+# container images built by the community. This set of content comes with all
+# of the risks of any user generated content including security and performance
+# issues. To use this list first comment out the default list, then uncomment
+# the following list
+[registries.search]
+registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io', 'quay.io']
+
+[lisa@localhost ~]$ podman search mysql | grep quay.io
+quay.io     quay.io/eclipse/che--centos--mysql-57-centos7                                                                0                 
+quay.io     quay.io/blaqkube/mysql-controller                                                                            0                 
+quay.io     quay.io/yeebase/mysql-client                                                                                 0                 
+quay.io     quay.io/bitnami/mysql                                       Official build of [Bitnami MySQL](https://gi...  0                 
+...
+
+quay.io/yeebase/mysql-client
+
+# inspect the image before downloading
+
+SKOPEO(1)                                             August 2016                                            SKOPEO(1)
+
+NAME
+       skopeo -- Command line utility used to interact with local and remote container images and container image
+       registries
+
+SYNOPSIS
+       skopeo [global options] command [command options]
+
+DESCRIPTION
+       skopeo is a command line utility providing various operations with container images and container image
+       registries.
+
+       skopeo can inspect a repository on a container registry without needlessly pulling the image. Pulling an image...
+       
+IMAGE NAMES
+       Most commands refer to container images, using a transport:details format. The following formats are supported:
+
+       containers-storage:docker-reference
+         An image located in a local containers/storage image store.  Both the location and image store are specified
+       in /etc/containers/storage.conf. (Backend for Podman, CRI-O, Buildah and friends)
+
+       dir:path
+         An existing local directory path storing the manifest, layer tarballs and signatures as individual files.
+       This is a non-standardized format, primarily useful for debugging or noninvasive container inspection.
+
+       docker://docker-reference
+         An image in a registry implementing the "Docker Registry HTTP API V2". By default, uses the authorization
+       state in either $XDG_RUNTIME_DIR/containers/auth.json, which is set using (skopeo login). If the authorization
+       state is not found there, $HOME/.docker/config.json is checked, which is set using (docker login).
+
+       oci:path:tag
+         An image tag in a directory compliant with "Open Container Image Layout Specification" at path.
+
+       │skopeo-inspect(1)           │ Return low-level information about     │
+       │                            │ image-name in a registry.              │
+
+[lisa@localhost ~]$ skopeo inspect docker://quay.io/bitnami/mysql
+{
+    "Name": "quay.io/bitnami/mysql",
+    "Digest": "sha256:d58cbf84b53e497f0035508cd69b1123de0831b068b74cd0e8244be05f0331d4",
+    "RepoTags": [
+        "5.7.24-ol-7-r13",
+        "8.0.13-ol-7-r13",
+        "8.0.13-ol-7-r14",
+        "5.7.24-debian-9-r14",
+        "8.0.13-debian-9-r11",
+        "5.7.24-r14",
+...
+
+        "8.0.23",
+        "8.0.23-debian-10-r55",
+        "latest"
+    ],
+    "Created": "2021-03-17T01:22:05.80636542Z",
+    "DockerVersion": "19.03.15",
+    "Labels": {
+        "maintainer": "Bitnami \u003ccontainers@bitnami.com\u003e"
+    },
+    "Architecture": "amd64",
+    "Os": "linux",
+    "Layers": [
+        "sha256:133717132a92b5b0db1f89bb99db40f068c16cc67138ff50b9a5254f58927e27",
+        "sha256:6e28ba912af0f7a080d3eb79c2e7b8c2a543508d3158e9fe4d3c9d7723130962",
+        "sha256:4d04e2aca06d28bfee58742ab2daab92cd7fe65123fb52e19cce37dd7d32af4c",
+        "sha256:855485c4b9eacf66ad5012ae1abfe2a0c51519ce6ecd77377d4120c29fd66014",
+        "sha256:d87e5466faede8ce80b93b8ee1dd7aa224bf21d7a8637689a51ff5911a9dfd9a",
+        "sha256:c787b4c3abfffaf272855c2323d31e88988e43253e6978e51ea1396ee94e66a5",
+        "sha256:41aedb6c47b0c7040129dd1b19d5fff84887784d5a860b5c6bff61d07aee8c2b",
+        "sha256:f8508872016f0979b27a536d6721c8ae19377517d45d9a5b7665bed30107a3af",
+        "sha256:0063f059ae5605e6bdfc4d4a56f01ee85125ca9fe9921784c215aee48010f70e",
+        "sha256:5b4d5800dfa9ad0eb7f89207da1526bb97537c258d8af306d5f6f6c0534a828f"
+    ],
+
+    "Env": [
+        "PATH=/opt/bitnami/common/bin:/opt/bitnami/mysql/bin:/opt/bitnami/mysql/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "HOME=/",
+        "OS_ARCH=amd64",
+        "OS_FLAVOUR=debian-10",
+        "OS_NAME=linux",
+        "BITNAMI_APP_NAME=mysql",
+        "BITNAMI_IMAGE_VERSION=8.0.23-debian-10-r55"
+    ]
+
+# download
+[lisa@localhost ~]$ podman pull docker://quay.io/bitnami/mysql
+
+# confirm
+[lisa@localhost ~]$ podman images
+REPOSITORY             TAG     IMAGE ID      CREATED      SIZE
+quay.io/bitnami/mysql  latest  8cf555631bf9  6 hours ago  613 MB
+
+# inspect
+[lisa@localhost ~]$ podman inspect mysql | less
+[
+    {
+        "Id": "8cf555631bf9ec3bec994ba9ab3ad67704fb3776527ac844a17612bd776c84af",
+        "Digest": "sha256:d58cbf84b53e497f0035508cd69b1123de0831b068b74cd0e8244be05f0331d4",
+        "RepoTags": [
+            "quay.io/bitnami/mysql:latest"
+        ],
+        "RepoDigests": [
+            "quay.io/bitnami/mysql@sha256:d58cbf84b53e497f0035508cd69b1123de0831b068b74cd0e8244be05f0331d4"
+        ],
+        "Parent": "",
+        "Comment": "",
+        "Created": "2021-03-17T01:22:05.80636542Z",
+        "Config": {
+            "User": "1001",
+            "ExposedPorts": {
+                "3306/tcp": {}
+            },
+            "Env": [
+                "PATH=/opt/bitnami/common/bin:/opt/bitnami/mysql/bin:/opt/bitnami/mysql/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "HOME=/",
+                "OS_ARCH=amd64",
+..
+            ],
+            "Entrypoint": [
+                "/opt/bitnami/scripts/mysql/entrypoint.sh"
+            ],
+            "Cmd": [
+                "/opt/bitnami/scripts/mysql/run.sh"
+            ],
+            "Labels": {
+                "maintainer": "Bitnami \u003ccontainers@bitnami.com\u003e"
+            }
+        },
+        "Version": "19.03.15",
+        "Author": "",
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 613336067,
+        "VirtualSize": 613336067,
+        "GraphDriver": {
+            "Name": "overlay",
+
+
+# delete
+[lisa@localhost ~]$ podman r
+restart  rm       rmi      run      
+[lisa@localhost ~]$ podman rmi mysql
+Untagged: quay.io/bitnami/mysql:latest
+Deleted: 8cf555631bf9ec3bec994ba9ab3ad67704fb3776527ac844a17612bd776c84af
+
+# confirm
+[lisa@localhost ~]$ podman images
+REPOSITORY  TAG     IMAGE ID  CREATED  SIZE
