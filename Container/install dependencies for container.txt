@@ -1,0 +1,20 @@
+[root@localhost ~]# yum module list | grep container
+container-tools      rhel8 [d][e] common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      1.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      2.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      rhel8 [d][e] common [d]                               Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and updated as frequently as every 12 weeks.
+container-tools      1.0          common [d]                               Stable versions of podman 1.0, buildah 1.5, skopeo 0.1, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and supported for 24 months.                                 
+container-tools      2.0          common [d]                               Stable versions of podman 1.6, buildah 1.11, skopeo 0.1, runc, conmon, etc as well as dependencies such as container-selinux built and tested together, and supported as documented on the Application Stream lifecycle page.    
+
+
+$ yum module install container-tools
+
+Installed:
+  crun-0.16-2.module_el8.3.0+699+d61d9c41.x86_64                                                                          
+  python-podman-api-1.2.0-0.2.gitd0a45fe.module_el8.3.0+475+c50ce30b.noarch                                               
+  python3-psutil-5.4.3-10.el8.x86_64                                                                                      
+  skopeo-1:1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64                                                                     
+  toolbox-0.0.8-1.module_el8.3.0+475+c50ce30b.noarch                                                                      
+  udica-0.2.4-1.module_el8.3.0+699+d61d9c41.noarch                                                                        
+
+Complete!
