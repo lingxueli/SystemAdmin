@@ -18,3 +18,25 @@ Installed:
   udica-0.2.4-1.module_el8.3.0+699+d61d9c41.noarch                                                                        
 
 Complete!
+
+
+[root@localhost ~]# yum module list container-tools
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 22:18:22 ago on Tue 16 Mar 2021 01:02:01 AM MDT.
+CentOS Linux 8 - AppStream
+Name            Stream       Profiles Summary                                                                             
+container-tools rhel8 [d][e] common [ Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc, conmo
+                             d] [i]   n, CRIU, Udica, etc as well as dependencies such as container-selinux built and test
+                                      ed together, and updated as frequently as every 12 weeks.
+container-tools 1.0          common [ Stable versions of podman 1.0, buildah 1.5, skopeo 0.1, runc, conmon, CRIU, Udica, e
+                             d]       tc as well as dependencies such as container-selinux built and tested together, and 
+                                      supported for 24 months.
+container-tools 2.0          common [ Stable versions of podman 1.6, buildah 1.11, skopeo 0.1, runc, conmon, etc as well a
+                             d]       s dependencies such as container-selinux built and tested together, and supported as
+                                       documented on the Application Stream lifecycle page.
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled

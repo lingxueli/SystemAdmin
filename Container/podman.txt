@@ -1,0 +1,110 @@
+podman(1)                                       General Commands Manual                                      podman(1)
+
+NAME
+       podman - Simple management tool for pods, containers and images
+
+SYNOPSIS
+       podman [options] command
+
+DESCRIPTION
+       Podman (Pod Manager) is a fully featured container engine that is a simple daemonless tool.  Podman provides a
+       Docker-CLI comparable command line that eases the transition from other container engines and allows the
+       management of pods, containers and images.  Simply put: alias docker=podman.  Most Podman commands can be run
+       as a regular user, without requiring additional privileges.
+
+       Podman uses Buildah(1) internally to create container images. Both tools share image (not container) storage,
+       hence each can use or manipulate images (but not containers) created by the other.
+
+       Default settings for flags are defined in containers.conf. Most settings for Remote connections use the
+       server's containers.conf, except when documented in man pages.
+
+       podman [GLOBAL OPTIONS]
+
+COMMANDS
+       ┌──────────────────────┬─────────────────────────────────────────┐
+       │Command               │ Description                             │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-attach(1)      │ Attach to a running container.          │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-auto-update(1) │ Auto update containers according to     │
+       │                      │ their auto-update policy                │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-build(1)       │ Build a container image using a         │
+       │                      │ Containerfile.                          │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-commit(1)      │ Create new image based on the changed   │
+       │                      │ container.                              │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-info(1)        │ Displays Podman related system          │
+       │                      │ information.                            │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-version(1)     │ Display the Podman version information. │
+
+
+
+[root@localhost ~]# podman info | less
+host:
+  arch: amd64
+  buildahVersion: 1.18.0
+  cgroupManager: systemd
+  cgroupVersion: v1
+  conmon:
+    package: conmon-2.0.22-3.module_el8.3.0+699+d61d9c41.x86_64
+    path: /usr/bin/conmon
+    version: 'conmon version 2.0.22, commit: 01898f0a68e4bf403cba544b87ecd260545ae25a'
+  cpus: 2
+  distribution:
+    distribution: '"centos"'
+    version: "8"
+  eventLogger: file
+  hostname: localhost.localdomain
+  kernel: 4.18.0-240.15.1.el8_3.x86_64
+  linkmode: dynamic
+  memFree: 71671808
+  memTotal: 1879097344
+  ociRuntime:
+    name: runc
+    package: runc-1.0.0-70.rc92.module_el8.3.0+699+d61d9c41.x86_64
+    path: /usr/bin/runc
+    version: 'runc version spec: 1.0.2-dev'
+  os: linux
+  remoteSocket:
+    path: /run/podman/podman.sock
+  rootless: false                    ### running the command as root user
+  slirp4netns:
+    executable: ""
+    package: ""
+    version: ""
+  swapFree: 1348988928
+  swapTotal: 2147479552
+  uptime: 33h 21m 45.37s (Approximately 1.38 days)
+
+
+registries:
+  search:
+  - registry.access.redhat.com
+  - registry.redhat.io
+  - docker.io
+
+
+store:
+  configFile: /etc/containers/storage.conf     ### running the command as root user
+  containerStore:
+    number: 0
+    paused: 0
+    running: 0
+    stopped: 0
+
+
+[lisa@localhost ~]$ podman info | grep rootless
+  rootless: true
+[lisa@localhost ~]$ podman info | grep configFile
+  configFile: /home/lisa/.config/containers/storage.conf
+
+
+[root@localhost ~]# podman version
+Version:      2.2.1
+API Version:  2
+Go Version:   go1.14.12
+Built:        Sun Feb 21 21:51:35 2021
+OS/Arch:      linux/amd64
