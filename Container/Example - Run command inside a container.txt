@@ -1,0 +1,183 @@
+       │podman-run(1)         │ Run a command in a new container.       │
+
+podman-run(1)                                   General Commands Manual                                  podman-run(1)
+
+NAME
+       podman-run - Run a command in a new container
+
+SYNOPSIS
+       podman run [options] image [command [arg ...]]
+
+       podman container run [options] image [command [arg ...]]
+
+
+DESCRIPTION
+       Run a process in a new container. podman run starts a process with its own file system, its own networking, and
+       its own isolated process tree. The image which starts the process may define defaults related to the process
+       that will be run in the container, the networking to expose, and more, but podman run gives final control to
+       the operator or administrator who starts the container from the image. For that reason podman run has more
+       options than any other Podman command.
+
+       If the image is not already loaded then podman run will pull the image, and all image dependencies, from the
+       repository in the same way running podman pull image , before it starts the container from that image.
+
+   --tty, -t=true|false
+       Allocate a pseudo-TTY. The default is false.
+
+       When set to true, Podman will allocate a pseudo-tty and attach to the standard input of the container. This can
+       be used, for example, to run a throwaway interactive shell. The default is false.
+
+       NOTE: The -t option is incompatible with a redirection of the Podman client standard input.
+
+   --interactive, -i=true|false
+       When set to true, keep stdin open even if not attached. The default is false.
+
+
+   --name=name
+       Assign a name to the container.
+
+       The operator can identify a container in three ways:
+
+       · UUID long identifier (“f78375b1c487e03c9438c729345e54db9d20cfa2ac1fc3494b6eb60872e74778”);
+
+       · UUID short identifier (“f78375b1c487”);
+
+       · Name (“jonah”).
+
+       Podman generates a UUID for each container, and if a name is not assigned to the container with --name then it
+       will generate a random string name. The name is useful any place you need to identify a container.  This works
+       for both background and foreground containers.
+
+# This command downloads and runs the lastest version of that image
+# no FQIN(Full qualified image name) is given. It searches through the registries provided in config file and pull the first image it found.
+
+# ubi8 - Red Hat Universal Base Image 8
+# Red Hat Universal Base Images (UBI) are OCI-compliant container base operating system images.
+# It includes a set of three base images (Standard, Minimal, and Init) to provide optimum starting points for a variety of use cases and are freely redistributable.
+
+
+
+# -t: open a terminal for interaction (-i)
+# it opens a terminal session inside the container as root user to interact with the containerized RHEL 8 OS.
+# hostname 3b9a2aa74f2b is the container ID that is auto-generated.
+
+[lisa@localhost ~]$ podman run -ti --name rhel8-base-os ubi8
+Completed short name "ubi8" with unqualified-search registries (origin: /home/lisa/.config/containers/registries.conf)
+Trying to pull registry.access.redhat.com/ubi8:latest...
+Getting image source signatures
+Copying blob 6b536614e8f8 done  
+Copying blob fdb393d8227c done  
+Copying config 4199acc83c done  
+Writing manifest to image destination
+Storing signatures
+[root@3b9a2aa74f2b /]# 
+
+
+# run a few commands inside the container. Verify it's working
+[root@3b9a2aa74f2b /]# pwd
+/
+[root@3b9a2aa74f2b /]# ls
+bin  boot  dev	etc  home  lib	lib64  lost+found  media  mnt  opt  proc  root	run  sbin  srv	sys  tmp  usr  var
+[root@3b9a2aa74f2b /]# uname --help
+Usage: uname [OPTION]...
+Print certain system information.  With no OPTION, same as -s.
+
+  -a, --all                print all information, in the following order,
+                             except omit -p and -i if unknown:
+  -s, --kernel-name        print the kernel name
+  -n, --nodename           print the network node hostname
+  -r, --kernel-release     print the kernel release
+  -v, --kernel-version     print the kernel version
+  -m, --machine            print the machine hardware name
+  -p, --processor          print the processor type (non-portable)
+  -i, --hardware-platform  print the hardware platform (non-portable)
+  -o, --operating-system   print the operating system
+      --help     display this help and exit
+      --version  output version information and exit
+
+GNU coreutils online help: <https://www.gnu.org/software/coreutils/>
+Report uname translation bugs to <https://translationproject.org/team/>
+Full documentation at: <https://www.gnu.org/software/coreutils/uname>
+or available locally via: info '(coreutils) uname invocation'
+[root@3b9a2aa74f2b /]# uname -a
+Linux 3b9a2aa74f2b 4.18.0-240.15.1.el8_3.x86_64 #1 SMP Mon Mar 1 17:16:16 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
+[root@3b9a2aa74f2b /]# cat /etc/redhat-release 
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+[root@3b9a2aa74f2b /]# date
+Thu Mar 18 04:58:59 UTC 2021
+# close the terminal session
+[root@3b9a2aa74f2b /]# exit
+exit
+
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-image(1)       │ Manage images.                          │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-images(1)      │ List images in local storage.           │
+       ├──────────────────────┼─────────────────────────────────────────┤
+
+       │podman-exec(1)        │ Execute a command in a running          │
+       │                      │ container.                              │
+
+podman-exec(1)                                  General Commands Manual                                 podman-exec(1)
+
+NAME
+       podman-exec - Execute a command in a running container
+
+SYNOPSIS
+       podman exec [options] container [command [arg ...]]
+
+       podman container exec [options] container [command [arg ...]]
+
+DESCRIPTION
+       podman exec executes a command in a running container.
+
+
+
+[lisa@localhost ~]$ podman images
+REPOSITORY                       TAG     IMAGE ID      CREATED      SIZE
+registry.access.redhat.com/ubi8  latest  4199acc83c6a  5 weeks ago  213 MB
+
+
+# execute a command inside the container from the host
+[lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
+Error: can only create exec sessions on running containers: container state improper
+
+[lisa@localhost ~]$ podman run --name rhel8-base-os ubi8
+Error: error creating container storage: the container name "rhel8-base-os" is already in use by "3b9a2aa74f2bbe9659173acd82cab2c468844dd7d679333499a171a3ba7f3f4c". You have to remove that container to be able to reuse that name.: that name is already in use
+
+# restart the container
+
+       │podman-restart(1)     │ Restart one or more containers.         │
+
+[lisa@localhost ~]$ podman restart rhel8-base-os
+3b9a2aa74f2bbe9659173acd82cab2c468844dd7d679333499a171a3ba7f3f4c
+
+[lisa@localhost ~]$ podman images
+REPOSITORY                       TAG     IMAGE ID      CREATED      SIZE
+registry.access.redhat.com/ubi8  latest  4199acc83c6a  5 weeks ago  213 MB
+
+[lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+
+       │podman-attach(1)      │ Attach to a running container.          │
+
+# reconnect to the container
+[lisa@localhost ~]$ podman attach rhel8-base-os
+[root@3b9a2aa74f2b /]# 
+[root@3b9a2aa74f2b /]# exit
+exit
+
+       │podman-rm(1)          │ Remove one or more containers.          │
+       ├──────────────────────┼─────────────────────────────────────────┤
+       │podman-rmi(1)         │ Removes one or more locally stored      │
+       │                      │ images.                                 │
+
+# remove
+[lisa@localhost ~]$ podman rm rhel8-base-os
+3b9a2aa74f2bbe9659173acd82cab2c468844dd7d679333499a171a3ba7f3f4c
+
+       │podman-ps(1)          │ Prints out information about            │
+       │                      │ containers.                             │
+# confirm
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
