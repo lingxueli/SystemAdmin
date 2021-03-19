@@ -1,0 +1,52 @@
+podman-run(1)                                   General Commands Manual                                  podman-run(1)
+
+NAME
+       podman-run - Run a command in a new container
+
+SYNOPSIS
+       podman run [options] image [command [arg ...]]
+
+       podman container run [options] image [command [arg ...]]
+
+
+   --rm=true|false
+       Automatically remove the container when it exits. The default is false.
+
+       Note that the container will not be removed when it could not be created or started successfully. This allows
+       the user to inspect the container after failure.
+
+   --rmi=true|false
+       After exit of the container, remove the image unless another container is using it. The default is false.
+
+
+[lisa@localhost ~]$ podman run --rm ubi7 ls
+Completed short name "ubi7" with unqualified-search registries (origin: /home/lisa/.config/containers/registries.conf)
+Trying to pull registry.access.redhat.com/ubi7:latest...
+Getting image source signatures
+Copying blob b855b55fea8a done  
+Copying blob 424ac630d77d done  
+Copying config 571ab83494 done  
+Writing manifest to image destination
+Storing signatures
+bin
+boot
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
