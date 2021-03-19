@@ -1,0 +1,30 @@
+# stop running container
+[root@localhost ~]# podman stop rhel7-port-map
+1c15c7f2307e991412f6b71e06a99b283d99e3c013d378710b91cb47a4613eff
+[root@localhost ~]# podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+[root@localhost ~]# podman ps -a
+CONTAINER ID  IMAGE           COMMAND               CREATED         STATUS                    PORTS                    NAMES
+1c15c7f2307e  httpd-24-rhel7  /usr/bin/run-http...  33 minutes ago  Exited (0) 7 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+
+
+   --all, -a
+       Show all the containers created by Podman, default is only running containers.
+
+# restart the container that stopped
+[root@localhost ~]# podman start rhel7-port-map
+[root@localhost ~]# podman ps -a
+CONTAINER ID  IMAGE           COMMAND               CREATED         STATUS            PORTS                    NAMES
+1c15c7f2307e  httpd-24-rhel7  /usr/bin/run-http...  33 minutes ago  Up 9 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+
+
+# remove the container
+[root@localhost ~]# podman stop rhel7-port-map
+1c15c7f2307e991412f6b71e06a99b283d99e3c013d378710b91cb47a4613eff
+[root@localhost ~]# podman rm rhel7-port-map 
+1c15c7f2307e991412f6b71e06a99b283d99e3c013d378710b91cb47a4613eff
+[root@localhost ~]# podman ps -a
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+[root@localhost ~]# podman images
+REPOSITORY                               TAG     IMAGE ID      CREATED     SIZE
+registry.redhat.io/rhscl/httpd-24-rhel7  latest  7f619078de75  3 days ago  329 MB
