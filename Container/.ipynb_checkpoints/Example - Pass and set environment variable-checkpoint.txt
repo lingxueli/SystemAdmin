@@ -1,0 +1,67 @@
+ENV variables needs to be passed to containers at the time of launching the container
+
+$ man podman-run
+   --tty, -t=true|false
+       Allocate a pseudo-TTY. The default is false.
+
+       When set to true, Podman will allocate a pseudo-tty and attach to the standard input of the container. This can
+       be used, for example, to run a throwaway interactive shell. The default is false.
+
+       NOTE: The -t option is incompatible with a redirection of the Podman client standard input.
+
+   --interactive, -i=true|false
+       When set to true, keep stdin open even if not attached. The default is false.
+
+
+   --env, -e=env
+       Set environment variables.
+
+       This option allows arbitrary environment variables that are available for the process to be launched inside of
+       the container. If an environment variable is specified without a value, Podman will check the host environment
+       for a value and set the variable only if it is set on the host. If an environment variable ending in * is
+       specified, Podman will search the host environment for variables starting with the prefix and will add those
+       variables to the container. If an environment variable with a trailing ***** is specified, then a value must be
+       supplied.
+
+       See Environment ⟨#environment⟩ note below for precedence and examples.
+
+[root@localhost ~]# man bash
+
+    HISTSIZE
+              The number of commands to remember in the command history (see HISTORY below).
+              
+              
+# launch the container with env variable set
+
+[root@localhost ~]# podman run -it -e HISTSIE -e SECRET="secret123" --name=rhel8-env-vars ubi8
+Completed short name "ubi8" with unqualified-search registries (origin: /etc/containers/registries.conf)
+Trying to pull registry.access.redhat.com/ubi8:latest...
+Getting image source signatures
+Copying blob 6b536614e8f8 done  
+Copying blob fdb393d8227c done  
+Copying config 4199acc83c done  
+Writing manifest to image destination
+Storing signatures
+
+# verify
+
+[root@b16057273e9b /]# echo $HISTSIZE $SECRET
+500 secret123
+
+
+# clean up
+
+[root@localhost ~]# podman stop rhel8-env-vars
+b16057273e9bd80726a171c5de2ef581f2ff8568864232cd6965aeac0bf62cc3
+[root@localhost ~]# podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+[root@localhost ~]# podman images
+REPOSITORY                               TAG     IMAGE ID      CREATED      SIZE
+registry.redhat.io/rhscl/httpd-24-rhel7  latest  7f619078de75  5 days ago   329 MB
+registry.access.redhat.com/ubi8          latest  4199acc83c6a  5 weeks ago  213 MB
+
+[root@localhost ~]# podman ps -a
+CONTAINER ID  IMAGE                                   COMMAND    CREATED        STATUS                         PORTS   NAMES
+b16057273e9b  registry.access.redhat.com/ubi8:latest  /bin/bash  2 minutes ago  Exited (0) About a minute ago          rhel8-env-vars
+[root@localhost ~]# podman rm b16057273e9b
+b16057273e9bd80726a171c5de2ef581f2ff8568864232cd6965aeac0bf62cc3
