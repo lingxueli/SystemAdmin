@@ -1,0 +1,119 @@
+# create a local directory as the persistent storage
+# set full permission
+[lisa@localhost ~]$ sudo mkdir /host_data
+[lisa@localhost ~]$ sudo chmod 777 /host_data
+[lisa@localhost ~]$ ls -ald /host_data
+drwxrwxrwx. 2 root root 6 Mar 20 14:46 /host_data
+[lisa@localhost ~]$ 
+
+
+   --volume, -v[=[[source-volume|host-dir:]container-dir[:options]]]
+       Create a bind mount. If you specify /host-dir:/container-dir, Podman bind mounts host-dir in the host to
+       container-dir in the Podman container. Similarly, source-volume:/container-dir will mount the volume in the
+       host to the container. If no such named volume exists, Podman will create one.
+
+       The options is a comma delimited list and can be: <sup>[1] ⟨#Footnote1⟩</sup>
+
+       · rw|ro
+
+       · z|Z
+
+       · [r]shared|[r]slave|[r]private[r]unbindable
+
+       · [r]bind
+
+       · [no]exec
+
+       · [no]dev
+
+       · [no]suid
+
+       · [O]
+
+       The container-dir must be an absolute path.
+
+       Volumes may specify a source as well, as either a directory on the host or the name of a named volume. If no
+       source is given, the volume will be created as an anonymous named volume with a randomly generated name, and
+       will be removed when the container is removed via the --rm flag or podman rm --volumes.
+
+       If a volume source is specified, it must be a path on the host or the name of a named volume. Host paths are
+       allowed to be absolute or relative; relative paths are resolved relative to the directory Podman is run in. Any
+       source that does not begin with a . or / will be treated as the name of a named volume.  If a volume with that
+       name does not exist, it will be created. Volumes created with names are not anonymous and are not removed by
+       --rm and podman rm --volumes.
+
+       You can specify multiple -v options to mount one or more volumes into a container.
+
+       You can add :ro or :rw option to mount a volume in read-only or read-write mode, respectively. By default, the
+       volumes are mounted read-write.
+
+# launch container with storage attached
+# Z: set SELinux type container_file_t on the local and container directory
+
+[lisa@localhost ~]$ sudo podman run --name rhel7-persistent-data -v /host_data:/container_data:Z -it ubi7
+[sudo] password for lisa: 
+Completed short name "ubi7" with unqualified-search registries (origin: /etc/containers/registries.conf)
+Trying to pull registry.access.redhat.com/ubi7:latest...
+Getting image source signatures
+Copying blob 424ac630d77d done  
+Copying blob b855b55fea8a done  
+Copying config 571ab83494 done  
+Writing manifest to image destination
+Storing signatures
+
+# test the storage in the container
+[root@9eef8db3e79c /]# ls -ldZ /container_data
+drwxrwxrwx. root root system_u:object_r:container_file_t:s0:c682,c755 /container_data
+[root@9eef8db3e79c /]# echo "testtest" > /container_data/testfile
+[root@9eef8db3e79c /]# ls -lZ /container_data/testfile 
+-rw-r--r--. root root system_u:object_r:container_file_t:s0:c682,c755 /container_data/testfile
+
+# test the storage on the host 
+[lisa@localhost ~]$ ls -ldZ /host_data/
+drwxrwxrwx. 2 root root system_u:object_r:container_file_t:s0:c682,c755 22 Mar 20 15:03 /host_data/
+
+
+# clean up
+[lisa@localhost ~]$ sudo podman stop rhel7-persistent-data
+[sudo] password for lisa: 
+9eef8db3e79c35952d0197d3023317899f9524ccc0589124074c1f481e02976d
+[lisa@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+[lisa@localhost ~]$ sudo podman ps -a
+CONTAINER ID  IMAGE                                   COMMAND    CREATED        STATUS                         PORTS   NAMES
+9eef8db3e79c  registry.access.redhat.com/ubi7:latest  /bin/bash  6 minutes ago  Exited (0) About a minute ago          rhel7-persistent-data
+[lisa@localhost ~]$ sudo podman rm rhel7-persistent-data
+9eef8db3e79c35952d0197d3023317899f9524ccc0589124074c1f481e02976d
+
+
+# reattach the storage to a new container
+[lisa@localhost ~]$ sudo podman run -it --name=rhel8-persistent-data -v /host_data:/container_data2:Z ubi8
+
+# test data persistency on the new container
+[root@e7b3d2aa1d9c /]# ls -ldZ /container_data2
+drwxrwxrwx. 2 root root system_u:object_r:container_file_t:s0:c822,c902 22 Mar 20 21:03 /container_data2
+[root@e7b3d2aa1d9c /]# ls -lZ /container_data2/
+total 4
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c822,c902 9 Mar 20 21:03 testfile
+[root@e7b3d2aa1d9c /]# cat /container_data2/testfile
+testtest
+
+# create new data from container 2 in the storage
+[root@e7b3d2aa1d9c /]# echo "test from container 2" > /container_data2/testfile2
+[root@e7b3d2aa1d9c /]# ls -lZ /container_data2/
+total 8
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c822,c902  9 Mar 20 21:03 testfile
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c822,c902 22 Mar 20 21:11 testfile2
+
+# test data persistency from local
+[lisa@localhost ~]$ ls -lZ /host_data/
+total 8
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c822,c902  9 Mar 20 15:03 testfile
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c822,c902 22 Mar 20 15:11 testfile2
+
+# clean up
+[lisa@localhost ~]$ sudo podman stop rhel8-persistent-data
+[sudo] password for lisa: 
+e7b3d2aa1d9cc1c3cb37caa6a7d10a014aa9889466940473772edd3165831657
+[lisa@localhost ~]$ sudo podman rm rhel8-persistent-data
+e7b3d2aa1d9cc1c3cb37caa6a7d10a014aa9889466940473772edd3165831657
