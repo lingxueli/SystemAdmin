@@ -20,30 +20,17 @@ PROFILES
        At the moment we're providing the following pre-defined profiles:
 
        balanced
-              It is the default profile. It provides balanced power saving and performance.  At the moment it enables CPU and disk plugins
-              of tuned and it makes sure the conservative governor is active (if supported by the current  cpufreq  driver).   It  enables
-              ALPM  power  saving  for  SATA host adapters and sets the link power management policy to medium_power. It also sets the CPU
-              energy performance bias to normal. It also enables AC97 audio power saving or (it depends on your  system)  HDA-Intel  power
-              savings  with  10 seconds timeout. In case your system contains supported Radeon graphics card (with enabled KMS) it config‐
-              ures it to automatic power saving.
+              It is the default profile. It provides balanced power saving and performance.
 
        powersave
-              Maximal power saving, at the moment it enables USB autosuspend (in case environment variable USB_AUTOSUSPEND is set  to  1),
-              enables  ALPM  power  saving for SATA host adapters and sets the link power management policy to min_power.  It also enables
-              WiFi power saving and makes sure the ondemand governor is active (if supported by the current cpufreq driver). It  sets  the
-              CPU  energy  performance bias to powersave. It also enables AC97 audio power saving or (it depends on your system) HDA-Intel
-              power savings (with 10 seconds timeout). In case your system contains supported Radeon graphics card (with enabled  KMS)  it
-              configures it to automatic power saving. On Asus Eee PCs dynamic Super Hybrid Engine is enabled.
-
+              Maximal power saving, at the moment it enables USB autosuspend (in case environment variable USB_AUTOSUSPEND is set  to  1), enables  ALPM  power  saving for SATA host adapters and sets the link power management policy to min_power.  
+              
        throughput-performance
-              Profile for typical throughput performance tuning. Disables power saving mechanisms and enables sysctl settings that improve
-              the throughput performance of your disk and network IO. CPU governor is set to performance and CPU energy  performance  bias
-              is set to performance. Disk readahead values are increased.
-
+              Profile for typical throughput performance tuning. Disables power saving mechanisms and enables sysctl settings that improve the throughput performance of your disk and network IO. 
+              
        accelerator-performance
-              This profile contains the same tuning as the throughput-performance profile.  Additionally, it locks the CPU to low C states
-              so that the latency is less than 100us. This improves the performance of certain accelerators, such as GPUs.
-       .../
+              This profile contains the same tuning as the throughput-performance profile.  Additionally, it locks the CPU to low C states so that the latency is less than 100us. This improves the performance of certain accelerators, such as GPUs.
+       
 
 
 # tuned-adm command: interact with tuned service and switch between different tuning profiles.
@@ -51,26 +38,11 @@ PROFILES
 # install tuned service
 
 [root@localhost lisa]# yum provides tuned
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
 Last metadata expiration check: 2:27:00 ago on Tue 16 Feb 2021 08:43:37 PM MST.
 tuned-2.14.0-3.el8.noarch : A dynamic adaptive system tuning daemon
 Repo        : BaseOS-exercise
 Matched from:
 Provide    : tuned = 2.14.0-3.el8
-
-tuned-2.14.0-3.el8_3.1.noarch : A dynamic adaptive system tuning daemon
-Repo        : @System
-Matched from:
-Provide    : tuned = 2.14.0-3.el8_3.1
-
-tuned-2.14.0-3.el8_3.1.noarch : A dynamic adaptive system tuning daemon
-Repo        : baseos
-Matched from:
-Provide    : tuned = 2.14.0-3.el8_3.1
 
 [root@localhost lisa]# rpm -q tuned
 tuned-2.14.0-3.el8_3.1.noarch
@@ -158,21 +130,12 @@ OPTIONS
        active Show current active profile.
 
        profile [PROFILE_NAME]...
-              Switches to the given profile. If more than one profile is given, the profiles are merged (in case of conflicting  settings,
-              the  setting from the last profile is used) and the resulting profile is applied. If no profile is given, then all available
-              profiles are listed. If the profile given is not valid, the command gracefully exits without performing any operation.
+              Switches to the given profile.
 
-       verify Verifies current profile against system settings. Outputs information whether system settings match current profile  or  not
-              (e.g.  somebody  modified  a  sysfs/sysctl value by hand). Detailed information about what is checked, what value is set and
-              what value is expected can be found in the log.
+       verify Verifies current profile against system settings. Outputs information whether system settings match current profile  or  not (e.g.  somebody  modified  a  sysfs/sysctl value by hand).
 
        recommend
-              Recommend a profile suitable for your system. Currently only static detection is implemented - it decides according to  data
-              in  /etc/system-release-cpe  and virt-what output. The rules for autodetection are defined in the file /usr/lib/tuned/recom‐
-              mend.d/50-tuned.conf. The default rules recommend profiles targeted to the best performance,  or  the  balanced  profile  if
-              unsure.
-
-
+              Recommend a profile suitable for your system.
 
 # check current profile
 [root@localhost /]# tuned-adm active

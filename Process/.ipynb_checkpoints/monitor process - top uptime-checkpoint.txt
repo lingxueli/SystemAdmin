@@ -29,21 +29,10 @@ MiB Swap:   2048.0 total,   1006.2 free,   1041.8 used.    309.4 avail Mem
 
 $ man top
    4a. GLOBAL Commands
-       The global interactive commands are always available in both full-screen mode and alternate-display mode.  However, some  of  these
-       interactive commands are not available when running in Secure mode.
-
-       If  you  wish  to  know in advance whether or not your top has been secured, simply ask for help and view the system summary on the
-       second line.
-
-         <Enter> or <Space>  :Refresh-Display
-              These commands awaken top and following receipt of any input the entire display will  be  repainted.   They  also  force  an
-              update of any hotplugged cpu or physical memory changes.
-
-              Use either of these keys if you have a large delay interval and wish to see current status,
-
+       The global interactive commands are always available in both full-screen mode and alternate-display mode.  However, some  of  these interactive commands are not available when running in Secure mode.
+       
           ? | h  :Help
-              There  are  two  help levels available.  The first will provide a reminder of all the basic interactive commands.  If top is
-              secured, that screen will be abbreviated.
+              There  are  two  help levels available.  The first will provide a reminder of all the basic interactive commands.  If top is secured, that screen will be abbreviated.
 
 $ top 
 
@@ -53,29 +42,14 @@ Help for Interactive Commands - procps-ng 3.3.15
 Window 1:Def: Cumulative mode Off.  System: Delay 3.0 secs; Secure mode Off.
 
   Z,B,E,e   Global: 'Z' colors; 'B' bold; 'E'/'e' summary/task memory scale
-  l,t,m     Toggle Summary: 'l' load avg; 't' task/cpu stats; 'm' memory info
-  0,1,2,3,I Toggle: '0' zeros; '1/2/3' cpus or numa node views; 'I' Irix mode
-  f,F,X     Fields: 'f'/'F' add/remove/order/sort; 'X' increase fixed-width
-
-  L,&,<,> . Locate: 'L'/'&' find/again; Move sort column: '<'/'>' left/right
-  R,H,V,J . Toggle: 'R' Sort; 'H' Threads; 'V' Forest view; 'J' Num justify
-  c,i,S,j . Toggle: 'c' Cmd name/line; 'i' Idle; 'S' Time; 'j' Str justify
-  x,y     . Toggle highlights: 'x' sort field; 'y' running tasks
-  z,b     . Toggle: 'z' color/mono; 'b' bold/reverse (only if 'x' or 'y')
-  u,U,o,O . Filter by: 'u'/'U' effective/any user; 'o'/'O' other criteria
-  n,#,^O  . Set: 'n'/'#' max tasks displayed; Show: Ctrl+'O' other filter(s)
-  C,...   . Toggle scroll coordinates msg for: up,down,left,right,home,end
-
+...
   k,r       Manipulate tasks: 'k' kill; 'r' renice
-  d or s    Set update interval
-  W,Y       Write configuration file 'W'; Inspect other output 'Y'
-  q         Quit
           ( commands shown with '.' require a visible task display window ) 
 Press 'h' or '?' for help with Windows,
 Type 'q' or <Esc> to continue 
 
 
-Process State:
+Process State
 
 $ man ps
 PROCESS STATE CODES         top
@@ -122,12 +96,27 @@ load average = number of processes in runnable state + uninterruptable sleep
 i.e running + waiting for I/O
 
 
+
 Alternative command to read load avaerage
 [root@localhost lisa]# uptime
  22:43:06 up 1 day,  2:01,  1 user,  load average: 3.78, 3.76, 3.72
  
- 
-If it's larger than the # of COPU cores, it's a performance issue
+UPTIME(1)                        User Commands                       UPTIME(1)
+
+NAME
+       uptime - Tell how long the system has been running.
+
+SYNOPSIS
+       uptime [options]
+
+DESCRIPTION
+       uptime gives a one line display of the following information.  The cur‐
+       rent time, how long the system has been running,  how  many  users  are
+       currently  logged  on,  and the system load averages for the past 1, 5,
+       and 15 minutes.
+
+
+If it's larger than the # of CPU cores, it's a performance issue
 
 [root@localhost lisa]# man -k cpu | grep lscpu
 lscpu (1)            - display information about the CPU architecture

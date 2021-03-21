@@ -70,8 +70,7 @@ SYNOPSIS
 
 
        -l, --list [number]
-              Print a list of signal names, or convert the given signal number to a name.  The signals can be found in /usr/include/linux/
-              signal.h
+              Print a list of signal names, or convert the given signal number to a name.  The signals can be found in /usr/include/linux/signal.h
 
 
 
@@ -90,6 +89,8 @@ SYNOPSIS
 58) SIGRTMAX-6	59) SIGRTMAX-5	60) SIGRTMAX-4	61) SIGRTMAX-3	62) SIGRTMAX-2
 63) SIGRTMAX-1	64) SIGRTMAX	
 
+
+pgrep == pkill
 
 
 PGREP(1)                                                       User Commands                                                      PGREP(1)
@@ -119,6 +120,13 @@ DESCRIPTION
               Only match processes whose effective user ID is listed.  Either the numerical or symbolical value may be used.
 
 
+# look up the PID of process dd
+[root@localhost ~]# pgrep dd
+2
+192
+2776
+2808
+65528
 
 
 KILLALL(1)                                                     User Commands                                                    KILLALL(1)

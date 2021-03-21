@@ -7,43 +7,6 @@ renice (1)           - alter priority of running processes
 renice (1p)          - set nice values of running processes
 
 
-NICE(1)                                                        User Commands                                                       NICE(1)
-
-NAME
-       nice - run a program with modified scheduling priority
-
-SYNOPSIS
-       nice [OPTION] [COMMAND [ARG]...]
-
-       -n, --adjustment=N
-              add integer N to the niceness (default 10)
-
-[root@localhost ~]# info nice
-
-
-22.3.4.2 Functions For Traditional Scheduling
-.............................................
-
-This section describes how you can read and set the nice value of a
-process.  All these symbols are declared in ‘sys/resource.h’.
-
-   The function and macro names are defined by POSIX, and refer to
-"priority," but the functions actually have to do with nice values, as
-the terms are used both in the manual and POSIX.
-
-   The range of valid nice values depends on the kernel, but typically
-it runs from ‘-20’ to ‘20’.  A lower nice value corresponds to higher
-priority for the process.  These constants describe the range of
-priority values:
-
-‘PRIO_MIN’
-
-     The lowest valid nice value.
-
-‘PRIO_MAX’
-
-     The highest valid nice value.
-
 # nice: run a program with a specified value of priority
 [root@localhost ~]# nice -n 5 dd if=/dev/zero of=/dev/null &
 [1] 67875
@@ -62,6 +25,38 @@ root          12  0.0  0.0      0     0 ?        S    Feb15   0:00 [migration/0]
 
 [root@localhost ~]# ps aux | grep dd
 root       67875 76.7  0.0   7328   916 pts/0    RN   09:52   0:20 dd if=/dev/zero of=/dev/null
+
+
+
+NICE(1)                                                        User Commands                                                       NICE(1)
+
+NAME
+       nice - run a program with modified scheduling priority
+
+SYNOPSIS
+       nice [OPTION] [COMMAND [ARG]...]
+
+       -n, --adjustment=N
+              add integer N to the niceness (default 10)
+
+[root@localhost ~]# info nice
+
+
+22.3.4.2 Functions For Traditional Scheduling
+.............................................
+   The range of valid nice values depends on the kernel, but typically
+it runs from ‘-20’ to ‘20’.  A lower nice value corresponds to higher
+priority for the process.  These constants describe the range of
+priority values:
+
+‘PRIO_MIN’
+
+     The lowest valid nice value.
+
+‘PRIO_MAX’
+
+     The highest valid nice value.
+
 
 # renice: adjust the priority of a running program
 [root@localhost ~]# renice -n 10 -p 67875
