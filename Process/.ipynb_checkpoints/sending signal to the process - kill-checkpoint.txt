@@ -90,8 +90,10 @@ SYNOPSIS
 63) SIGRTMAX-1	64) SIGRTMAX	
 
 
-pgrep == pkill
+pgrep - look up the PID
 
+pkill - kill the process
+$ pkill dd
 
 PGREP(1)                                                       User Commands                                                      PGREP(1)
 
@@ -103,8 +105,7 @@ SYNOPSIS
        pkill [options] pattern
 
 DESCRIPTION
-       pgrep  looks  through  the currently running processes and lists the process IDs which match the selection criteria to stdout.  All
-       the criteria have to match.  For example,
+       pgrep  looks  through  the currently running processes and lists the process IDs which match the selection criteria to stdout.  All the criteria have to match.  For example,
 
               $ pgrep -u root sshd
 
@@ -119,14 +120,11 @@ DESCRIPTION
        -u, --euid euid,...
               Only match processes whose effective user ID is listed.  Either the numerical or symbolical value may be used.
 
+OPERANDS
+       pattern
+              Specifies an Extended Regular Expression  for  matching  against
+              the process names or command lines.
 
-# look up the PID of process dd
-[root@localhost ~]# pgrep dd
-2
-192
-2776
-2808
-65528
 
 
 KILLALL(1)                                                     User Commands                                                    KILLALL(1)
