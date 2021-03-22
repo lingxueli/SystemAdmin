@@ -35,8 +35,7 @@ scope
 
 $ man 5 systemd.unit
 UNIT LOAD PATH
-       Unit files are loaded from a set of paths determined during compilation, described in the two tables below. Unit files found in directories
-       listed earlier override files with the same name in directories lower in the list.
+       Unit files are loaded from a set of paths determined during compilation, described in the two tables below. Unit files found in directories listed earlier override files with the same name in directories lower in the list.
 
        Table 1.  Load path when running in system mode (--system).
        ┌────────────────────────┬─────────────────────────────┐
@@ -62,58 +61,55 @@ highest precedence to lowest:
 /run/systemd/system > /etc/systemd/system > /usr/lib/systemd/system
 
 
-       In addition to the generic [Unit] and [Install] sections described here, each unit may have a type-specific section, e.g. [Service] for a
-       service unit. See the respective man pages for more information: systemd.service(5), systemd.socket(5), systemd.device(5),
-       systemd.mount(5), systemd.automount(5), systemd.swap(5), systemd.target(5), systemd.path(5), systemd.timer(5), systemd.snapshot(5).
-       systemd.slice(5).  systemd.scope(5).
+       In addition to the generic [Unit] and [Install] sections described here, each unit may have a type-specific section, e.g. [Service] for a service unit. See the respective man pages for more information: systemd.service(5), systemd.socket(5), systemd.device(5), systemd.mount(5)...
 
 # common sections in all types of units
 
 [UNIT] SECTION OPTIONS
        Unit file may include a [Unit] section, which carries generic information about the unit that is not dependent on the type of unit:
        
-       Before=, After=
-           A space-separated list of unit names. Configures ordering dependencies between units. If a unit foo.service contains a setting
-           Before=bar.service and both units are being started, bar.service's start-up is delayed until foo.service is started up. Note that this
-           setting is independent of and orthogonal to the requirement dependencies as configured by Requires=. It is a common pattern to include
-           a unit name in both the After= and Requires= option, in which case the unit listed will be started before the unit that is configured
-           with these options. This option may be specified more than once, in which case ordering dependencies for all listed names are created.
-           After= is the inverse of Before=, i.e. while After= ensures that the configured unit is started after the listed unit finished starting
-           up, Before= ensures the opposite, i.e. that the configured unit is fully started up before the listed unit is started. Note that when
-           two units with an ordering dependency between them are shut down, the inverse of the start-up order is applied. i.e. if a unit is
-           configured with After= on another unit, the former is stopped before the latter if both are shut down. If one unit with an ordering
-           dependency on another unit is shut down while the latter is started up, the shut down is ordered before the start-up regardless of
-           whether the ordering dependency is actually of type After= or Before=. If two units have no ordering dependencies between them, they
-           are shut down or started up simultaneously, and no ordering takes place.
-
-       Requires=
-           Configures requirement dependencies on other units. If this unit gets activated, the units listed here will be activated as well. If
-           one of the other units gets deactivated or its activation fails, this unit will be deactivated. This option may be specified more than
-           once or multiple space-separated units may be specified in one option in which case requirement dependencies for all listed names will
-           be created. Note that requirement dependencies do not influence the order in which services are started or stopped. This has to be
-           configured independently with the After= or Before= options. If a unit foo.service requires a unit bar.service as configured with
-           Requires= and no ordering is configured with After= or Before=, then both units will be started simultaneously and without any delay
-           between them if foo.service is activated. Often it is a better choice to use Wants= instead of Requires= in order to achieve a system
-           that is more robust when dealing with failing services.
-
-           Note that dependencies of this type may also be configured outside of the unit configuration file by adding a symlink to a .requires/
-           directory accompanying the unit file. For details see above.
+       Before=, After=           ### it determines the order to start up/shut down the units
+           Configures ordering dependencies between units. 
+           If a unit foo.service contains a setting Before=bar.service and both units are being started, bar.service's start-up is delayed until foo.service is started up. 
            
+           Note that this setting is independent of and orthogonal to the requirement dependencies as configured by Requires=. It is a common pattern to include a unit name in both the After= and Requires= option, in which case the unit listed will be started before the unit that is configured with these options.
+           
+           After= is the inverse of Before=, i.e. while After= ensures that the configured unit is started after the listed unit finished starting up, Before= ensures the opposite, i.e. that the configured unit is fully started up before the listed unit is started. 
+           Note that when two units with an ordering dependency between them are shut down, the inverse of the start-up order is applied. i.e. if a unit is configured with After= on another unit, the former is stopped before the latter if both are shut down. If one unit with an ordering dependency on another unit is shut down while the latter is started up, the shut down is ordered before the start-up regardless of whether the ordering dependency is actually of type After= or Before=.
+
+       Requires=               ### it determins the dependencies with no requirement of the ordering
+                               ### /.requires directory is created
+           Configures requirement dependencies on other units. If this unit gets activated, the units listed here will be activated as well. If one of the other units gets deactivated or its activation fails, this unit will be deactivated. 
+           
+           Note that requirement dependencies do not influence the order in which services are started or stopped. This has to be configured independently with the After= or Before= options. 
+           
+           If a unit foo.service requires a unit bar.service as configured with Requires= and no ordering is configured with After= or Before=, then both units will be started simultaneously and without any delay between them if foo.service is activated. Often it is a better choice to use Wants= instead of Requires= in order to achieve a system that is more robust when dealing with failing services.
+
+           Note that dependencies of this type may also be configured outside of the unit configuration file by adding a symlink to a .requires/ directory accompanying the unit file. For details see above.
+
+       Wants=                 ### it determines desired dependencies - if missing, there's no impact on its integrity. 
+                              ### it doesn't specify the ordering.
+                              ### /.wants directory is created
+           A weaker version of Requires=. Units listed in this option will be
+           started if the configuring unit is. However, if the listed units
+           fail to start or cannot be added to the transaction, this has no
+           impact on the validity of the transaction as a whole. This is the
+           recommended way to hook start-up of one unit to the start-up of
+           another unit.
+
+           Note that dependencies of this type may also be configured outside
+           of the unit configuration file by adding symlinks to a .wants/
+           directory accompanying the unit file. For details, see above.
+
 [INSTALL] SECTION OPTIONS
-       Unit file may include an "[Install]" section, which carries installation information for the unit. This section is not interpreted by
-       systemd(1) during runtime. It is used exclusively by the enable and disable commands of the systemctl(1) tool during installation of a
-       unit:
+       Unit file may include an "[Install]" section, which carries installation information for the unit. This section is not interpreted by systemd(1) during runtime. It is used exclusively by the enable and disable commands of the systemctl(1) tool during installation of a unit:
 
-       WantedBy=, RequiredBy=
-           This option may be used more than once, or a space-separated list of unit names may be given. A symbolic link is created in the .wants/
-           or .requires/ directory of each of the listed units when this unit is installed by systemctl enable. This has the effect that a
-           dependency of type Wants= or Requires= is added from the listed unit to the current unit. The primary result is that the current unit
-           will be started when the listed unit is started. See the description of Wants= and Requires= in the [Unit] section for details.
+       WantedBy=, RequiredBy=     ### the same effect as Wants, Requires
+                                  ### bar.service: WantedBy=foo.service translates to the symbolic link
+                                  ### /etc/systemd/system/foo.service.wants/bar.service -> /usr/lib/systemd/system/bar.service
+           This option may be used more than once, or a space-separated list of unit names may be given. A symbolic link is created in the .wants/ or .requires/ directory of each of the listed units when this unit is installed by systemctl enable. This has the effect that a dependency of type Wants= or Requires= is added from the listed unit to the current unit. The primary result is that the current unit will be started when the listed unit is started. See the description of Wants= and Requires= in the [Unit] section for details.
 
-           WantedBy=foo.service in a service bar.service is mostly equivalent to Alias=foo.service.wants/bar.service in the same file. In case of
-           template units, systemctl enable must be called with an instance name, and this instance will be added to the .wants/ or .requires/
-           list of the listed unit. E.g.  WantedBy=getty.target in a service getty@.service will result in systemctl enable getty@tty2.service
-           creating a getty.target.wants/getty@tty2.service link to getty@.service.
+           WantedBy=foo.service in a service bar.service is mostly equivalent to Alias=foo.service.wants/bar.service in the same file. In case of template units, systemctl enable must be called with an instance name, and this instance will be added to the .wants/ or .requires/ list of the listed unit. E.g.  WantedBy=getty.target in a service getty@tty2.service will result in systemctl enable getty@tty2.service creating a getty.target.wants/getty@tty2.service link to getty@tty2.service.
 
 
 EXAMPLES
@@ -130,10 +126,19 @@ EXAMPLES
            [Install]
            WantedBy=multi-user.target
 
-       After running systemctl enable, a symlink /etc/systemd/system/multi-user.target.wants/foo.service linking to the actual unit will be
-       created. It tells systemd to pull in the unit when starting multi-user.target. The inverse systemctl disable will remove that symlink
-       again.
+       After running systemctl enable, a symlink /etc/systemd/system/multi-user.target.wants/foo.service linking to the actual unit will be created. It tells systemd to pull in the unit when starting multi-user.target. The inverse systemctl disable will remove that symlink again.
 
+[root@localhost lisa]# ls -al  /etc/systemd/system/multi-user.target.wants/
+total 8
+drwxr-xr-x.  2 root root 4096 Mar 20 16:25 .
+drwxr-xr-x. 24 root root 4096 Mar 20 16:08 ..
+lrwxrwxrwx.  1 root root   35 Jan 22 23:52 atd.service -> /usr/lib/systemd/system/atd.service
+lrwxrwxrwx.  1 root root   38 Jan 22 23:39 auditd.service -> /usr/lib/systemd/system/auditd.service
+lrwxrwxrwx.  1 root root   44 Jan 22 23:46 avahi-daemon.service -> /usr/lib/systemd/system/avahi-daemon.service
+lrwxrwxrwx.  1 root root   39 Jan 25 00:06 chronyd.service -> /usr/lib/systemd/system/chronyd.service
+lrwxrwxrwx.  1 root root   37 Jan 22 23:39 crond.service -> /usr/lib/systemd/system/crond.service
+lrwxrwxrwx.  1 root root   33 Jan 22 23:48 cups.path -> /usr/lib/systemd/system/cups.path
+lrwxrwxrwx.  1 root root   36 Jan 22 23:48 cups.service -> /usr/lib/systemd/system/cups.service
 
 # service unit
 $ man 5 systemd.service
@@ -144,38 +149,22 @@ NAME
 
 
 OPTIONS
-       Service files must include a "[Service]" section, which carries information about the service and the process it supervises. A number of
-       options that may be used in this section are shared with other unit types. These options are documented in systemd.exec(5) and
-       systemd.kill(5). The options specific to the "[Service]" section of service units are the following:
+       Service files must include a "[Service]" section, which carries information about the service and the process it supervises. A number of options that may be used in this section are shared with other unit types. These options are documented in systemd.exec(5) and systemd.kill(5). The options specific to the "[Service]" section of service units are the following:
 
        Type=
            Configures the process start-up type for this service unit. One of simple, forking, oneshot, dbus, notify or idle.
 
-           If set to simple (the default if neither Type= nor BusName=, but ExecStart= are specified), it is expected that the process configured
-           with ExecStart= is the main process of the service. In this mode, if the process offers functionality to other processes on the system,
-           its communication channels should be installed before the daemon is started up (e.g. sockets set up by systemd, via socket activation),
-           as systemd will immediately proceed starting follow-up units.
+           If set to simple (the default if neither Type= nor BusName=, but ExecStart= are specified), it is expected that the process configured with ExecStart= is the main process of the service. In this mode, if the process offers functionality to other processes on the system, its communication channels should be installed before the daemon is started up (e.g. sockets set up by systemd, via socket activation), as systemd will immediately proceed starting follow-up units.
 
-           If set to forking, it is expected that the process configured with ExecStart= will call fork() as part of its start-up. The parent
-           process is expected to exit when start-up is complete and all communication channels are set up. The child continues to run as the main
-           daemon process.
+           If set to forking, it is expected that the process configured with ExecStart= will call fork() as part of its start-up. The parent  process is expected to exit when start-up is complete and all communication channels are set up. The child continues to run as the main daemon process.
 
-           Behavior of oneshot is similar to simple; however, it is expected that the process has to exit before systemd starts follow-up units.
-           RemainAfterExit= is particularly useful for this type of service. This is the implied default if neither Type= or ExecStart= are
-           specified.
+           Behavior of oneshot is similar to simple; however, it is expected that the process has to exit before systemd starts follow-up units. RemainAfterExit= is particularly useful for this type of service. This is the implied default if neither Type= or ExecStart= are specified.
 
-           Behavior of dbus is similar to simple; however, it is expected that the daemon acquires a name on the D-Bus bus, as configured by
-           BusName=. systemd will proceed with starting follow-up units after the D-Bus bus name has been acquired. Service units with this option
-           configured implicitly gain dependencies on the dbus.socket unit. This type is the default if BusName= is specified.
+           Behavior of dbus is similar to simple; however, it is expected that the daemon acquires a name on the D-Bus bus, as configured by BusName=. systemd will proceed with starting follow-up units after the D-Bus bus name has been acquired. Service units with this option  configured implicitly gain dependencies on the dbus.socket unit. This type is the default if BusName= is specified.
 
-           Behavior of notify is similar to simple; however, it is expected that the daemon sends a notification message via sd_notify(3) or an
-           equivalent call when it has finished starting up. systemd will proceed with starting follow-up units after this notification message
-           has been sent. If this option is used, NotifyAccess= (see below) should be set to open access to the notification socket provided by
-           systemd. If NotifyAccess= is not set, it will be implicitly set to main. Note that currently Type=notify will not work if used in
-           combination with PrivateNetwork=yes.
+           Behavior of notify is similar to simple; however, it is expected that the daemon sends a notification message via sd_notify(3) or an equivalent call when it has finished starting up. systemd will proceed with starting follow-up units after this notification message has been sent. If this option is used, NotifyAccess= (see below) should be set to open access to the notification socket provided by systemd. If NotifyAccess= is not set, it will be implicitly set to main. Note that currently Type=notify will not work if used in combination with PrivateNetwork=yes.
 
-           Behavior of idle is very similar to simple; however, actual execution of the service binary is delayed until all jobs are dispatched.
-           This may be used to avoid interleaving of output of shell services with the status output on the console.       
+           Behavior of idle is very similar to simple; however, actual execution of the service binary is delayed until all jobs are dispatched. This may be used to avoid interleaving of output of shell services with the status output on the console.       
 
        ExecStart=
            Commands with their arguments that are executed when this service is started. The value is split into zero or more command lines is

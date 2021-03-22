@@ -35,10 +35,7 @@ COMMANDS
    Unit Commands
        list-units [PATTERN...]
 
-           List units that systemd currently has in memory. This includes units that are either referenced directly or through a
-           dependency, units that are pinned by applications programmatically, or units that were active in the past and have failed. By
-           default only units which are active, have pending jobs, or have failed are shown; this can be changed with option --all. If one
-           or more PATTERNs are specified, only units matching one of them are shown. The units that are shown are additionally filtered
+           List units that systemd currently has in memory. The units that are shown are additionally filtered
            by --type= and --state= if those options are specified.
 
            ...
@@ -52,18 +49,14 @@ COMMANDS
                  boot-efi.mount               loaded active mounted /boot/efi
                  systemd-journald.service     loaded active running Journal Service
            
-           The LOAD column shows the load state, one of loaded, not-found, bad-setting, error, masked. The ACTIVE columns shows the
-           general unit state, one of active, reloading, inactive, failed, activating, deactivating. The SUB column shows the
-           unit-type-specific detailed state of the unit, possible values vary by unit type. The list of possible LOAD, ACTIVE, and SUB
-           states is not constant and new systemd releases may both add and remove values.
+           The LOAD column shows the load state, one of loaded, not-found, bad-setting, error, masked. The ACTIVE columns shows the general unit state, one of active, reloading, inactive, failed, activating, deactivating. The SUB column shows the unit-type-specific detailed state of the unit, possible values vary by unit type. The list of possible LOAD, ACTIVE, and SUB states is not constant and new systemd releases may both add and remove values.
 
                systemctl --state=help
 
            command maybe be used to display the current set of possible values.
            
        list-dependencies [UNIT]
-           Shows units required and wanted by the specified unit. This recursively lists units following the Requires=, Requisite=,
-           ConsistsOf=, Wants=, BindsTo= dependencies. If no unit is specified, default.target is implied.
+           Shows units required and wanted by the specified unit. This recursively lists units following the Requires=, Requisite=, ConsistsOf=, Wants=, BindsTo= dependencies. If no unit is specified, default.target is implied.
 
            By default, only target units are recursively expanded. When --all is passed, all other units are recursively expanded as well.
 
@@ -74,36 +67,19 @@ COMMANDS
            Stop (deactivate) one or more units specified on the command line.
 
        reload PATTERN...
-           Asks all units listed on the command line to reload their configuration. Note that this will reload the service-specific
-           configuration, not the unit configuration file of systemd. If you want systemd to reload the configuration file of a unit, use
-           the daemon-reload command. In other words: for the example case of Apache, this will reload Apache's httpd.conf in the web
-           server, not the apache.service systemd unit file.
+           Asks all units listed on the command line to reload their configuration. Note that this will reload the service-specific configuration, not the unit configuration file of systemd. If you want systemd to reload the configuration file of a unit, use the daemon-reload command. In other words: for the example case of Apache, this will reload Apache's httpd.conf in the web server, not the apache.service systemd unit file.
 
            This command should not be confused with the daemon-reload command.
 
        restart PATTERN...
            Stop and then start one or more units specified on the command line. If the units are not running yet, they will be started.
 
-           Note that restarting a unit with this command does not necessarily flush out all of the unit's resources before it is started
-           again. For example, the per-service file descriptor storage facility (see FileDescriptoreStoreMax= in systemd.service(5)) will
-           remain intact as long as the unit has a job pending, and is only cleared when the unit is fully stopped and no jobs are pending
-           anymore. If it is intended that the file descriptor store is flushed out, too, during a restart operation an explicit systemctl
-           stop command followed by systemctl start should be issued.
-
-
-
        status [PATTERN...|PID...]]
-           Show terse runtime status information about one or more units, followed by most recent log data from the journal. If no units
-           are specified, show system status. If combined with --all, also show the status of all units (subject to limitations specified
-           with -t). If a PID is passed, show information about the unit the process belongs to.
+           Show terse runtime status information about one or more units, followed by most recent log data from the journal. If no units are specified, show system status. If combined with --all, also show the status of all units (subject to limitations specified with -t). If a PID is passed, show information about the unit the process belongs to.
 
 
        show [PATTERN...|JOB...]
-           Show properties of one or more units, jobs, or the manager itself. If no argument is specified, properties of the manager will
-           be shown. If a unit name is specified, properties of the unit are shown, and if a job ID is specified, properties of the job
-           are shown. By default, empty properties are suppressed. Use --all to show those too. To select specific properties to show, use
-           --property=. This command is intended to be used whenever computer-parsable output is required. Use status if you are looking
-           for formatted human-readable output.
+           Show properties of one or more units, jobs, or the manager itself. If no argument is specified, properties of the manager will be shown. If a unit name is specified, properties of the unit are shown, and if a job ID is specified, properties of the job are shown. By default, empty properties are suppressed. Use --all to show those too. To select specific properties to show, use --property=. This command is intended to be used whenever computer-parsable output is required.
 
        edit UNIT...
            Edit a drop-in snippet or a whole replacement file if --full is specified, to extend or override the specified unit.
