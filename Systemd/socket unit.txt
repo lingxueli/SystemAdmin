@@ -1,0 +1,90 @@
+# socket unit
+$ man 5 systemd.socket
+SYSTEMD.SOCKET(5)                                                 systemd.socket                                                 SYSTEMD.SOCKET(5)
+
+NAME
+       systemd.socket - Socket unit configuration
+
+SYNOPSIS
+       socket.socket
+
+DESCRIPTION
+       A unit configuration file whose name ends in ".socket" encodes information about an IPC or network socket or a file system FIFO controlled and supervised by systemd, for socket-based activation.
+
+       ListenStream=, ListenDatagram=, ListenSequentialPacket=
+           Specifies an address to listen on for a stream (SOCK_STREAM), datagram (SOCK_DGRAM), or sequential packet (SOCK_SEQPACKET) socket, respectively. The address can be written in various formats:
+
+           If the address string is a single number, it is read as port number to listen on via IPv6. Depending on the value of BindIPv6Only= (see below) this might result in the service being available via both IPv6 and IPv4 (default) or just via IPv6.
+
+
+       ExecStartPre=, ExecStartPost=
+           Takes one or more command lines, which are executed before or after the listening sockets/FIFOs are created and bound, respectively.
+           The first token of the command line must be an absolute filename, then followed by arguments for the process. Multiple command lines may be specified following the same scheme as used for ExecStartPre= of service unit files.
+
+       ExecStopPre=, ExecStopPost=
+           Additional commands that are executed before or after the listening sockets/FIFOs are closed and removed, respectively. Multiple command lines may be specified following the same scheme as used for ExecStartPre= of service unit files.
+           
+           
+cockpit is used to administer Linux servers in a web browser. It provides a user friendly GUI to administrate a Linux system.
+           
+[root@localhost ~]# systemctl cat cockpit.socket
+# /usr/lib/systemd/system/cockpit.socket
+[Unit]
+Description=Cockpit Web Service Socket
+Documentation=man:cockpit-ws(8)
+Wants=cockpit-motd.service
+
+[Socket]
+ListenStream=9090
+ExecStartPost=-/usr/share/cockpit/motd/update-motd '' localhost
+ExecStartPost=-/bin/ln -snf active.motd /run/cockpit/motd
+ExecStopPost=-/bin/ln -snf /usr/share/cockpit/motd/inactive.motd /run/cockpit/motd
+
+[Install]
+WantedBy=sockets.target
+
+# the socket unit listens on ports and activate the service only when acti
+# each socket unit has a service unit with the same name
+[root@localhost ~]# ls -al /usr/lib/systemd/system/ | grep cockpit
+-rw-r--r--.  1 root root   222 Aug 24  2020 cockpit-motd.service
+-rw-r--r--.  1 root root   835 Aug 24  2020 cockpit.service
+-rw-r--r--.  1 root root   373 Aug 24  2020 cockpit.socket
+-rw-r--r--.  1 root root   251 Aug 24  2020 cockpit-wsinstance-http-redirect.service
+-rw-r--r--.  1 root root   233 Aug 24  2020 cockpit-wsinstance-http-redirect.socket
+-rw-r--r--.  1 root root   221 Aug 24  2020 cockpit-wsinstance-http.service
+-rw-r--r--.  1 root root   165 Aug 24  2020 cockpit-wsinstance-https-factory@.service
+-rw-r--r--.  1 root root   244 Aug 24  2020 cockpit-wsinstance-https-factory.socket
+-rw-r--r--.  1 root root   215 Aug 24  2020 cockpit-wsinstance-http.socket
+-rw-r--r--.  1 root root   264 Aug 24  2020 cockpit-wsinstance-https@.service
+-rw-r--r--.  1 root root   478 Aug 24  2020 cockpit-wsinstance-https@.socket
+-rw-r--r--.  1 root root   268 Aug 19  2020 system-cockpithttps.slice
+
+
+
+[root@localhost ~]# systemctl cat cockpit.service
+# /usr/lib/systemd/system/cockpit.service
+[Unit]
+Description=Cockpit Web Service
+Documentation=man:cockpit-ws(8)
+Requires=cockpit.socket
+Requires=cockpit-wsinstance-http.socket cockpit-wsinstance-http-redirect.socket cockpit-wsinstance-https-factory.socket
+After=cockpit-wsinstance-http.socket cockpit-wsinstance-http-redirect.socket cockpit-wsinstance-https-factory.socket
+
+[Service]
+RuntimeDirectory=cockpit/tls
+# systemd ≥ 241 sets this automatically
+Environment=RUNTIME_DIRECTORY=/run/cockpit/tls
+ExecStartPre=+/usr/sbin/remotectl certificate --ensure --user=root --group=cockpit-ws --selinux-type=etc_t
+ExecStart=/usr/libexec/cockpit-tls
+User=cockpit-ws
+Group=cockpit-ws
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryDenyWriteExecute=true
+
+

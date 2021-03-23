@@ -150,37 +150,6 @@ OPTIONS
            Mount options to use when mounting. This takes a comma-separated list of options. This setting is optional.
 
 
-# socket unit
-$ man 5 systemd.socket
-SYSTEMD.SOCKET(5)                                                 systemd.socket                                                 SYSTEMD.SOCKET(5)
-
-NAME
-       systemd.socket - Socket unit configuration
-
-SYNOPSIS
-       socket.socket
-
-DESCRIPTION
-       A unit configuration file whose name ends in ".socket" encodes information about an IPC or network socket or a file system FIFO controlled
-       and supervised by systemd, for socket-based activation.
-
-       ListenStream=, ListenDatagram=, ListenSequentialPacket=
-           Specifies an address to listen on for a stream (SOCK_STREAM), datagram (SOCK_DGRAM), or sequential packet (SOCK_SEQPACKET) socket,
-           respectively. The address can be written in various formats:
-
-           If the address string is a single number, it is read as port number to listen on via IPv6. Depending on the value of BindIPv6Only= (see
-           below) this might result in the service being available via both IPv6 and IPv4 (default) or just via IPv6.
-
-
-       ExecStartPre=, ExecStartPost=
-           Takes one or more command lines, which are executed before or after the listening sockets/FIFOs are created and bound, respectively.
-           The first token of the command line must be an absolute filename, then followed by arguments for the process. Multiple command lines
-           may be specified following the same scheme as used for ExecStartPre= of service unit files.
-
-ExecStopPre=, ExecStopPost=
-           Additional commands that are executed before or after the listening sockets/FIFOs are closed and removed, respectively. Multiple
-           command lines may be specified following the same scheme as used for ExecStartPre= of service unit files.
-
 
 # target unit
 
