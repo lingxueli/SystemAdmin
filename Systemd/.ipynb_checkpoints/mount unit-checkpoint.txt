@@ -1,0 +1,84 @@
+# mount unit
+$ man -k systemd | grep mount
+systemd.mount (5)    - Mount unit configuration
+
+$ man 5 systemd.mount
+SYSTEMD.MOUNT(5)                                                   systemd.mount                                                  SYSTEMD.MOUNT(5)
+
+NAME
+       systemd.mount - Mount unit configuration
+
+SYNOPSIS
+       mount.mount
+
+DESCRIPTION
+       A unit configuration file whose name ends in ".mount" encodes information about a file system mount point controlled and supervised by systemd.
+
+OPTIONS
+       Mount files must include a [Mount] section, which carries information about the file system mount points it supervises. A number of optionsbthat may be used in this section are shared with other unit types. These options are documented in systemd.exec(5) and systemd.kill(5). The options specific to the [Mount] section of mount units are the following:
+
+       What=
+           Takes an absolute path of a device node, file or other resource to mount. See mount(8) for details. If this refers to a device node, a dependency on the respective device unit is automatically created. (See systemd.device(5) for more information.) This option is mandatory.
+
+       Where=
+           Takes an absolute path of a directory of the mount point. If the mount point does not exist at the time of mounting, it is created.
+           This string must be reflected in the unit filename. (See above.) This option is mandatory.
+
+       Type=
+           Takes a string for the file system type. See mount(8) for details. This setting is optional.
+
+       Options=
+           Mount options to use when mounting. This takes a comma-separated list of options. This setting is optional.
+
+
+
+[root@localhost ~]# ls -al /usr/lib/systemd/system/ | grep ".mount"
+-rw-r--r--.  1 root root   750 Jun 22  2018 dev-hugepages.mount
+-rw-r--r--.  1 root root   665 Jun 22  2018 dev-mqueue.mount
+lrwxrwxrwx.  1 root root    60 Feb 22 08:57 dracut-mount.service -> ../../dracut/modules.d/98dracut-systemd/dracut-mount.service
+lrwxrwxrwx.  1 root root    64 Feb 22 08:57 dracut-pre-mount.service -> ../../dracut/modules.d/98dracut-systemd/dracut-pre-mount.service
+-rw-r--r--.  1 root root   287 Jul 20  2020 nfs-mountd.service
+-rw-r--r--.  1 root root  1503 Jul 13  2020 ostree-remount.service
+-rw-r--r--.  1 root root    98 Jul 20  2020 proc-fs-nfsd.mount
+-rw-r--r--.  1 root root   745 Jun 22  2018 proc-sys-fs-binfmt_misc.automount
+-rw-r--r--.  1 root root   655 Jun 22  2018 proc-sys-fs-binfmt_misc.mount
+-rw-r--r--.  1 root root   469 Jul 21  2020 run-vmblock\x2dfuse.mount
+-rw-r--r--.  1 root root   795 Jun 22  2018 sys-fs-fuse-connections.mount
+-rw-r--r--.  1 root root   767 Jun 22  2018 sys-kernel-config.mount
+-rw-r--r--.  1 root root   710 Jun 22  2018 sys-kernel-debug.mount
+-rw-r--r--.  1 root root   802 Dec 17 16:29 systemd-remount-fs.service
+-rw-r--r--.  1 root root   782 Dec 17 16:29 tmp.mount
+-rw-r--r--.  1 root root   457 Jun 22  2018 umount.target
+-rw-r--r--.  1 root root   515 Jun 22  2018 var-lib-machines.mount
+-rw-r--r--.  1 root root   191 Jul 20  2020 var-lib-nfs-rpc_pipefs.mount
+
+[root@localhost ~]# systemctl cat tmp.mount
+# /usr/lib/systemd/system/tmp.mount
+#  SPDX-License-Identifier: LGPL-2.1+
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Temporary Directory (/tmp)
+Documentation=man:hier(7)
+Documentation=https://www.freedesktop.org/wiki/Software/systemd/APIFileSystems
+ConditionPathIsSymbolicLink=!/tmp
+DefaultDependencies=no
+Conflicts=umount.target
+Before=local-fs.target umount.target
+After=swap.target
+
+[Mount]
+What=tmpfs
+Where=/tmp
+Type=tmpfs
+Options=mode=1777,strictatime,nosuid,nodev
+
+# Make 'systemctl enable tmp.mount' work:
+[Install]
+WantedBy=local-fs.target

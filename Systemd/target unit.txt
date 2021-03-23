@@ -62,6 +62,10 @@ EXAMPLES
 
        After running systemctl enable, a symlink /etc/systemd/system/multi-user.target.wants/foo.service linking to the actual unit will be created. It tells systemd to pull in the unit when starting multi-user.target. The inverse systemctl disable will remove that symlink again.
 
+
+### in .wants directory, multiple symbolic links for services are created, which point to the actual service files.
+
+
 [root@localhost lisa]# ls -al  /etc/systemd/system/multi-user.target.wants/
 total 8
 drwxr-xr-x.  2 root root 4096 Mar 20 16:25 .
@@ -73,3 +77,52 @@ lrwxrwxrwx.  1 root root   39 Jan 25 00:06 chronyd.service -> /usr/lib/systemd/s
 lrwxrwxrwx.  1 root root   37 Jan 22 23:39 crond.service -> /usr/lib/systemd/system/crond.service
 lrwxrwxrwx.  1 root root   33 Jan 22 23:48 cups.path -> /usr/lib/systemd/system/cups.path
 lrwxrwxrwx.  1 root root   36 Jan 22 23:48 cups.service -> /usr/lib/systemd/system/cups.service
+
+
+
+
+# target unit
+
+$ man -k systemd | grep target
+systemd.target (5)   - Target unit configuration
+$ man 5 systemd.target
+SYSTEMD.TARGET(5)                                                 systemd.target                                                 SYSTEMD.TARGET(5)
+
+NAME
+       systemd.target - Target unit configuration
+
+SYNOPSIS
+       target.target
+
+DESCRIPTION
+       A unit configuration file whose name ends in ".target" encodes information about a target unit of systemd, which is used for grouping units and as well-known synchronization points during start-up.
+
+       This unit type has no specific options. See systemd.unit(5) for the common options of all unit configuration files. The common configuration items are configured in the generic [Unit] and [Install] sections. A separate [Target] section does not exist, since no target-specific options may be configured.
+
+       Target units do not offer any additional functionality on top of the generic functionality provided by units. They exist merely to group units via dependencies (useful as boot targets), and to establish standardized names for synchronization points used in dependencies between units. Among other things, target units are a more flexible replacement for SysV runlevels in the classic SysV init system. (And for compatibility reasons special target units such as runlevel3.target exist which are used by the SysV runlevel compatibility code in systemd. See systemd.special(7) for details).
+
+       Unless DefaultDependencies= is set to false, target units will implicitly complement all configured dependencies of type Wants=, Requires=,
+       RequiresOverridable= with dependencies of type After= if the units in question also have DefaultDependencies=true.
+
+SEE ALSO
+       systemd(1), systemctl(1), systemd.unit(5), systemd.special(7), systemd.directives(7)
+       
+       
+[root@localhost ~]# systemctl cat multi-user.target 
+# /usr/lib/systemd/system/multi-user.target
+#  SPDX-License-Identifier: LGPL-2.1+
+#
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+
+[Unit]
+Description=Multi-User System
+Documentation=man:systemd.special(7)
+Requires=basic.target
+Conflicts=rescue.service rescue.target
+After=basic.target rescue.service rescue.target
+AllowIsolate=yes
