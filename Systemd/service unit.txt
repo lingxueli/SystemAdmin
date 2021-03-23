@@ -1,0 +1,87 @@
+# service unit
+$ man 5 systemd.service
+SYSTEMD.SERVICE(5)                                                systemd.service                                               SYSTEMD.SERVICE(5)
+
+NAME
+       systemd.service - Service unit configuration
+
+
+OPTIONS
+       Service files must include a "[Service]" section, which carries information about the service and the process it supervises. A number of options that may be used in this section are shared with other unit types. These options are documented in systemd.exec(5) and systemd.kill(5). The options specific to the "[Service]" section of service units are the following:
+
+       Type=
+           Configures the process start-up type for this service unit. One of simple, forking, oneshot, dbus, notify or idle.
+
+           If set to simple (the default if neither Type= nor BusName=, but ExecStart= are specified), it is expected that the process configured with ExecStart= is the main process of the service. In this mode, if the process offers functionality to other processes on the system, its communication channels should be installed before the daemon is started up (e.g. sockets set up by systemd, via socket activation), as systemd will immediately proceed starting follow-up units.
+
+           If set to forking, it is expected that the process configured with ExecStart= will call fork() as part of its start-up. The parent  process is expected to exit when start-up is complete and all communication channels are set up. The child continues to run as the main daemon process.
+
+           Behavior of oneshot is similar to simple; however, it is expected that the process has to exit before systemd starts follow-up units. RemainAfterExit= is particularly useful for this type of service. This is the implied default if neither Type= or ExecStart= are specified.
+
+           Behavior of dbus is similar to simple; however, it is expected that the daemon acquires a name on the D-Bus bus, as configured by BusName=. systemd will proceed with starting follow-up units after the D-Bus bus name has been acquired. Service units with this option  configured implicitly gain dependencies on the dbus.socket unit. This type is the default if BusName= is specified.
+
+           Behavior of notify is similar to simple; however, it is expected that the daemon sends a notification message via sd_notify(3) or an equivalent call when it has finished starting up. systemd will proceed with starting follow-up units after this notification message has been sent. If this option is used, NotifyAccess= (see below) should be set to open access to the notification socket provided by systemd. If NotifyAccess= is not set, it will be implicitly set to main. Note that currently Type=notify will not work if used in combination with PrivateNetwork=yes.
+
+           Behavior of idle is very similar to simple; however, actual execution of the service binary is delayed until all jobs are dispatched. This may be used to avoid interleaving of output of shell services with the status output on the console.       
+
+       ExecStart=
+           Commands with their arguments that are executed when this service is started. The value is split into zero or more command lines is according to the rules described below (see section "Command Lines" below).
+
+           Unless Type=forking is set, the process started via this command line will be considered the main process of the daemon.
+
+       ExecStop=
+           Commands to execute to stop the service started via ExecStart=. This argument takes multiple command lines, following the same scheme as described for ExecStart= above. Use of this setting is optional. After the commands configured in this option are run, all processes remaining for a service are terminated according to the KillMode= setting (see systemd.kill(5)). If this option is not specified, the process is terminated immediately when service stop is requested.
+
+
+# type of service
+simple
+forking   # the main process triggers fork(). Parent process exits. Child process starts as the main process.
+oneshot   # the main process exits before the follow-up units start
+dbus      # the main process require a spot on D-BUS, as defined in BusName=
+notify    # the main process triggers a notification message. After the notification is sent, the follow up units start.
+idle      # the actual execution is delayed until all dependencies are dispatched.
+
+# main process to be executed
+ExecStart=
+
+
+[root@localhost ~]# systemctl cat httpd.service
+
+# /usr/lib/systemd/system/httpd.service
+# See httpd.service(8) for more information on using the httpd service.
+
+# Modifying this file in-place is not recommended, because changes
+# will be overwritten during package upgrades.  To customize the
+# behaviour, run "systemctl edit httpd" to create an override unit.
+
+# For example, to pass additional options (such as -D definitions) to
+# the httpd binary at startup, create an override unit (as is done by
+# systemctl edit) and enter the following:
+
+#       [Service]
+#       Environment=OPTIONS=-DMY_DEFINE
+
+[Unit]
+Description=The Apache HTTP Server
+Wants=httpd-init.service
+After=network.target remote-fs.target nss-lookup.target httpd-init.service
+Documentation=man:httpd.service(8)
+
+[Service]
+Type=notify
+Environment=LANG=C
+
+ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND
+ExecReload=/usr/sbin/httpd $OPTIONS -k graceful
+# Send SIGWINCH for graceful stop
+KillSignal=SIGWINCH
+KillMode=mixed
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+# /usr/lib/systemd/system/httpd.service.d/php-fpm.conf
+[Unit]
+Wants=php-fpm.service
+

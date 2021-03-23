@@ -1,0 +1,8 @@
+Loaded - the unit file has been processed; it's active
+Running(running) - It's running with 1 or more active processes.
+Running(exited) - It's one-time run and completed
+Running(waiting) - It's running and waiting for an event
+Inactive(dead) - It's not running
+Enabled - It'll be started at boot time.
+Disabled - It'll not be started at boot time
+Static - It cannot be enabled but may be started by another unit automatically.

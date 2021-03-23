@@ -1,4 +1,51 @@
+# common sections in all types of units
 
+[UNIT] SECTION OPTIONS
+       Unit file may include a [Unit] section, which carries generic information about the unit that is not dependent on the type of unit:
+       
+       Before=, After=           ### it determines the order to start up/shut down the units
+           Configures ordering dependencies between units. 
+           If a unit foo.service contains a setting Before=bar.service and both units are being started, bar.service's start-up is delayed until foo.service is started up. 
+           
+           Note that this setting is independent of and orthogonal to the requirement dependencies as configured by Requires=. It is a common pattern to include a unit name in both the After= and Requires= option, in which case the unit listed will be started before the unit that is configured with these options.
+           
+           After= is the inverse of Before=, i.e. while After= ensures that the configured unit is started after the listed unit finished starting up, Before= ensures the opposite, i.e. that the configured unit is fully started up before the listed unit is started. 
+           Note that when two units with an ordering dependency between them are shut down, the inverse of the start-up order is applied. i.e. if a unit is configured with After= on another unit, the former is stopped before the latter if both are shut down. If one unit with an ordering dependency on another unit is shut down while the latter is started up, the shut down is ordered before the start-up regardless of whether the ordering dependency is actually of type After= or Before=.
+
+       Requires=               ### it determins the dependencies with no requirement of the ordering
+                               ### /.requires directory is created
+           Configures requirement dependencies on other units. If this unit gets activated, the units listed here will be activated as well. If one of the other units gets deactivated or its activation fails, this unit will be deactivated. 
+           
+           Note that requirement dependencies do not influence the order in which services are started or stopped. This has to be configured independently with the After= or Before= options. 
+           
+           If a unit foo.service requires a unit bar.service as configured with Requires= and no ordering is configured with After= or Before=, then both units will be started simultaneously and without any delay between them if foo.service is activated. Often it is a better choice to use Wants= instead of Requires= in order to achieve a system that is more robust when dealing with failing services.
+
+           Note that dependencies of this type may also be configured outside of the unit configuration file by adding a symlink to a .requires/ directory accompanying the unit file. For details see above.
+
+       Wants=                 ### it determines desired dependencies - if missing, there's no impact on its integrity. 
+                              ### it doesn't specify the ordering.
+                              ### /.wants directory is created
+           A weaker version of Requires=. Units listed in this option will be
+           started if the configuring unit is. However, if the listed units
+           fail to start or cannot be added to the transaction, this has no
+           impact on the validity of the transaction as a whole. This is the
+           recommended way to hook start-up of one unit to the start-up of
+           another unit.
+
+           Note that dependencies of this type may also be configured outside
+           of the unit configuration file by adding symlinks to a .wants/
+           directory accompanying the unit file. For details, see above.
+
+[INSTALL] SECTION OPTIONS
+       Unit file may include an "[Install]" section, which carries installation information for the unit. This section is not interpreted by systemd(1) during runtime. It is used exclusively by the enable and disable commands of the systemctl(1) tool during installation of a unit:
+
+       WantedBy=, RequiredBy=     ### the same effect as Wants, Requires
+                                  ### bar.service: WantedBy=foo.service translates to the symbolic link
+                                  ### /etc/systemd/system/foo.service.wants/bar.service -> /usr/lib/systemd/system/bar.service
+           This option may be used more than once, or a space-separated list of unit names may be given. A symbolic link is created in the .wants/ or .requires/ directory of each of the listed units when this unit is installed by systemctl enable. This has the effect that a dependency of type Wants= or Requires= is added from the listed unit to the current unit. The primary result is that the current unit will be started when the listed unit is started. See the description of Wants= and Requires= in the [Unit] section for details.
+
+           WantedBy=foo.service in a service bar.service is mostly equivalent to Alias=foo.service.wants/bar.service in the same file. In case of template units, systemctl enable must be called with an instance name, and this instance will be added to the .wants/ or .requires/ list of the listed unit. E.g.  WantedBy=getty.target in a service getty@tty2.service will result in systemctl enable getty@tty2.service creating a getty.target.wants/getty@tty2.service link to getty@tty2.service.
+           
 EXAMPLES
        Example 1. Allowing units to be enabled
 
