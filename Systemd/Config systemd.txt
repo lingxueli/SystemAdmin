@@ -1,0 +1,57 @@
+[root@localhost ~]# man systemd.directives 
+
+SYSTEMD.DIRECTIVES(7)                             systemd.directives                             SYSTEMD.DIRECTIVES(7)
+
+NAME
+       systemd.directives - Index of configuration directives
+
+UNIT DIRECTIVES
+       Directives for configuring units, used in unit files.
+
+       Accept=
+           systemd.socket(5)
+
+       AccuracySec=
+           systemd.timer(5)
+
+       After=
+           systemd.unit(5)
+
+ENVIRONMENT VARIABLES
+       Environment variables understood by the systemd manager and other programs.
+
+       $EXIT_CODE
+           systemd.exec(5)
+
+       $EXIT_STATUS
+           systemd.exec(5)
+
+       $SYSTEMD_EDITOR
+           systemctl(1)
+
+
+How to configure the default editor that systemctl uses?
+Define 
+SYSTEMD_EDITOR=/bin/bin
+in /etc/profile
+
+
+[root@localhost ~]# which vim
+/usr/bin/vim
+
+$ man bash
+FILES
+       /bin/bash
+              The bash executable
+       /etc/profile
+              The systemwide initialization file, executed for login shells
+       /etc/bash.bash_logout
+              The systemwide login shell cleanup file, executed when a login shell exits
+       ~/.bash_profile
+              The personal initialization file, executed for login shells
+       ~/.bashrc
+              The individual per-interactive-shell startup file
+       ~/.bash_logout
+              The individual login shell cleanup file, executed when a login shell exits
+       ~/.inputrc
+              Individual readline initialization file
