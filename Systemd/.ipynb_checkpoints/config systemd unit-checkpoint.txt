@@ -1,0 +1,57 @@
+SYSTEMD.UNIT(5)                                      systemd.unit                                      SYSTEMD.UNIT(5)
+
+NAME
+       systemd.unit - Unit configuration
+
+SYNOPSIS
+       service.service, socket.socket, device.device, mount.mount, automount.automount, swap.swap, target.target,
+       path.path, timer.timer, slice.slice, scope.scope
+
+       /etc/systemd/system/*
+       /run/systemd/system/*
+       /usr/lib/systemd/system/*
+
+
+
+# where's the cutomized config of unit exists
+# most of them are directores and symbolic links
+[root@localhost ~]# ls -al  /etc/systemd/system/
+total 16
+drwxr-xr-x. 24 root root 4096 Mar 22 17:39 .
+drwxr-xr-x.  4 root root  150 Dec 17 16:30 ..
+drwxr-xr-x.  2 root root   31 Jan 22 23:52 basic.target.wants
+drwxr-xr-x.  2 root root   31 Jan 22 23:38 bluetooth.target.wants
+lrwxrwxrwx.  1 root root   41 Jan 22 23:38 dbus-org.bluez.service -> /usr/lib/systemd/system/bluetooth.service
+...
+lrwxrwxrwx.  1 root root   40 Jan 23 00:04 default.target -> /usr/lib/systemd/system/graphical.target
+drwxr-xr-x.  2 root root   32 Jan 22 23:38 getty.target.wants
+drwxr-xr-x.  2 root root   88 Jan 23 00:10 graphical.target.wants
+drwxr-xr-x.  2 root root 4096 Mar 20 16:25 multi-user.target.wants
+drwxr-xr-x.  2 root root   48 Jan 22 23:38 network-online.target.wants
+drwxr-xr-x.  2 root root   33 Jan 22 23:49 nfs-blkmap.service.requires
+drwxr-xr-x.  2 root root   33 Jan 22 23:49 nfs-idmapd.service.requires
+drwxr-xr-x.  2 root root   33 Jan 22 23:49 nfs-mountd.service.requires
+drwxr-xr-x.  2 root root   33 Jan 22 23:49 nfs-server.service.requires
+drwxr-xr-x.  2 root root    6 Oct  7  2019 nginx.service.d
+drwxr-xr-x.  2 root root    6 Sep 16  2020 php-fpm.service.d
+drwxr-xr-x.  2 root root   26 Jan 22 23:48 printer.target.wants
+drwxr-xr-x.  2 root root   52 Jan 22 23:49 remote-fs.target.wants
+-rw-r--r--.  1 root root  895 Mar 20 16:08 root-container.service
+drwxr-xr-x.  2 root root 4096 Jan 22 23:51 sockets.target.wants
+drwxr-xr-x.  2 root root  261 Jan 22 23:52 sysinit.target.wants
+lrwxrwxrwx.  1 root root   39 Jan 22 23:38 syslog.service -> /usr/lib/systemd/system/rsyslog.service
+lrwxrwxrwx.  1 root root    9 May 11  2019 systemd-timedated.service -> /dev/null
+drwxr-xr-x.  2 root root   61 Jan 22 23:49 timers.target.wants
+drwxr-xr-x.  2 root root   29 Jan 22 23:48 vmtoolsd.service.requires
+
+[root@localhost ~]# cd /etc/systemd/system/multi-user.target.wants
+[root@localhost multi-user.target.wants]# ls -al
+total 8
+drwxr-xr-x.  2 root root 4096 Mar 20 16:25 .
+drwxr-xr-x. 24 root root 4096 Mar 22 17:39 ..
+lrwxrwxrwx.  1 root root   35 Jan 22 23:52 atd.service -> /usr/lib/systemd/system/atd.service
+lrwxrwxrwx.  1 root root   38 Jan 22 23:39 auditd.service -> /usr/lib/systemd/system/auditd.service
+lrwxrwxrwx.  1 root root   44 Jan 22 23:46 avahi-daemon.service -> /usr/lib/systemd/system/avahi-daemon.service
+lrwxrwxrwx.  1 root root   39 Jan 25 00:06 chronyd.service -> /usr/lib/systemd/system/chronyd.service
+lrwxrwxrwx.  1 root root   37 Jan 22 23:39 crond.service -> /usr/lib/systemd/system/crond.service
+lrwxrwxrwx.  1 root root   33 Jan 22 23:48 cups.path -> /usr/lib/systemd/system/cups.path

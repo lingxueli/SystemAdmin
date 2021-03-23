@@ -208,36 +208,17 @@ Keywords used in unit file to define dependencies
 $ man 5 systemd.unit
 
        Requires=
-           Configures requirement dependencies on other units. If this unit gets activated, the units listed here will be activated as
-           well. If one of the other units fails to activate, and an ordering dependency After= on the failing unit is set, this unit will
+           Configures requirement dependencies on other units. If this unit gets activated, the units listed here will be activated as well. If one of the other units fails to activate, and an ordering dependency After= on the failing unit is set, this unit will
        
        Requisite=
-           Similar to Requires=. However, if the units listed here are not started already, they will not be started and the starting of
-           this unit will fail immediately.  Requisite= does not imply an ordering dependency, even if both units are started in the same
-           transaction. Hence this setting should usually be combined with After=, to ensure this unit is not started before the other
-           unit.
-
-           When Requisite=b.service is used on a.service, this dependency will show as RequisiteOf=a.service in property listing of
-           b.service.  RequisiteOf= dependency cannot be specified directly.
+           Similar to Requires=. However, if the units listed here are not started already, they will not be started and the starting of this unit will fail immediately.  Requisite= does not imply an ordering dependency, even if both units are started in the same transaction. Hence this setting should usually be combined with After=, to ensure this unit is not started before the other unit.
 
 
        Wants=
-           A weaker version of Requires=. Units listed in this option will be started if the configuring unit is. However, if the listed
-           units fail to start or cannot be added to the transaction, this has no impact on the validity of the transaction as a whole.
-           This is the recommended way to hook start-up of one unit to the start-up of another unit.
-           
-           Note that dependencies of this type may also be configured outside of the unit configuration file by adding symlinks to a
-           .wants/ directory accompanying the unit file. For details, see above.
+           A weaker version of Requires=. Units listed in this option will be started if the configuring unit is. However, if the listed units fail to start or cannot be added to the transaction, this has no impact on the validity of the transaction as a whole.
 
        Before=, After=
-           These two settings expect a space-separated list of unit names. They configure ordering dependencies between units. If a unit
-           foo.service contains a setting Before=bar.service and both units are being started, bar.service's start-up is delayed until
-           foo.service has finished starting up. Note that this setting is independent of and orthogonal to the requirement dependencies
-           as configured by Requires=, Wants= or BindsTo=. It is a common pattern to include a unit name in both the After= and Requires=
-           options, in which case the unit listed will be started before the unit that is configured with these options. This option may
-           be specified more than once, in which case ordering dependencies for all listed names are created.  After= is the inverse of
-           Before=, i.e. while After= ensures that the configured unit is started after the listed unit finished starting up, Before=
-           ensures the opposite, that the configured unit is fully started up before the listed unit is started. ...............
+           They configure ordering dependencies between units.
            
            
 Manage unit options
