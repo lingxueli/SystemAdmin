@@ -1,91 +1,34 @@
-[root@ip-172-31-9-71 /]# systemctl -t help
-Available unit types:
-service
-socket
-target
-device
-mount
-automount
-swap
-timer
-path
-slice
-scope
+Install bash-completion package and use Tab on the systemctl command, you don't need to remember everything here.
+
+
 [root@ip-172-31-9-71 ~]# yum -y install vsftpd
 [root@ip-172-31-9-71 ~]# systemctl start vsftpd
 [root@ip-172-31-9-71 ~]# systemctl status vsftpd
 ● vsftpd.service - Vsftpd ftp daemon
    Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; disabled; vendor preset: disabled)
    Active: active (running) since Tue 2020-09-22 01:56:47 UTC; 16s ago
-  Process: 13815 ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf (code=exited, status=0/SUCCESS)
- Main PID: 13816 (vsftpd)
-    Tasks: 1 (limit: 4936)
-   Memory: 540.0K
-   CGroup: /system.slice/vsftpd.service
-           └─13816 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+...
+# Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; disabled; vendor preset: disabled)
+# disabled: not activated after reboot
+# vendor preset disabled:  not activated after installed
 
-Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
-Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
+
+
 
 [root@ip-172-31-9-71 ~]# systemctl enable vsftpd
 Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /usr/lib/systemd/system/vsftpd.service.
-[root@ip-172-31-9-71 ~]# systemctl enable vsftpd
-Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /usr/lib/systemd/system/vsftpd.service.
+
 [root@ip-172-31-9-71 ~]# systemctl status vsftpd
 ● vsftpd.service - Vsftpd ftp daemon
    Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
    Active: active (running) since Tue 2020-09-22 01:56:47 UTC; 1min 34s ago
- Main PID: 13816 (vsftpd)
-    Tasks: 1 (limit: 4936)
-   Memory: 540.0K
-   CGroup: /system.slice/vsftpd.service
-           └─13816 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
-
+...
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
 
 
 [root@ip-172-31-9-71 ~]# systemctl --type=service
 UNIT                               LOAD   ACTIVE SUB     DESCRIPTION
-auditd.service                     loaded active running Security Auditing Service
-choose_repo.service                loaded active exited  LSB: Initializes the correct repo depending on the region.
-chronyd.service                    loaded active running NTP client/server
-cloud-config.service               loaded active exited  Apply the settings specified in cloud-config
-cloud-final.service                loaded active exited  Execute cloud user/final scripts
-cloud-init-local.service           loaded active exited  Initial cloud-init job (pre-networking)
-cloud-init.service                 loaded active exited  Initial cloud-init job (metadata service crawler)
-crond.service                      loaded active running Command Scheduler
-dbus.service                       loaded active running D-Bus System Message Bus
-dracut-shutdown.service            loaded active exited  Restore /run/initramfs on shutdown
-getty@tty1.service                 loaded active running Getty on tty1
-import-state.service               loaded active exited  Import network configuration from initramfs
-kdump.service                      loaded active exited  Crash recovery kernel arming
-kmod-static-nodes.service          loaded active exited  Create list of required static device nodes for the current kernel
-NetworkManager-wait-online.service loaded active exited  Network Manager Wait Online
-NetworkManager.service             loaded active running Network Manager
-nis-domainname.service             loaded active exited  Read and set NIS domainname from /etc/sysconfig/network
-polkit.service                     loaded active running Authorization Manager
-rngd-wake-threshold.service        loaded active exited  Hardware RNG Entropy Gatherer Wake threshold service
-rngd.service                       loaded active running Hardware RNG Entropy Gatherer Daemon
-rsyslog.service                    loaded active running System Logging Service
-serial-getty@ttyS0.service         loaded active running Serial Getty on ttyS0
-sshd.service                       loaded active running OpenSSH server daemon
-sssd.service                       loaded active running System Security Services Daemon
-systemd-journal-flush.service      loaded active exited  Flush Journal to Persistent Storage
-systemd-journald.service           loaded active running Journal Service
-systemd-logind.service             loaded active running Login Service
-systemd-random-seed.service        loaded active exited  Load/Save Random Seed
-systemd-remount-fs.service         loaded active exited  Remount Root and Kernel File Systems
-systemd-sysctl.service             loaded active exited  Apply Kernel Variables
-systemd-tmpfiles-setup-dev.service loaded active exited  Create Static Device Nodes in /dev
-systemd-tmpfiles-setup.service     loaded active exited  Create Volatile Files and Directories
-systemd-udev-trigger.service       loaded active exited  udev Coldplug all Devices
-systemd-udevd.service              loaded active running udev Kernel Device Manager
-systemd-update-utmp.service        loaded active exited  Update UTMP about System Boot/Shutdown
-systemd-user-sessions.service      loaded active exited  Permit User Sessions
-tuned.service                      loaded active running Dynamic System Tuning Daemon
-user-runtime-dir@1000.service      loaded active exited  /run/user/1000 mount wrapper
-user@1000.service                  loaded active running User Manager for UID 1000
 vsftpd.service                     loaded active running Vsftpd ftp daemon
 
 LOAD   = Reflects whether the unit definition was properly loaded.
@@ -94,11 +37,15 @@ SUB    = The low-level unit activation state, values depend on unit type.
 
 40 loaded units listed. Pass --all to see loaded but inactive units, too.
 To show all installed unit files use 'systemctl list-unit-files'.
+
+
 [root@ip-172-31-9-71 ~]# systemctl list-units --type=service
 [root@ip-172-31-9-71 ~]# systemctl list-units --type=service --all
 [root@ip-172-31-9-71 ~]# systemctl --failed --type=service
 0 loaded units listed. Pass --all to see loaded but inactive units, too.
 To show all installed unit files use 'systemctl list-unit-files'.
+
+
 [root@ip-172-31-9-71 ~]# systemctl status -l vsftpd.service
 ● vsftpd.service - Vsftpd ftp daemon
    Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
@@ -112,3 +59,83 @@ To show all installed unit files use 'systemctl list-unit-files'.
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Starting Vsftpd ftp daemon...
 Sep 22 01:56:47 ip-172-31-9-71.us-west-2.compute.internal systemd[1]: Started Vsftpd ftp daemon.
 
+
+
+# modify httpd.service unit file such as starting httpd will always auto-start vsftpd
+# use systemctl edit or copy the default config to /etc/systemd/system
+
+
+# edit httpd service such that after failure it's automatically started again in 10 secs
+
+$ systemctl edit httpd.service
+Editing "/etc/systemd/system/httpd.service.d/override.conf" canceled: temporary file is empty.
+
+[Unit]
+Requires=vsftpd.service
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+
+$ man systemd.service
+OPTIONS
+       Service files must include a "[Service]" section, which carries information about the service and the process
+       it supervises. A number of options that may be used in this section are shared with other unit types. These
+       options are documented in systemd.exec(5), systemd.kill(5) and systemd.resource-control(5). The options
+       specific to the "[Service]" section of service units are the following:
+
+       RestartSec=
+           Configures the time to sleep before restarting a service (as configured with Restart=). Takes a unit-less
+           value in seconds, or a time span value such as "5min 20s". Defaults to 100ms.
+
+       Restart=
+           Configures whether the service shall be restarted when the service process exits, is killed, or a timeout
+           is reached. The service process may be the main service process, but it may also be one of the processes
+           specified with ExecStartPre=, ExecStartPost=, ExecStop=, ExecStopPost=, or ExecReload=. When the death of
+           the process is a result of systemd operation (e.g. service stop or restart), the service will not be
+           restarted. Timeouts include missing the watchdog "keep-alive ping" deadline and a service start, reload,
+           and stop operation timeouts.
+
+           Takes one of no, on-success, on-failure, on-abnormal, on-watchdog, on-abort, or always. If set to no (the
+           default), the service will not be restarted. If set to on-success, it will be restarted only when the
+           service process exits cleanly. 
+           
+           If set to on-failure, the service will be restarted when the process exits with a
+           non-zero exit code, is terminated by a signal (including on core dump, but excluding the aforementioned
+           four signals), when an operation (such as service reload) times out, and when the configured watchdog
+           timeout is triggered. 
+           
+[root@localhost ~]# systemctl reload httpd.service
+
+[root@localhost ~]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sun 2021-03-21 15:44:48 MDT; 1 day 6h ago
+ Main PID: 1232 (vsftpd)
+    Tasks: 1 (limit: 11099)
+   Memory: 676.0K
+   CGroup: /system.slice/vsftpd.service
+           └─1232 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+Mar 21 15:44:47 localhost.localdomain systemd[1]: Starting Vsftpd ftp daemon...
+Mar 21 15:44:48 localhost.localdomain systemd[1]: Started Vsftpd ftp daemon.
+
+
+[root@localhost ~]# date
+Mon Mar 22 22:27:17 MDT 2021
+[root@localhost ~]# systemctl stop vsftpd
+[root@localhost ~]# systemctl stop httpd
+[root@localhost ~]# systemctl start httpd
+[root@localhost ~]# systemctl status vsftpd
+● vsftpd.service - Vsftpd ftp daemon
+   Loaded: loaded (/usr/lib/systemd/system/vsftpd.service; enabled; vendor preset: disabled)
+   Active: active (running) since Mon 2021-03-22 22:27:44 MDT; 8s ago
+  Process: 12848 ExecStart=/usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf (code=exited, status=0/SUCCESS)
+ Main PID: 12849 (vsftpd)
+    Tasks: 1 (limit: 11099)
+   Memory: 724.0K
+   CGroup: /system.slice/vsftpd.service
+           └─12849 /usr/sbin/vsftpd /etc/vsftpd/vsftpd.conf
+
+Mar 22 22:27:44 localhost.localdomain systemd[1]: Starting Vsftpd ftp daemon...
+Mar 22 22:27:44 localhost.localdomain systemd[1]: Started Vsftpd ftp daemon.
