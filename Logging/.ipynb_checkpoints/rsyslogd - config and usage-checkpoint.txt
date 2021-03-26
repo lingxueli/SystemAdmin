@@ -69,11 +69,21 @@ include(file="/etc/rsyslog.d/*.conf" mode="optional")
 authpriv.*                                              /var/log/secure
 
 # Log all the mail messages in one place.
-mail.*                                                  -/var/log/maillog
+mail.*                                                  -/var/log/maillog    -> writes to a buffer first and /var/log/maillog later
 
 
 # Log cron stuff
 cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*        -> writes to a rsyslog module - omusrmsg
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
 
 
 	In rules, you'll define
