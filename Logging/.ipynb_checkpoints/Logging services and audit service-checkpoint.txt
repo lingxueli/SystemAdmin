@@ -1,13 +1,20 @@
-Three sources of logging
+logging services
+
 	1. direct write from services
     
 	2. rsyslogd:
-		centralized logging
-		modules to filtering the msg
-		addition modules such output module to store msg in a database
+		it offers features that are not offered by journald, such as centralized logging and modules to filter the msg
+		it offers addition modules to enhance logging, such as output modules that allows admin to store msg in a database
 		persistent between reboots
 		allow remote logging and log servers
-        
+
+	3. journald: 
+		integrated with Systemd, so it logs everything that your service is doing
+		journald is not persistent between reboots. So msg are forwarded to rsyslogd service, which writes to /var/log(file in this directory is presitent between reboots)
+		msg is stored in binary format, which can be processed by journalctl command
+
+
+How to config rsyslog
 $ man -k syslog
 rsyslog.conf (5)     - rsyslogd(8) configuration file
 rsyslogd (8)         - reliable and extended syslogd
@@ -24,14 +31,6 @@ FILES
        /etc/rsyslog.conf
               Configuration file for rsyslogd.  See rsyslog.conf(5) for  exact
               information.
-       /dev/log
-              The  Unix  domain socket to from where local syslog messages are
-              read.
-       /var/run/rsyslogd.pid
-              The file containing the process id of rsyslogd.
-       prefix/lib/rsyslog
-              Default directory for rsyslogd modules. The prefix is  specified
-              during compilation (e.g. /usr/local).
 
 $ vi /etc/rsyslog.conf
 #### RULES ####
@@ -63,10 +62,7 @@ uucp,news.crit                                          /var/log/spooler
 local7.*                                                /var/log/boot.log
 
 
-	3. journald: 
-		integrated with Systemd, so it logs everything that your service is doing
-		journald is not persistent between reboots. So msg are forwarded to rsyslogd service, which writes to /var/log(file in this directory is presitent between reboots)
-		msg is stored in binary format, which can be processed by journalctl command
+How to config journald?
 
 
 $ man -k journal
@@ -98,27 +94,34 @@ SYNOPSIS
        /usr/lib/systemd/journald.conf.d/*.conf
 
 
+[root@localhost ~]# cat  /etc/systemd/journald.conf
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+#
+# Entries in this file show the compile time defaults.
+# You can change settings by editing this file.
+# Defaults can be restored by simply deleting this file.
+#
+# See journald.conf(5) for details.
 
-FORWARDING TO TRADITIONAL SYSLOG DAEMONS
-       Journal events can be transferred to a different logging daemon in two
-       different ways. With the first method, messages are immediately
-       forwarded to a socket (/run/systemd/journal/syslog), where the
-       traditional syslog daemon can read them. This method is controlled by
-       the ForwardToSyslog= option. With a second method, a syslog daemon
-       behaves like a normal journal client, and reads messages from the
-       journal files, similarly to journalctl(1). With this, messages do not
-       have to be read immediately, which allows a logging daemon which is
-       only started late in boot to access all messages since the start of the
-       system. In addition, full structured meta-data is available to it. This
-       method of course is available only if the messages are stored in a
-       journal file at all. So it will not work if Storage=none is set. It
-       should be noted that usually the second method is used by syslog
-       daemons, so the Storage= option, and not the ForwardToSyslog= option,
-       is relevant for them.
+[Journal]
+#Storage=auto
+#Compress=yes
+#Seal=yes
+#SplitMode=uid
+#SyncIntervalSec=5m
+#RateLimitIntervalSec=30s
+
 
 Auditd service
 	more in-depth trace of the activities than logging service
 	SELinux logs detailed messages to the auditd service
+
+How to use the logging services?
 
 Administrator can access the log in three ways
 	1. monitor /var/log written mostly by rsyslogd, or by specific services
