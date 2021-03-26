@@ -10,23 +10,33 @@ FILES
        /var/run/rsyslogd.pid
               The file containing the process id of rsyslogd.
        prefix/lib/rsyslog
-              Default directory for rsyslogd modules. The prefix is  specified
+              Default directory for rsyslogd modules. The prefix is specified
               during compilation (e.g. /usr/local).
 
+another config file not mentioned in man page:
+/etc/sysconfig/rsyslog file
 
-Another config file is /etc/sysconfig/rsyslog file
+It's not recommended to change it. Because this opetion is included in Systemd confg file that starts rsyslogd
 
-It defines the startup parameter of rsyslogd. It's defined by systemd. By default it contains only one line.
+By default it contains only one line.
+SYSLOGD_OPTIONS="" to specify the startup parameter
 
-SYSLOGD_OPTIONS="" 	specify startup parameter here.... It's not recommended to modify it here because this opetion is included in Systemd confg file that starts rsyslogd
+It defines the startup parameter of rsyslogd. It's defined by systemd. 
 
+
+[root@localhost log]# cat /etc/sysconfig/rsyslog
+# Options for rsyslogd
+# Syslogd options are deprecated since rsyslog v3.
+# If you want to use them, switch to compatibility mode 2 by "-c 2"
+# See rsyslogd(8) for more details
+SYSLOGD_OPTIONS=""
 
 
 Understand rsyslogd config file /etc/rsyslog.conf
 
-	Modules					rsyslogd is modular, add enhanced supported feature here	
+	Modules					rsyslogd is modular, add enhanced supported feature here
 	GLOBAL DIRECTIVES		define global parameters
-	RULES					the most important part. It specify what should be logged to which destination.
+	RULES					the most important part. It specifies what should be logged to which destination.
 
 
 
@@ -43,11 +53,7 @@ module(load="builtin:omfile" Template="RSYSLOG_TraditionalFileFormat")
 # Include all config files in /etc/rsyslog.d/
 include(file="/etc/rsyslog.d/*.conf" mode="optional")
 
-
-
-/etc/rsyslog.d could be populated by installing RPM packages on the server. The content in that directory is also included in the config.
-
-$ less /etc/rsyslog.conf
+-> /etc/rsyslog.d could be populated by installing RPM packages on the server. The content in that directory is also included in the config.
 
 #### RULES ####
 
@@ -71,9 +77,11 @@ cron.*                                                  /var/log/cron
 
 
 	In rules, you'll define
+    
+    facility.priority  location
 
 	facility:
-		this is the category of information. Facilities' list is fixed for backward compatibility with legacy syslog service. Msg from one facility will be written to the corresponding log files in /var
+		It's the category of information. Facilities' list is fixed for backward compatibility with legacy syslog service. Msg from one facility will be written to the corresponding log files in /var
 
 	priority:
 		all msg with that priority and all that with higher priorities are logged
@@ -83,11 +91,10 @@ cron.*                                                  /var/log/cron
 		it could be rsyslogd modules, that way it will be further processed by rsyslogd modules
 
 
-format of rules
-facility.priority  location
 
 location = -/var/log/maillog; the hyphen in the front means it's not directly written to the file. There's a buffer used to make write more efficient.
 
+# what are the facilities and priorities
 
 LOGGER(1)                               User Commands                               LOGGER(1)
 
@@ -152,13 +159,10 @@ user
        log(3).
 
 
-Understand rsyslogd facilites
-    
-	Fixed set of facilities here to work with legacy syslog service.
+	Because of Fixed set of facilities here to work with legacy syslog service.
 
 	To support new services, you can use 
 		1. daemon facility of daemon services
 		2. local0-local7
 
 	The service writes msg to a facility, so the loggging service can collect the msg from a facility and write it to a specific file.
-    
