@@ -96,6 +96,11 @@ location = -/var/log/maillog; the hyphen in the front means it's not directly wr
 
 # what are the facilities and priorities
 
+
+$ man rsyslogd
+SEE ALSO
+       rsyslog.conf(5), logger(1), syslog(2), syslog(3), services(5), savelog(8)
+
 LOGGER(1)                               User Commands                               LOGGER(1)
 
 NAME
