@@ -17,6 +17,7 @@ Feb 21 21:52:39 localhost rsyslogd[13472]: imjournal: journal files changed, rel
 
 
 # send debug msg from daemon facility
+# this is done from a new terminal. The old terminal is used to monitor the log
 [root@localhost lisa]# logger -p daemon.debug "Daemon Debug Message"
 
 
