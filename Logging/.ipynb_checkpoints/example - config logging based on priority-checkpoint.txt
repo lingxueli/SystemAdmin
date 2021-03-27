@@ -1,0 +1,50 @@
+Another example - config the log msg forwarding based on priority rather than facility
+
+
+# forward debug msg to a new file
+$ echo "*.debug /var/log/messages-debug" > /etc/rsyslog.d/debug.conf
+$ systemctl restart rsyslog
+
+[root@localhost rsyslog.d]# tail -f /var/log/messages-debug 
+Feb 21 21:52:39 localhost systemd[1]: Stopping System Logging Service...
+Feb 21 21:52:39 localhost rsyslogd[13352]: [origin software="rsyslogd" swVersion="8.1911.0-6.el8" x-pid="13352" x-info="https://www.rsyslog.com"] exiting on signal 15.
+Feb 21 21:52:39 localhost systemd[1]: rsyslog.service: Succeeded.
+Feb 21 21:52:39 localhost systemd[1]: Stopped System Logging Service.
+Feb 21 21:52:39 localhost systemd[1]: Starting System Logging Service...
+Feb 21 21:52:39 localhost rsyslogd[13472]: [origin software="rsyslogd" swVersion="8.1911.0-6.el8" x-pid="13472" x-info="https://www.rsyslog.com"] start
+Feb 21 21:52:39 localhost systemd[1]: Started System Logging Service.
+Feb 21 21:52:39 localhost rsyslogd[13472]: imjournal: journal files changed, reloading...  [v8.1911.0-6.el8 try https://www.rsyslog.com/e/0 ]
+
+
+# send debug msg from daemon facility
+[root@localhost lisa]# logger -p daemon.debug "Daemon Debug Message"
+
+
+LOGGER(1)                                            User Commands                                           LOGGER(1)
+
+NAME
+       logger - enter messages into the system log
+
+SYNOPSIS
+       logger [options] [message]
+
+DESCRIPTION
+       logger makes entries in the system log.
+
+       When  the  optional  message  argument  is present, it is written to the log.  If it is not present, and the -f
+       option is not given either, then standard input is logged.
+
+       -p, --priority priority
+              Enter  the  message into the log with the specified priority.  The priority may be specified numerically
+              or as a facility.level pair.  For example, -p local3.info logs  the  message  as  informational  in  the
+              local3 facility.  The default is user.notice.
+
+EXAMPLES
+       logger System rebooted
+       logger -p local0.notice -t HOSTIDM -f /dev/idmc
+       logger -n loghost.example.com System rebooted
+
+# notice there're new lines in the log file
+Feb 21 21:54:40 localhost su[13558]: pam_unix(su:session): session opened for user root by (uid=1000)
+Feb 21 21:54:58 localhost lisa[13604]: Daemon Debug Message
+Feb 21 21:55:08 localhost systemd[1]: fprintd.service: Succeeded.

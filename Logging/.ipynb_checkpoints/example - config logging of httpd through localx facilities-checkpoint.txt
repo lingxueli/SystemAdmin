@@ -56,7 +56,7 @@ SYNOPSIS
 # logged here.  If you *do* define an error logfile for a <VirtualHost>
 # container, that host's errors will be logged there and not here.
 #
-ErrorLog "logs/error_log"
+ErrorLog "logs/error_log"        -> Use ServerRoot/logs/error_log as the log file
 
 #
 # LogLevel: Control the number of messages logged to the error_log.
@@ -65,24 +65,39 @@ ErrorLog "logs/error_log"
 #
 LogLevel warn
 
+[root@localhost log]# grep ServerRoot /etc/httpd/conf/httpd.conf
+# with "/", the value of ServerRoot is prepended -- so 'log/access_log'
+# with ServerRoot set to '/www' will be interpreted by the
+# ServerRoot: The top of the directory tree under which the server's
+# ServerRoot at a non-local disk, be sure to specify a local disk on the
+# same ServerRoot for multiple httpd daemons, you will need to change at
+ServerRoot "/etc/httpd"
+
+# log file
+[root@localhost log]# cd /etc/httpd/logs/
+[root@localhost logs]# ls -al
+total 32
+drwx------.  2 root root  213 Feb 28 11:39 .
+drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
+-rw-r--r--.  1 root root    0 Feb 28 11:39 access_log
+-rw-r--r--.  1 root root  158 Jan 25 01:19 access_log-20210221
+-rw-r--r--.  1 root root  327 Feb 21 21:50 access_log-20210228
+-rw-r--r--.  1 root root    0 Feb 28 11:39 error_log
+-rw-r--r--.  1 root root 9262 Feb 21 03:13 error_log-20210221
+-rw-r--r--.  1 root root 1633 Feb 21 21:36 error_log-20210228
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_access_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_error_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_request_log
 
 
-# update httpd to send the log to rsyslog local1
-$ vi /etc/httpd/conf/httpd.conf
-#
-# ErrorLog: The location of the error log file.
-# If you do not specify an ErrorLog directive within a <VirtualHost>
-# container, error messages relating to that virtual host will be
-# logged here.  If you *do* define an error logfile for a <VirtualHost>
-# container, that host's errors will be logged there and not here.
-#
-ErrorLog "logs/error_log"
-ErrorLog syslog:local1
-
-
+[root@localhost logs]# head error_log-20210221
+[Mon Jan 25 01:05:54.264720 2021] [core:notice] [pid 5873:tid 139649151187264] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Mon Jan 25 01:05:54.269613 2021] [suexec:notice] [pid 5873:tid 139649151187264] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using localhost.localdomain. Set the 'ServerName' directive globally to suppress this message
+[Mon Jan 25 01:05:54.301558 2021] [lbmethod_heartbeat:notice] [pid 5873:tid 139649151187264] AH02282: No slotmem from mod_heartmonitor
+...
 
 $ man httpd.conf
-
    Configuration structure
        The main configuration file (httpd.conf) sets up various defaults and
        includes configuration files from two directories -
@@ -101,6 +116,22 @@ $ man httpd.conf
 
        ErrorLog "logs/error_log"
            Error messages are logged to /var/log/httpd/error_log.
+
+
+
+# Add the line making httpd to send the log to rsyslog local1
+$ vi /etc/httpd/conf/httpd.conf
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog "logs/error_log"
+ErrorLog syslog:local1
+
+
 
 
 # restart the service to reload the config
@@ -138,7 +169,6 @@ $ systemctl restart rsyslog
 # visit a page that doesn't exist
 $ curl http://localhost | less
 
-# test
 # errror msg sent to the newly created log file
 [root@localhost rsyslog.d]# cat /var/log/httpd-error.log
 Feb 21 21:49:29 localhost httpd[12754]: [authz_core:error] [pid 12754:tid 140161543264000] [client ::1:35604] AH01630: client denied by server configuration: /webfiles/
@@ -165,8 +195,33 @@ Feb 21 21:52:39 localhost systemd[1]: Started System Logging Service.
 Feb 21 21:52:39 localhost rsyslogd[13472]: imjournal: journal files changed, reloading...  [v8.1911.0-6.el8 try https://www.rsyslog.com/e/0 ]
 
 
-# send the debug msg from another terminal
+# send debug msg from daemon facility
 [root@localhost lisa]# logger -p daemon.debug "Daemon Debug Message"
+
+
+LOGGER(1)                                            User Commands                                           LOGGER(1)
+
+NAME
+       logger - enter messages into the system log
+
+SYNOPSIS
+       logger [options] [message]
+
+DESCRIPTION
+       logger makes entries in the system log.
+
+       When  the  optional  message  argument  is present, it is written to the log.  If it is not present, and the -f
+       option is not given either, then standard input is logged.
+
+       -p, --priority priority
+              Enter  the  message into the log with the specified priority.  The priority may be specified numerically
+              or as a facility.level pair.  For example, -p local3.info logs  the  message  as  informational  in  the
+              local3 facility.  The default is user.notice.
+
+EXAMPLES
+       logger System rebooted
+       logger -p local0.notice -t HOSTIDM -f /dev/idmc
+       logger -n loghost.example.com System rebooted
 
 # notice there're new lines in the log file
 Feb 21 21:54:40 localhost su[13558]: pam_unix(su:session): session opened for user root by (uid=1000)

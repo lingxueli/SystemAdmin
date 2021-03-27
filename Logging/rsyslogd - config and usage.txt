@@ -174,10 +174,11 @@ user
        log(3).
 
 
-	Because of Fixed set of facilities here to work with legacy syslog service.
+	Because we use the fixed set of facilities to work with legacy syslog service.
 
 	To support new services, you can use 
-		1. daemon facility of daemon services
-		2. local0-local7
+		1. daemon facility can be used by daemon services
+		2. local0-local7 can be used by other services such as apache web service.
+        You'll need to configure the service to use the rsyslog facility and modify the rsyslog config to store the msg from facility.
 
 	The service writes msg to a facility, so the loggging service can collect the msg from a facility and write it to a specific file.
