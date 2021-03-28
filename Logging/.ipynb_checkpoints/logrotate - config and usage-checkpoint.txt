@@ -1,0 +1,364 @@
+rsyslogd Log rotation
+	Old log file will be removed from the system. To keep them, you can either back up the log file, or use a centralized log server to keep it for a significantly longer period
+
+
+[root@localhost ~]# man -k rotate
+clevis-luks-report (1) - Reports whether a pin bound to a LUKS1 or LUKS2 volume has...
+logrotate (8)        - rotates, compresses, and mails system logs
+logrotate.conf (5)   - rotates, compresses, and mails system logs
+rotatelogs (8)       - Piped logging program to rotate Apache logs
+
+
+LOGROTATE(8)               System Administrator's Manual               LOGROTATE(8)
+
+NAME
+       logrotate ‐ rotates, compresses, and mails system logs
+
+SYNOPSIS
+       logrotate  [--debug]  [--verbose]  [--log  file]  [--force]  [--state  file]
+       [--mail command] config_file [config_file2 ...]
+
+DESCRIPTION
+       logrotate is designed to ease administration of systems that generate  large
+       numbers  of  log files.  It allows automatic rotation, compression, removal,
+       and mailing of log files.  Each log  file  may  be  handled  daily,  weekly,
+       monthly, or when it grows too large.
+
+   DIRECTIVES
+       These directives may be included in a logrotate configuration file:
+
+       compress
+              Old versions of log files are compressed with gzip(1) by default. See
+              also nocompress.
+
+        ....
+FILES
+       /var/lib/logrotate/logrotate.status   Default state file.
+       /etc/logrotate.conf                   Configuration options.
+
+
+[root@localhost ~]# cat /etc/logrotate.conf   
+# see "man logrotate" for details
+# rotate log files weekly
+weekly
+
+# keep 4 weeks worth of backlogs
+rotate 4
+
+# create new (empty) log files after rotating old ones
+create
+
+# use date as a suffix of the rotated file
+dateext
+
+# uncomment this if you want your log files compressed
+#compress
+
+# RPM packages drop log rotation information into this directory
+include /etc/logrotate.d
+
+# system-specific logs may be also be configured here.
+
+
+/etc/logroate.d 		you can configure logrotate for specific file here
+
+
+
+
+LOGROTATE(8)                                 System Administrator's Manual                                LOGROTATE(8)
+
+NAME
+       logrotate ‐ rotates, compresses, and mails system logs
+
+SYNOPSIS
+       logrotate  [--debug]  [--verbose]  [--log  file]  [--force]  [--state  file] [--mail command] config_file [con‐
+       fig_file2 ...]
+
+DESCRIPTION
+       logrotate is designed to ease administration of systems that generate large numbers of log  files.   It  allows
+       automatic  rotation,  compression,  removal,  and  mailing  of  log files.  Each log file may be handled daily,
+       weekly, monthly, or when it grows too large.
+
+       Normally, logrotate is run as a daily cron job.  It will not modify a log more than once in one day unless  the
+       criterion for that log is based on the log's size and logrotate is being run more than once each day, or unless
+       the -f or --force option is used.
+       
+CONFIGURATION FILE
+       logrotate reads everything about the log files it should be handling from the  series  of  configuration  files
+       specified  on  the  command  line.   Each configuration file can set global options (local definitions override
+       global ones, and later definitions override earlier ones) and specify logfiles to rotate. A  simple  configura‐
+       tion file looks like this:
+
+       # sample logrotate configuration file
+       compress
+
+       /var/log/messages {
+           rotate 5
+           weekly
+           postrotate
+               /usr/bin/killall -HUP syslogd
+           endscript
+       }
+
+       "/var/log/httpd/access.log" /var/log/httpd/error.log {
+           rotate 5
+           mail recipient@example.org
+           size 100k
+           sharedscripts
+           postrotate
+               /usr/bin/killall -HUP httpd
+           endscript
+       }
+
+       /var/log/news/* {
+           monthly
+           rotate 2
+           olddir /var/log/news/old
+           missingok
+           postrotate
+               kill -HUP $(cat /var/run/inn.pid)
+           endscript
+           nocompress
+       }
+
+       ~/log/*.log {}
+
+       The  first few lines set global options; in the example, logs are compressed after they are rotated.  Note that
+       comments may appear anywhere in the config file as long as the first non-whitespace character on the line is a
+       #.
+
+       Values are separated from directives by whitespace and/or an optional =.  Numbers must be specified in a format
+       understood by strtoul(3).
+
+       The next section of the config file defines how to handle the log  file  /var/log/messages.  The  log  will  go
+       through  five  weekly  rotations  before being removed. After the log file has been rotated (but before the old
+       version of the log has been compressed), the command /usr/bin/killall -HUP syslogd will be executed.
+
+       The next section defines the parameters for both /var/log/httpd/access.log and /var/log/httpd/error.log.   Each
+       is  rotated whenever it grows over 100k in size, and the old logs files are mailed (uncompressed) to recipient@
+       example.org after going through 5 rotations, rather than  being  removed.  The  sharedscripts  means  that  the
+       postrotate  script will only be run once (after the old logs have been compressed), not once for each log which
+       is rotated.  Note that log file names may be enclosed in quotes (and that quotes are required if the name  con‐
+       tains spaces).  Normal shell quoting rules apply, with ', ", and \ characters supported.
+
+       The  next  section  defines  the  parameters  for  all of the files in /var/log/news. Each file is rotated on a
+       monthly basis.  This is considered a single rotation directive and if errors occur for more than one file,  the
+       log files are not compressed.
+
+       The  last  section  uses tilde expansion to rotate log files in the home directory of the current user. This is
+       only available, if your glob library supports tilde expansion. GNU glob does support this.
+
+       Please use wildcards with caution.  If you specify *, logrotate will rotate  all  files,  including  previously
+       rotated ones.  A way around this is to use the olddir directive or a more exact wildcard (such as *.log).
+
+       Here is more information on the directives which may be included in a logrotate configuration file:
+
+   DIRECTIVES
+       These directives may be included in a logrotate configuration file:
+
+       compress
+              Old versions of log files are compressed with gzip(1) by default. See also nocompress.
+
+       daily  Log files are rotated every day.
+
+       mail address
+              When a log is rotated out of existence, it is mailed to address. If no mail should  be  generated  by  a
+              particular log, the nomail directive may be used.
+
+       postrotate/endscript
+              The lines between postrotate and endscript (both of which must appear on lines by themselves)  are  exe‐
+              cuted  (using /bin/sh) after the log file is rotated. These directives may only appear inside a log file
+              definition. Normally, the absolute path to the log file is passed as first argument to  the  script.  If
+              sharedscripts  is  specified,  whole  pattern  is passed to the script.  See also prerotate. See shared‐
+              scripts and nosharedscripts for error handling.
+              
+       rotate count
+              Log files are rotated count times before being removed or mailed to the  address  specified  in  a  mail
+              directive. If count is 0, old versions are removed rather than rotated. Default is 0.
+
+       size size
+              Log files are rotated only if they grow bigger than size bytes. If size is followed by k,  the  size  is
+              assumed  to  be in kilobytes.  If the M is used, the size is in megabytes, and if G is used, the size is
+              in gigabytes. So size 100, size 100k, size 100M and size 100G are all valid.
+
+       maxsize size
+              Log  files are rotated when they grow bigger than size bytes even before the additionally specified time
+              interval (daily, weekly, monthly, or yearly).  The related size option is  similar  except  that  it  is
+              mutually  exclusive with the time interval options, and it causes log files to be rotated without regard
+              for the last rotation time.  When maxsize is used, both the size and timestamp of a log file are consid‐
+              ered.
+
+       minsize  size
+              Log  files  are rotated when they grow bigger than size bytes, but not before the additionally specified
+              time interval (daily, weekly, monthly, or yearly).  The related size option is similar except that it is
+              mutually  exclusive with the time interval options, and it causes log files to be rotated without regard
+              for the last rotation time.  When minsize is used, both the size and timestamp of a log file are consid‐
+              ered.
+
+FILES
+       /var/lib/logrotate/logrotate.status   Default state file.
+       /etc/logrotate.conf                   Configuration options.
+
+SEE ALSO
+       chmod(2), gunzip(1), gzip(1), mail(1), shred(1), strftime(3), strtoul(3),  <https://github.com/logrotate/logro‐
+       tate>
+       
+       
+Example:
+
+configue the maximize of the log file size to 10MB
+
+# create a file in /etc/logrotate.d and specify the max size for that log file there
+
+[root@localhost logs]# cd /etc/
+[root@localhost etc]# ls -al log
+login.defs      logrotate.conf  logrotate.d/    
+[root@localhost etc]# cd logrotate.d/
+[root@localhost logrotate.d]# ls -al
+total 96
+drwxr-xr-x.   2 root root 4096 Mar  3 23:41 .
+drwxr-xr-x. 146 root root 8192 Mar 25 21:27 ..
+-rw-r--r--.   1 root root   91 Oct  6 08:50 bootlog
+-rw-r--r--.   1 root root  130 Feb 19  2018 btmp
+-rw-r--r--.   1 root root  160 May 10  2019 chrony
+-rw-r--r--.   1 root root   71 Jun 15  2020 cups
+-rw-r--r--.   1 root root  212 Jun  2  2020 dnf
+-rw-r--r--.   1 root root   93 Aug 11  2020 firewalld
+-rw-r--r--.   1 root root  194 Nov  3 20:19 httpd
+-rw-r--r--.   1 root root  172 Nov  4  2019 iscsiuiolog
+-rw-r--r--.   1 root root  165 Nov  3 18:05 libvirtd
+-rw-r--r--.   1 root root  540 Nov  3 18:05 libvirtd.qemu
+-rw-r--r--.   1 root root  106 Jun  2  2015 numad
+-rw-r--r--.   1 root root  203 Sep 16  2020 php-fpm
+-rw-r--r--.   1 root root  408 May 11  2019 psacct
+-rw-r--r--.   1 root root  155 Aug 17  2020 samba
+-rw-r--r--.   1 root root  237 Sep 17  2020 sssd
+-rw-r--r--.   1 root root   88 Sep 14  2020 subscription-manager
+-rw-r--r--.   1 root root  226 Jul 20  2020 syslog
+-rw-r--r--.   1 root root  188 Apr 26  2020 vsftpd
+-rw-r--r--.   1 root root  100 Apr  6  2020 wpa_supplicant
+-rw-r--r--.   1 root root  145 Feb 19  2018 wtmp
+
+
+[root@localhost logrotate.d]# cat httpd
+/var/log/httpd/*log {
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
+    endscript
+}
+
+
+[root@localhost logrotate.d]# cp httpd ./httpd2
+[root@localhost logrotate.d]# cat httpd2
+/var/log/httpd/*log {
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
+    endscript
+}
+
+# modify log rotate config to rotate frequently for testing purpose
+[root@localhost logrotate.d]# cat httpd2
+/var/log/httpd/*log {
+    rotate 2
+    hourly
+    size 10KB
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
+    endscript
+}
+
+
+
+
+HTTPD.CONF(5)                                         httpd.conf                                         HTTPD.CONF(5)
+
+NAME
+       httpd.conf - Configuration files for httpd
+
+SYNOPSIS
+       /etc/httpd/conf/httpd.conf, /etc/httpd/conf.modules.d, /etc/httpd/conf.d
+
+
+[root@localhost logrotate.d]# vi /etc/httpd/conf/httpd.conf
+#
+# ServerRoot: The top of the directory tree under which the server's
+# configuration, error, and log files are kept.
+#
+# Do not add a slash at the end of the directory path.  If you point
+# ServerRoot at a non-local disk, be sure to specify a local disk on the
+# Mutex directive, if file-based mutexes are used.  If you wish to share the
+# same ServerRoot for multiple httpd daemons, you will need to change at
+# least PidFile.
+#
+ServerRoot "/etc/httpd"
+
+#
+# DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+DocumentRoot "/webfiles"
+
+
+#
+# Listen: Allows you to bind Apache to specific IP addresses and/or
+# ports, instead of the default. See also the <VirtualHost>
+# directive.
+#
+# Change this to Listen on specific IP addresses as shown below to
+# prevent Apache from glomming onto all bound IP addresses.
+#
+#Listen 12.34.56.78:80
+Listen 80
+
+
+[root@localhost logrotate.d]# curl http://localhost:80
+# It doesn't show the content from /webfiles/index.html
+
+# log is not rotated? Maybe log file is directed to other place?
+
+[root@localhost logrotate.d]# cd /var/log/httpd/
+
+[root@localhost httpd]# ls -al
+total 36
+drwx------.  2 root root  213 Feb 28 11:39 .
+drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
+-rw-r--r--.  1 root root 2554 Mar 27 22:25 access_log
+-rw-r--r--.  1 root root  158 Jan 25 01:19 access_log-20210221
+-rw-r--r--.  1 root root  327 Feb 21 21:50 access_log-20210228
+-rw-r--r--.  1 root root    0 Feb 28 11:39 error_log
+-rw-r--r--.  1 root root 9262 Feb 21 03:13 error_log-20210221
+-rw-r--r--.  1 root root 1633 Feb 21 21:36 error_log-20210228
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_access_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_error_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_request_log
+
+
+/etc/httpd/logs/error_log
+
+[root@localhost httpd]# cd /etc/httpd/logs/
+[root@localhost logs]# ls -al
+total 36
+drwx------.  2 root root  213 Feb 28 11:39 .
+drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
+-rw-r--r--.  1 root root 3526 Mar 27 22:27 access_log
+-rw-r--r--.  1 root root  158 Jan 25 01:19 access_log-20210221
+-rw-r--r--.  1 root root  327 Feb 21 21:50 access_log-20210228
+-rw-r--r--.  1 root root    0 Feb 28 11:39 error_log
+-rw-r--r--.  1 root root 9262 Feb 21 03:13 error_log-20210221
+-rw-r--r--.  1 root root 1633 Feb 21 21:36 error_log-20210228
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_access_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_error_log
+-rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_request_log

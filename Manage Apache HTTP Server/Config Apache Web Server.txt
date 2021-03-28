@@ -96,3 +96,28 @@ Jan 25 01:05:54 localhost.localdomain httpd[5873]: Server configured, listening>
 
 [root@localhost /]# curl http://localhost
 hello world
+
+
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/httpd.service.d
+           └─override.conf
+           /usr/lib/systemd/system/httpd.service.d
+           └─php-fpm.conf
+   Active: active (running) since Mon 2021-03-22 22:27:45 MDT; 4 days ago
+     Docs: man:httpd.service(8)
+  Process: 12573 ExecReload=/usr/sbin/httpd $OPTIONS -k graceful (code=exited, status=0/SUCCESS)
+ Main PID: 12847 (httpd)
+   Status: "Total requests: 7; Idle/Busy workers 100/0;Requests/sec: 1.62e-05; Bytes served/sec:   0 B/sec"
+    Tasks: 213 (limit: 11099)
+   Memory: 26.6M
+   CGroup: /system.slice/httpd.service
+           ├─12847 /usr/sbin/httpd -DFOREGROUND
+           ├─12853 /usr/sbin/httpd -DFOREGROUND
+           ├─12854 /usr/sbin/httpd -DFOREGROUND
+           ├─12855 /usr/sbin/httpd -DFOREGROUND
+           └─12856 /usr/sbin/httpd -DFOREGROUND
+
+Mar 22 22:27:45 localhost.localdomain httpd[12847]: AH00558: httpd: Could not reliably determine the server's fully quali>
+Mar 22 22:27:45 localhost.localdomain systemd[1]: Started The Apache HTTP Server.
+Mar 22 22:27:45 localhost.localdomain httpd[12847]: Server configured, listening on: port 443, port 80
