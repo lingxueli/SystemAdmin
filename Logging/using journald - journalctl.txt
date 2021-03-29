@@ -1,0 +1,157 @@
+$ man -k journal
+coredumpctl (1)      - Retrieve coredumps from the journal
+journal-remote.conf (5) - Journal remote service configuration files
+journal-remote.conf.d (5) - Journal remote service configuration files
+journalctl (1)       - Query the systemd journal
+journald.conf (5)    - Journal service configuration files
+journald.conf.d (5)  - Journal service configuration files
+systemd-cat (1)      - Connect a pipeline or program's output with the journal
+systemd-journal-upload (8) - Send journal messages over the network
+systemd-journald (8) - Journal service
+systemd-journald.service (8) - Journal service
+systemd-journald.socket (8) - Journal service
+systemd.journal-fields (7) - Special journal fields
+
+
+JOURNALCTL(1)                                                       journalctl                                                       JOURNALCTL(1)
+
+NAME
+       journalctl - Query the systemd journal
+
+SYNOPSIS
+       journalctl [OPTIONS...] [MATCHES...]
+
+DESCRIPTION
+       journalctl may be used to query the contents of the systemd(1) journal as written by systemd-journald.service(8).
+
+
+       -f, --follow
+           Show only the most recent journal entries, and continuously print new entries as they are appended to the journal.
+
+       --no-pager
+           Do not pipe output into a pager.
+
+       -n, --lines=
+           Show the most recent journal events and limit the number of events shown. If --follow is used, this option is implied. The argument is a positive integer or "all" to disable line limiting. The default value is 10 if no argument is given.
+
+       -p, --priority=
+           Filter output by message priorities or priority ranges. Takes either a single numeric or textual log level (i.e. between 0/"emerg" and 7/"debug"), or a range of numeric/text log levels in the form FROM..TO. The log levels are the usual syslog log levels as documented in syslog(3), i.e.  "emerg" (0), "alert" (1), "crit" (2), "err" (3), "warning" (4), "notice" (5), "info" (6), "debug" (7). If a single log level is specified, all messages with this log level or a lower (hence more important) log level are shown. If a range is specified, all messages within the range are shown, including both the start and the end value of the range. This will add "PRIORITY=" matches for the specified priorities.
+
+       -S, --since=, -U, --until=
+           Start showing entries on or newer than the specified date, or on or older than the specified date, respectively. Date specifications should be of the format "2012-10-30 18:17:16". If the time part is omitted, "00:00:00" is assumed. If only the seconds component is omitted, ":00" is assumed. If the date component is omitted, the current day is assumed. Alternatively the strings "yesterday", "today", "tomorrow" are understood, which refer to 00:00:00 of the day before the current day, the current day, or the day after the current day, respectively.  "now" refers to the current time. Finally, relative times may be specified, prefixed with "-" or "+", referring to times before or after the current time, respectively.
+
+       -o, --output=
+           Controls the formatting of the journal entries that are shown. Takes one of the following options:
+
+           short is the default and generates an output that is mostly identical to the formatting of classic syslog files, showing one line per journal entry.
+
+           verbose shows the full-structured entry items with all fields.
+
+       -k, --dmesg
+           Show only kernel messages. This implies -b and adds the match "_TRANSPORT=kernel".
+SEE ALSO
+       systemd(1), systemd-journald.service(8), systemctl(1), coredumpctl(1), systemd.journal-fields(7), journald.conf(5)
+
+
+$ journalctl
+$ journalctl -f
+$ journalctl -n 20
+$ journalctl -p err
+$ journalctl --since yesterday -p err
+
+$ journalctl --no-pager
+
+# to use filter, press tab twice after journalctl
+
+[root@localhost ~]# journalctl 
+_AUDIT_LOGINUID=              JOB_ID=                       _SOURCE_MONOTONIC_TIMESTAMP=
+_AUDIT_SESSION=               JOB_RESULT=                   _SOURCE_REALTIME_TIMESTAMP=
+AVAILABLE=                    JOB_TYPE=                     SSSD_DOMAIN=
+AVAILABLE_PRETTY=             JOURNAL_NAME=                 _STREAM_ID=
+_BOOT_ID=                     JOURNAL_PATH=                 SYSLOG_FACILITY=
+_CAP_EFFECTIVE=               _KERNEL_DEVICE=               SYSLOG_IDENTIFIER=
+_CMDLINE=                     _KERNEL_SUBSYSTEM=            SYSLOG_PID=
+CODE_FILE=                    KERNEL_USEC=                  _SYSTEMD_CGROUP=
+CODE_FUNC=                    LEADER=                       _SYSTEMD_INVOCATION_ID=
+CODE_LINE=                    LIMIT=                        _SYSTEMD_OWNER_UID=
+_COMM=                        LIMIT_PRETTY=                 _SYSTEMD_SESSION=
+CPU_USAGE_NSEC=               _MACHINE_ID=                  _SYSTEMD_SLICE=
+CURRENT_USE=                  MAX_USE=                      _SYSTEMD_UNIT=
+CURRENT_USE_PRETTY=           MAX_USE_PRETTY=               _SYSTEMD_USER_SLICE=
+DISK_AVAILABLE=               MESSAGE=                      _SYSTEMD_USER_UNIT=
+DISK_AVAILABLE_PRETTY=        MESSAGE_ID=                   THREAD_ID=
+DISK_KEEP_FREE=               NM_DEVICE=                    TIMESTAMP_BOOTTIME=
+DISK_KEEP_FREE_PRETTY=        NM_LOG_DOMAINS=               TIMESTAMP_MONOTONIC=
+ERRNO=                        NM_LOG_LEVEL=                 _TRANSPORT=
+_EXE=                         N_RESTARTS=                   _UDEV_DEVNODE=
+EXIT_CODE=                    OBJECT_PID=                   _UDEV_SYSNAME=
+EXIT_STATUS=                  _PID=                         _UID=
+_GID=                         PRIORITY=                     UNIT=
+...
+
+$ journalctl _UID=1000
+
+# this shows options for each log, later these options can be used as filters
+$ journalctl -o verbose
+
+[root@localhost ~]# journalctl -o verbose
+-- Logs begin at Mon 2021-02-22 14:19:44 MST, end at Mon 2021-03-29 14:39:54 MDT. --
+Mon 2021-02-22 14:19:44.655582 MST [s=96489b1288e347a6a96e8e1701530d12;i=1;b=79b3755b86174a13977716bfe34da255;m=6>
+    _SOURCE_MONOTONIC_TIMESTAMP=0
+    _TRANSPORT=kernel
+    PRIORITY=5
+    SYSLOG_FACILITY=0
+    SYSLOG_IDENTIFIER=kernel
+    MESSAGE=Linux version 4.18.0-240.10.1.el8_3.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 8.3.1 20>
+    _BOOT_ID=79b3755b86174a13977716bfe34da255
+    _MACHINE_ID=ef42488fe41a4812a6a0ed66f48dd10b
+    _HOSTNAME=localhost.localdomain
+...
+
+$ journalctl _SYSTEMD_UNIT=sshd.service
+
+# this shows kernel messages only.
+# dmesg - print or control the kernel ring buffer. The kernel ring buffer is a data structure that records messages related to the operation of the kernel. A ring buffer is a special kind of buffer that is always a constant size, removing the oldest messages when new messages are received.
+
+$ journalctl --dmesg
+
+[root@localhost ~]# journalctl --dmesg
+-- Logs begin at Mon 2021-02-22 14:19:44 MST, end at Mon 2021-03-29 14:41:29 MDT. --
+Mar 29 00:13:55 localhost.localdomain kernel: Linux version 4.18.0-240.15.1.el8_3.x86_64 (mockbuild@kbuilder.bsys>
+Mar 29 00:13:55 localhost.localdomain kernel: Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-4.18.0-240.15.1.el8_3>
+Mar 29 00:13:55 localhost.localdomain kernel: Disabled fast string operations
+Mar 29 00:13:55 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point regist>
+Mar 29 00:13:55 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+Mar 29 00:13:55 localhost.localdomain kernel: x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+Mar 29 00:13:55 localhost.localdomain kernel: x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+Mar 29 00:13:55 localhost.localdomain kernel: x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, us>
+Mar 29 00:13:55 localhost.localdomain kernel: BIOS-provided physical RAM map:
+Mar 29 00:13:55 localhost.localdomain kernel: BIOS-e820: [mem 0x0000000000000000-0x000000000009ebff] usable
+
+# search log based on matches
+
+JOURNALCTL(1)                                                       journalctl                                                       JOURNALCTL(1)
+
+NAME
+       journalctl - Query the systemd journal
+
+SYNOPSIS
+       journalctl [OPTIONS...] [MATCHES...]
+
+
+DESCRIPTION
+       journalctl may be used to query the contents of the systemd(1) journal as written by systemd-journald.service(8).
+
+       If called without parameters, it will show the full contents of the journal, starting with the oldest entry collected.
+
+       If one or more match arguments are passed, the output is filtered accordingly. A match is in the format "FIELD=VALUE", e.g. "_SYSTEMD_UNIT=httpd.service", referring to the components of a structured journal entry. See systemd.journal-fields(7) for a list of well-known fields. If multiple matches are specified matching different fields, the log entries are filtered by both, i.e. the resulting output will show only entries matching all the specified matches of this kind. If two matches apply to the same field, then they are automatically matched as alternatives, i.e. the resulting output will show entries matching any of the specified matches for the same field. Finally, the character "+" may appears as a separate word between other terms on the command line. This causes all matches before and after to be combined in a disjunction (i.e. logical OR).
+
+
+man systemd.journal-fields
+SYSTEMD.JOURNAL-FIELDS(7)                                     systemd.journal-fields                                     SYSTEMD.JOURNAL-FIELDS(7)
+
+NAME
+       systemd.journal-fields - Special journal fields
+
+DESCRIPTION
+       Entries in the journal resemble an environment block in their syntax but with fields that can include binary data. Primarily, fields are formatted UTF-8 text strings, and binary formatting is used only where formatting as UTF-8 text strings makes little sense. New fields may freely be defined by applications, but a few fields have special meaning. All fields with special meanings are optional. In some cases, fields may appear more than once per entry.

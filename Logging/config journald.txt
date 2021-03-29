@@ -1,14 +1,10 @@
-	journald stores log msg in the a temporary binary file, /run/log/journal. use journalctl command to read it
+	journald stores log msg in the a temporary binary file, /run/log/journal. Use journalctl command to read it. It stores the runtime information but it's not persistent between reboot. 
 
-	Because it works with systemd, it logs everything happening on the server but the log is not persistent between reboots. To keep them, you can forward the msg from journald to rsyslogd. rsyslogd will keep it in /var/log.
-
+	Because it works with systemd, it logs everything happening on the server but the log is not persistent between reboots. To keep them, you can forward the msg from journald to rsyslogd. rsyslogd will keep it in /var/log. If you want to make the log persistent, you should make sure that the directory /var/log/journal exists.
 
 How to config journald log to be persisitent?
 
-Configure the service writting log to /var/log/journal/, instead of /run/log/journal/
-
-
-
+Configure journald to write log to /var/log/journal/, instead of /run/log/journal.
 
 
 $ man 8 systemd-journald
@@ -44,10 +40,7 @@ FILES
 
        /run/log/journal/machine-id/*.journal, /run/log/journal/machine-id/*.journal~, /var/log/journal/machine-id/*.journal,
        /var/log/journal/machine-id/*.journal~
-           systemd-journald writes entries to files in /run/log/journal/machine-id/ or /var/log/journal/machine-id/ with the ".journal" suffix. If
-           the daemon is stopped uncleanly, or if the files are found to be corrupted, they are renamed using the ".journal~" suffix, and
-           systemd-journald starts writing to a new file.  /run is used when /var/log/journal is not available, or when Storage=volatile is set in
-           the journald.conf(5) configuration file.
+           systemd-journald writes entries to files in /run/log/journal/machine-id/ or /var/log/journal/machine-id/ with the ".journal" suffix. If the daemon is stopped uncleanly, or if the files are found to be corrupted, they are renamed using the ".journal~" suffix, and systemd-journald starts writing to a new file.  /run is used when /var/log/journal is not available, or when Storage=volatile is set in the journald.conf(5) configuration file.
 
 
 JOURNALD.CONF(5)                                                   journald.conf                                                  JOURNALD.CONF(5)
@@ -68,13 +61,10 @@ OPTIONS
        All options are configured in the "[Journal]" section:
 
        Storage=
-           Controls where to store journal data. One of "volatile", "persistent", "auto" and "none". If "volatile", journal log data will be
-           stored only in memory, i.e. below the /run/log/journal hierarchy (which is created if needed). If "persistent", data will be stored
-           preferably on disk, i.e. below the /var/log/journal hierarchy (which is created if needed), with a fallback to /run/log/journal (which
-           is created if needed), during early boot and if the disk is not writable.  "auto" is similar to "persistent" but the directory
-           /var/log/journal is not created if needed, so that its existence controls where log data goes.  "none" turns off all storage, all log
-           data received will be dropped. Forwarding to other targets, such as the console, the kernel log buffer, or a syslog socket will still
-           work however. Defaults to "auto".
+           Controls where to store journal data. One of "volatile", "persistent", "auto" and "none". 
+           If "volatile", journal log data will be stored only in memory, i.e. below the /run/log/journal hierarchy (which is created if needed). 
+           If "persistent", data will be stored preferably on disk, i.e. below the /var/log/journal hierarchy (which is created if needed), with a fallback to /run/log/journal (which is created if needed), during early boot and if the disk is not writable.             "auto" is similar to "persistent" but the directory /var/log/journal is not created if needed, so that its existence controls where log data goes.  
+           "none" turns off all storage, all log data received will be dropped. Forwarding to other targets, such as the console, the kernel log buffer, or a syslog socket will still work however. Defaults to "auto".
 
 
 # change preference: Storage = auto
@@ -120,3 +110,281 @@ $ cat /etc/systemd/journald.conf
 #MaxLevelConsole=info
 #MaxLevelWall=emerg
 #LineMax=48K
+
+
+Example - configure journald log to be presistent
+1. config journald
+
+$ vi /etc/systemd/journald.conf
+Storage=auto
+Or
+Storage=persistent
+
+2. make the directory and set the correct ownership and permission
+[root@localhost ~]# mkdir /var/log/journal
+
+[root@localhost ~]# chown root:systemd-journal /var/log/journal
+
+# which group should be the owner?
+
+# more information of the group systemd-journal
+# nobody uses this group as the secondary
+[root@localhost ~]# grep systemd /etc/group
+systemd-journal:x:190:
+systemd-coredump:x:997:
+systemd-resolve:x:193:
+
+# nobody uses this group as the primary
+[root@localhost ~]# grep 190 /etc/passwd
+
+# what permission to use?
+# set SGID to make log files share the same group owner: systemd-journal
+# this allows journald to write the journal to this directory
+
+[root@localhost ~]# chmod 2755 /var/log/journal
+
+[root@localhost ~]# ls -ald /var/log/journal/
+drwxr-sr-x+ 3 root systemd-journal 46 Feb 22 15:35 /var/log/journal/
+
+# SGID is set
+# SGID set on file: user executes file with permissions of group owner.
+# SGID set on directory: Files created in directory get the same group owner.
+
+# To set special permissions:
+# SUID = 4, SGID = 2, sticky bit = 1
+# SUID: chmod u+s, SGID: chmod g+s, sticky bit: chmod +t
+
+3. reboot the system or 
+
+$ killall -USR1 systemd-journald
+
+# kill -USR1 %1 sends the "user-defined signal #1" (a.k.a. "SIGUSR1") to the first background child process of the current shell process.
+
+# If that background process has set up a signal-handler function for the USR1 signal, that function will be run. If the target process doesn't have a signal-handler for that signal, the target process will terminate.
+
+# -USR1 tells kill to send the USR1 signal. 
+
+
+# Each signal has a "default disposition" -- what a process does by default when it receives that signal. There's a table in the signal(7) man page listing them:
+
+Signal     Value     Action   Comment
+──────────────────────────────────────────────────────────────────────
+...
+SIGUSR1   30,10,16    Term    User-defined signal 1
+SIGUSR2   31,12,17    Term    User-defined signal 2
+SIGUSR1 and SIGUSR2 both have the default action Term -- the process is terminated. dd registers a handler to intercept the signal and do something useful with it, but if you signal too quickly it hasn't had time to register that handler yet, so the default action happens instead
+
+
+# i.e. USR1 = SIGUSR1
+
+systemd journal is now persistent across reboots. To see the log msg since the last reboot:
+
+$ journalctl -b
+
+
+       -b [ID][±offset], --boot=[ID][±offset]
+           Show messages from a specific boot. This will add a match for "_BOOT_ID=".
+
+           The argument may be empty, in which case logs for the current boot will be shown.
+
+           If the boot ID is omitted, a positive offset will look up the boots starting from the beginning of
+           the journal, and an equal-or-less-than zero offset will look up boots starting from the end of the
+           journal. Thus, 1 means the first boot found in the journal in chronological order, 2 the second and
+           so on; while -0 is the last boot, -1 the boot before last, and so on. An empty offset is equivalent
+           to specifying -0, except when the current boot is not the last boot (e.g. because --directory was
+           specified to look at logs from a different machine).
+
+           If the 32-character ID is specified, it may optionally be followed by offset which identifies the
+           boot relative to the one given by boot ID. Negative values mean earlier boots and positive values
+           mean later boots. If offset is not specified, a value of zero is assumed, and the logs for the boot
+           given by ID are shown.
+
+CHOWN(1)                                         User Commands                                         CHOWN(1)
+
+NAME
+       chown - change file owner and group
+
+SYNOPSIS
+       chown [OPTION]... [OWNER][:[GROUP]] FILE...
+       chown [OPTION]... --reference=RFILE FILE...
+
+DESCRIPTION
+       This  manual  page documents the GNU version of chown.  chown changes the user and/or group ownership of
+       each given file. 
+
+EXAMPLES
+       chown root /u
+              Change the owner of /u to "root".
+
+       chown root:staff /u
+              Likewise, but also change its group to "staff".
+
+       chown -hR root /u
+              Change the owner of /u and subfiles to "root".
+
+
+
+GROUP(5)                                   Linux Programmer's Manual                                   GROUP(5)
+
+NAME
+       group - user group file
+
+DESCRIPTION
+       The  /etc/group file is a text file that defines the groups on the system.  There is one entry per line,
+       with the following format:
+
+           group_name:password:GID:user_list
+
+       The fields are as follows:
+
+       group_name  the name of the group.
+
+       password    the (encrypted) group password.  If this field is empty, no password is needed.
+
+       GID         the numeric group ID.
+
+       user_list   a list of the usernames that are members of this group, separated by commas.
+
+FILES
+       /etc/group
+
+USERADD(8)                                 System Management Commands                                USERADD(8)
+
+NAME
+       useradd - create a new user or update default new user information
+
+SYNOPSIS
+       useradd [options] LOGIN
+
+       useradd -D
+
+       useradd -D [options]
+
+FILES
+       /etc/passwd
+           User account information.
+
+       /etc/shadow
+           Secure user account information.
+
+       /etc/group
+           Group account information.
+
+       /etc/default/useradd
+           Default values for account creation.
+
+
+
+PASSWD(5)                                  Linux Programmer's Manual                                  PASSWD(5)
+
+NAME
+       passwd - password file
+
+DESCRIPTION
+       The  /etc/passwd  file is a text file that describes user login accounts for the system.  It should have
+       read permission allowed for all users (many utilities, like ls(1) use it to map user IDs to  usernames),
+       but write access only for the superuser.
+       
+       Each line of the file describes a single user, and contains seven colon-separated fields:
+
+           name:password:UID:GID:GECOS:directory:shell
+
+       The field are as follows:
+
+       name        This is the user's login name.  It should not contain capital letters.
+
+       password    This  is  either  the  encrypted  user  password,  an asterisk (*), or the letter 'x'.  (See
+                   pwconv(8) for an explanation of 'x'.)
+
+       UID         The privileged root login account (superuser) has the user ID 0.
+
+       GID         This is the numeric primary group ID for this user.  (Additional groups  for  the  user  are
+                   defined in the system group file; see group(5)).
+
+       GECOS       This  field  (sometimes  called  the "comment field") is optional and used only for informa‐
+                   tional purposes.  Usually, it contains the full username.  Some programs (for example,  fin‐
+                   ger(1)) display information from this field.
+
+                   GECOS  stands  for  "General  Electric Comprehensive Operating System", which was renamed to
+                   GCOS when GE's large systems division was sold to Honeywell.  Dennis Ritchie  has  reported:
+                   "Sometimes  we sent printer output or batch jobs to the GCOS machine.  The gcos field in the
+                   password file was a place to stash the information for the $IDENTcard.  Not elegant."
+
+       directory   This is the user's home directory: the initial directory where the user is placed after log‐
+                   ging in.  The value in this field is used to set the HOME environment variable.
+
+       shell       This  is  the program to run at login (if empty, use /bin/sh).  If set to a nonexistent exe‐
+                   cutable, the user will be unable to login through login(1).  The value in this field is used
+                   to set the SHELL environment variable.
+
+
+KILLALL(1)                                       User Commands                                       KILLALL(1)
+
+NAME
+       killall - kill processes by name
+
+SYNOPSIS
+       killall [-Z, --context pattern] [-e, --exact] [-g, --process-group] [-i, --interactive] [-n, --ns PID]
+       [-o, --older-than TIME] [-q, --quiet] [-r, --regexp] [-s, --signal SIGNAL, -SIGNAL] [-u, --user user]
+       [-v, --verbose] [-w, --wait] [-y, --younger-than TIME] [-I, --ignore-case] [-V, --version] [--] name ...
+       killall -l
+       killall -V, --version
+
+DESCRIPTION
+       killall  sends  a  signal  to all processes running any of the specified commands.  If no signal name is
+       specified, SIGTERM is sent.
+
+       Signals can be specified either by name (e.g.  -HUP or -SIGHUP) or by number (e.g.  -1) or by option -s.
+
+
+
+SIGNAL(7)                                  Linux Programmer's Manual                                  SIGNAL(7)
+
+NAME
+       signal - overview of signals
+
+DESCRIPTION
+       Linux supports both POSIX reliable signals (hereinafter "standard signals") and POSIX real-time signals.
+       
+   Signal dispositions
+       Each signal has a current disposition, which determines how the process behaves when it is delivered the
+       signal.
+
+       The entries in the "Action" column of the tables below specify the default disposition for each  signal,
+       as follows:
+
+       Term   Default action is to terminate the process.
+
+       Ign    Default action is to ignore the signal.
+
+       Core   Default action is to terminate the process and dump core (see core(5)).
+
+       Stop   Default action is to stop the process.
+
+       Cont   Default action is to continue the process if it is currently stopped.
+
+       Signal     Value     Action   Comment
+       ──────────────────────────────────────────────────────────────────────
+       SIGHUP        1       Term    Hangup detected on controlling terminal
+                                     or death of controlling process
+       SIGINT        2       Term    Interrupt from keyboard
+       SIGQUIT       3       Core    Quit from keyboard
+       SIGILL        4       Core    Illegal Instruction
+       SIGABRT       6       Core    Abort signal from abort(3)
+       SIGFPE        8       Core    Floating-point exception
+       SIGKILL       9       Term    Kill signal
+       SIGSEGV      11       Core    Invalid memory reference
+       SIGPIPE      13       Term    Broken pipe: write to pipe with no
+                                     readers; see pipe(7)
+       SIGALRM      14       Term    Timer signal from alarm(2)
+       SIGTERM      15       Term    Termination signal
+       SIGUSR1   30,10,16    Term    User-defined signal 1
+       SIGUSR2   31,12,17    Term    User-defined signal 2
+       SIGCHLD   20,17,18    Ign     Child stopped or terminated
+
+       SIGCONT   19,18,25    Cont    Continue if stopped
+       SIGSTOP   17,19,23    Stop    Stop process
+       SIGTSTP   18,20,24    Stop    Stop typed at terminal
+       SIGTTIN   21,21,26    Stop    Terminal input for background process
+       SIGTTOU   22,22,27    Stop    Terminal output for background process
+
