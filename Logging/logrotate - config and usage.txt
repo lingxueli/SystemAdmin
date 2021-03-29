@@ -206,7 +206,8 @@ SEE ALSO
        
 Example:
 
-configue the maximize of the log file size to 10MB
+How to configue the maximize of the log file size to 10MB for httpd service?
+
 
 # create a file in /etc/logrotate.d and specify the max size for that log file there
 
@@ -240,6 +241,7 @@ drwxr-xr-x. 146 root root 8192 Mar 25 21:27 ..
 -rw-r--r--.   1 root root  145 Feb 19  2018 wtmp
 
 
+# this is previous config of httpd log file - it might be outdated because httpd might use other log files
 [root@localhost logrotate.d]# cat httpd
 /var/log/httpd/*log {
     missingok
@@ -252,35 +254,7 @@ drwxr-xr-x. 146 root root 8192 Mar 25 21:27 ..
 }
 
 
-[root@localhost logrotate.d]# cp httpd ./httpd2
-[root@localhost logrotate.d]# cat httpd2
-/var/log/httpd/*log {
-    missingok
-    notifempty
-    sharedscripts
-    delaycompress
-    postrotate
-        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
-    endscript
-}
-
-# modify log rotate config to rotate frequently for testing purpose
-[root@localhost logrotate.d]# cat httpd2
-/var/log/httpd/*log {
-    rotate 2
-    hourly
-    size 10KB
-    missingok
-    notifempty
-    sharedscripts
-    delaycompress
-    postrotate
-        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
-    endscript
-}
-
-
-
+# check httpd config to see where the current log file is
 
 HTTPD.CONF(5)                                         httpd.conf                                         HTTPD.CONF(5)
 
@@ -323,36 +297,47 @@ DocumentRoot "/webfiles"
 #Listen 12.34.56.78:80
 Listen 80
 
+#
+# Relax access to content within /var/www.
+#
+<Directory "/var/www">
+    AllowOverride None
+    # Allow open access:
+    Require all granted
+</Directory>
 
-[root@localhost logrotate.d]# curl http://localhost:80
-# It doesn't show the content from /webfiles/index.html
+#
+# Relax access to content within /var/www.
+#
+<Directory "/webfiles">
+    AllowOverride None
+    Require all granted
+</Directory>
 
-# log is not rotated? Maybe log file is directed to other place?
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog "logs/error_log"
+ErrorLog syslog:local1
 
-[root@localhost logrotate.d]# cd /var/log/httpd/
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel warn
 
-[root@localhost httpd]# ls -al
-total 36
-drwx------.  2 root root  213 Feb 28 11:39 .
-drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
--rw-r--r--.  1 root root 2554 Mar 27 22:25 access_log
--rw-r--r--.  1 root root  158 Jan 25 01:19 access_log-20210221
--rw-r--r--.  1 root root  327 Feb 21 21:50 access_log-20210228
--rw-r--r--.  1 root root    0 Feb 28 11:39 error_log
--rw-r--r--.  1 root root 9262 Feb 21 03:13 error_log-20210221
--rw-r--r--.  1 root root 1633 Feb 21 21:36 error_log-20210228
--rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_access_log
--rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_error_log
--rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_request_log
+# check log file at /etc/httpd/logs/error_log
 
-
-/etc/httpd/logs/error_log
-
-[root@localhost httpd]# cd /etc/httpd/logs/
+[root@localhost logrotate.d]# cd /etc/httpd/logs
 [root@localhost logs]# ls -al
 total 36
 drwx------.  2 root root  213 Feb 28 11:39 .
-drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
+drwxr-xr-x. 20 root root 4096 Mar 28 23:49 ..
 -rw-r--r--.  1 root root 3526 Mar 27 22:27 access_log
 -rw-r--r--.  1 root root  158 Jan 25 01:19 access_log-20210221
 -rw-r--r--.  1 root root  327 Feb 21 21:50 access_log-20210228
@@ -362,3 +347,182 @@ drwxr-xr-x. 20 root root 4096 Mar 26 22:03 ..
 -rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_access_log
 -rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_error_log
 -rw-r--r--.  1 root root    0 Jan 25 22:20 ssl_request_log
+
+
+# check the log file of syslog:local1
+# check the default and customized rsyslog config
+
+
+[root@localhost log]# cat /etc/rsyslog.conf
+# rsyslog configuration file
+
+# Include all config files in /etc/rsyslog.d/
+include(file="/etc/rsyslog.d/*.conf" mode="optional")
+
+#### RULES ####
+
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.*                                                 /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none                /var/log/messages
+
+# The authpriv file has restricted access.
+authpriv.*                                              /var/log/secure
+
+# Log all the mail messages in one place.
+mail.*                                                  -/var/log/maillog
+
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*
+
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                          /var/log/spooler
+
+# Save boot messages also to boot.log
+local7.*                                                /var/log/boot.log
+
+
+[root@localhost log]# cd /etc/rsyslog.d
+[root@localhost rsyslog.d]# ls -al
+total 20
+drwxr-xr-x.   2 root root   50 Feb 21 21:52 .
+drwxr-xr-x. 146 root root 8192 Mar 28 23:49 ..
+-rw-r--r--.   1 root root   32 Feb 21 21:52 debug.conf
+-rw-r--r--.   1 root root   38 Feb 21 21:47 rsyslog-httpd.conf
+
+[root@localhost rsyslog.d]# cat rsyslog-httpd.conf 
+local1.error	/var/log/httpd-error.log
+
+# location of httpd log files are:
+1. /etc/httpd/logs/error_log
+
+-rw-r--r--.  1 root root    0 Feb 28 11:39 error_log
+-rw-r--r--.  1 root root 9262 Feb 21 03:13 error_log-20210221
+-rw-r--r--.  1 root root 1633 Feb 21 21:36 error_log-20210228
+
+2. /var/log/httpd-error.log
+
+
+drwx------.  2 root   root                 213 Feb 28 11:39 httpd
+-rw-------.  1 root   root                5754 Mar 27 22:27 httpd-error.log
+
+
+# modify the log rotate config of the second log file
+
+[root@localhost log]# cd /etc/logrotate.d/
+[root@localhost logrotate.d]# cp httpd httpd_updated
+
+[root@localhost logrotate.d]# vi httpd_updated
+/var/log/httpd-error {
+    rotate 4
+    hourly
+    size=100k
+    missingok
+    notifempty
+    sharedscripts
+    delaycompress
+    postrotate
+        /bin/systemctl reload httpd.service > /dev/null 2>/dev/null || true
+    endscript
+}                                                                                                                    
+
+# test if httpd service works as expected
+
+[root@localhost lisa]# systemctl status httpd
+● httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/httpd.service.d
+           └─override.conf
+           /usr/lib/systemd/system/httpd.service.d
+           └─php-fpm.conf
+   Active: active (running) since Mon 2021-03-29 00:17:07 MDT; 22s ago
+     Docs: man:httpd.service(8)
+ Main PID: 3418 (httpd)
+   Status: "Running, listening on: port 443, port 80"
+    Tasks: 213 (limit: 11099)
+   Memory: 27.7M
+   CGroup: /system.slice/httpd.service
+           ├─3418 /usr/sbin/httpd -DFOREGROUND
+           ├─3425 /usr/sbin/httpd -DFOREGROUND
+           ├─3426 /usr/sbin/httpd -DFOREGROUND
+           ├─3427 /usr/sbin/httpd -DFOREGROUND
+           └─3428 /usr/sbin/httpd -DFOREGROUND
+
+Mar 29 00:17:07 localhost.localdomain systemd[1]: Starting The Apache HTTP Server...
+Mar 29 00:17:07 localhost.localdomain httpd[3418]: AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using localh>
+Mar 29 00:17:07 localhost.localdomain systemd[1]: Started The Apache HTTP Server.
+Mar 29 00:17:07 localhost.localdomain httpd[3418]: Server configured, listening on: port 443, port 80
+
+# curl http://localhost:80 doesn't serve the right content
+# the reason could be:
+
+1. Httpd config blocks access to the /webfiles/index.html
+
+To fix this, update the httpd config file with:
+
+######## add-on
+# Relax access to the new directory
+<Directory "/web">
+    AllowOverride None 
+    Require all granted
+</Directory>
+
+
+2. SELinux blocks /webfiles/index.html
+
+To fix this, update SELinux context label as:
+
+# after disable Selinux it serves the right content
+[root@localhost lisa]# setenforce 0
+[root@localhost lisa]# curl http://localhost:80
+hello world
+
+apply the correct context label to the policy
+[root@localhost lisa]# semanage fcontext -a -t httpd_sys_content_t "/webfiles(/.*)?"
+
+apply the policy to the file system
+[root@localhost lisa]# restorecon -R -v /webfiles
+Relabeled /webfiles from unconfined_u:object_r:default_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+Relabeled /webfiles/index.html from unconfined_u:object_r:default_t:s0 to unconfined_u:object_r:httpd_sys_content_t:s0
+
+turn SELinux into enforcing mode
+$ setenforce 1
+
+[root@localhost lisa]# curl http://localhost:80
+hello world
+[root@localhost lisa]# curl http://localhost:80/babababa
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>Not Found</h1>
+<p>The requested URL was not found on this server.</p>
+</body></html>
+
+
+ 
+# test if httpd log file is at the path expected
+
+[root@localhost lisa]# tail -5 /var/log/httpd-error.log
+Mar 29 00:12:28 localhost httpd[28299]: [authz_core:error] [pid 28299:tid 140409669912320] [client ::1:58908] AH01630: client denied by server configuration: /webfiles/
+Mar 29 00:12:30 localhost httpd[28299]: [authz_core:error] [pid 28299:tid 140409636341504] [client ::1:58910] AH01630: client denied by server configuration: /webfiles/
+Mar 29 00:18:27 localhost httpd[3427]: [authz_core:error] [pid 3427:tid 139872832538368] [client ::1:57356] AH01630: client denied by server configuration: /webfiles/
+Mar 29 00:25:22 localhost httpd[3427]: [authz_core:error] [pid 3427:tid 139872815752960] [client ::1:57370] AH01630: client denied by server configuration: /webfiles/
+Mar 29 00:25:41 localhost httpd[3906]: [core:error] [pid 3906:tid 140151149782784] (13)Permission denied: [client ::1:57372] AH00035: access to /index.html denied (filesystem path '/webfiles/index.html') because search permissions are missing on a component of the path
+
+
+# test if httpd log file is rotated as expected
+
+# for testing purpose, change the log level as >= "debug" so it rotates more frequently
+
+[root@localhost logrotate.d]# systemctl stop httpd
+[root@localhost logrotate.d]# systemctl enable --now httpd
+
+

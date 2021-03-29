@@ -17,6 +17,7 @@ DocumentRoot "/web"
 
 $ vim /etc/httpd/conf/httpd.conf
 
+######## original
 # <Directory> blocks below.
 #
 <Directory />
@@ -32,6 +33,8 @@ $ vim /etc/httpd/conf/httpd.conf
     Require all granted
 </Directory>
 
+
+######## add-on
 # Relax access to the new directory
 <Directory "/web">
     AllowOverride None 
