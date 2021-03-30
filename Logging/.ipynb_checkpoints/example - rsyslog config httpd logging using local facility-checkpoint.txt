@@ -146,11 +146,15 @@ FILES
        /etc/rsyslog.conf
               Configuration file for rsyslogd
 
+
+# config rsyslogd to store the facility log on disk
+
 [root@localhost ~]# cd /etc/rsyslog.d
 [root@localhost rsyslog.d]# ls -al
 total 12
 drwxr-xr-x.   2 root root    6 Jul 20  2020 .
 drwxr-xr-x. 144 root root 8192 Feb 21 21:46 ..
+
 [root@localhost rsyslog.d]# vi rsyslog-httpd.conf
 
 local1.error    /var/log/httpd-error.log
@@ -159,7 +163,6 @@ local1.error    /var/log/httpd-error.log
 # example from /etc/rsyslog.conf
 # Save boot messages also to boot.log
 local7.*                                                /var/log/boot.log
-
 
 
 # rsyslog reloads config
