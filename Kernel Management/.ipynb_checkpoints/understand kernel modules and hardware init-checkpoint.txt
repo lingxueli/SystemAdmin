@@ -1,0 +1,270 @@
+# kernel modules improves efficiency of the kernel. It consists of a relatively small core kernel and provides additional modules such as drivers that would be loaded when required. Previously all drivers are required to be included in the compile of the kernel.
+
+
+# a kernel module serves a specific functionality, such as loading drivers, file system support
+
+# udev is a device manager for the Linux kernel. udev primarily manages device nodes in the /dev directory
+
+# Udev is the Linux subsystem that supplies your computer with device events. In plain English, that means it's the code that detects when you have things plugged into your computer, like a network card, external hard drives (including USB thumb drives), mouses, keyboards, joysticks and gamepads, DVD-ROM drives, and so on. That makes it a potentially useful utility, and it's well-enough exposed that a standard user can manually script it to do things like performing certain tasks when a certain hard drive is plugged in.
+
+
+
+
+
+[root@localhost ~]# man -k udev
+dracut-pre-trigger.service (8) - runs the dracut hooks before udevd is triggered
+dracut-pre-udev.service (8) - runs the dracut hooks before udevd is started
+systemd-udevd (8)    - Device event managing daemon
+systemd-udevd-control.socket (8) - Device event managing daemon
+systemd-udevd-kernel.socket (8) - Device event managing daemon
+systemd-udevd.service (8) - Device event managing daemon
+udev (7)             - Dynamic device management
+udev.conf (5)        - Configuration for device event managing daemon
+udevadm (8)          - udev management tool
+
+
+
+
+SYSTEMD-UDEVD.SERVICE(8)                                       systemd-udevd.service                                      SYSTEMD-UDEVD.SERVICE(8)
+
+NAME
+       systemd-udevd.service, systemd-udevd-control.socket, systemd-udevd-kernel.socket, systemd-udevd - Device event managing daemon
+
+SYNOPSIS
+       systemd-udevd.service
+
+       systemd-udevd-control.socket
+
+       systemd-udevd-kernel.socket
+
+       /usr/lib/systemd/systemd-udevd [--daemon] [--debug] [--children-max=] [--exec-delay=] [--event-timeout=] [--resolve-names=early|late|never]
+                                      [--version] [--help]
+
+DESCRIPTION
+       systemd-udevd listens to kernel uevents. For every event, systemd-udevd executes matching instructions specified in udev rules. See udev(7).
+
+       The behavior of the daemon can be configured using udev.conf(5), its command line options, environment variables, and on the kernel command line, or changed dynamically with udevadm control.
+
+
+# rule files
+
+UDEV(7)                                             udev                                            UDEV(7)
+
+NAME
+       udev - Dynamic device management
+
+DESCRIPTION
+       udev supplies the system software with device events, manages permissions of device nodes and may
+       create additional symlinks in the /dev directory, or renames network interfaces. The kernel usually
+       just assigns unpredictable device names based on the order of discovery. Meaningful symlinks or
+       network device names provide a way to reliably identify devices based on their properties or current
+       configuration.
+
+       The udev daemon, systemd-udevd.service(8), receives device uevents directly from the kernel whenever
+       a device is added or removed from the system, or it changes its state. When udev receives a device
+       event, it matches its configured set of rules against various device attributes to identify the
+       device. Rules that match may provide additional device information to be stored in the udev database
+       or to be used to create meaningful symlink names.
+
+       All device information udev processes is stored in the udev database and sent out to possible event
+       subscribers. Access to all stored data and the event sources is provided by the library libudev.
+
+RULES FILES
+       The udev rules are read from the files located in the system rules directory /usr/lib/udev/rules.d,
+       the volatile runtime directory /run/udev/rules.d and the local administration directory
+       /etc/udev/rules.d. All rules files are collectively sorted and processed in lexical order,
+       regardless of the directories in which they live. However, files with identical filenames replace
+       each other. Files in /etc have the highest priority, files in /run take precedence over files with
+       the same name in /usr/lib. This can be used to override a system-supplied rules file with a local
+       file if needed; a symlink in /etc with the same name as a rules file in /usr/lib, pointing to
+       /dev/null, disables the rules file entirely. Rule files must have the extension .rules; other
+       extensions are ignored.
+
+
+# systemd-udevd listens to kernel events
+# it loads the driver to make the hardware available
+# it reads rule files which could be system rules files and the custom rules
+
+How is hardware initialized?
+
+1. When kernel probes hardware, systemd-udevd process responds to the kenel events, and loads the hardware driver and makes the hardware available.
+
+2. To decide how the devices are initialized, systemd-udevd reads rules files from
+    /usr/lib/udev/rules.d - system-provided rules files that should not be modified
+    /etc/udev/rules.d - custom rules files
+    
+3. As a result, kernel modules are loaded automatically as designed, and status about kernel modules and associated hardware are written to the sysfs file system , which is mounted on /sys directory.
+
+sysfs file system (or /sys directory) is a pseudo file system to track hardware related settings. At the end of hardware initialization, the information about hardware and device drivers are written here by systemd-udev process.
+
+4. systemd-udevd process continues to monitors plugging and unplugging of new hardware devices.
+
+# what's inside sysfs file system
+[root@localhost proc]# cd /sys
+[root@localhost sys]# ls -al
+total 4
+dr-xr-xr-x.  13 root root    0 Mar 29 00:14 .
+dr-xr-xr-x.  22 root root 4096 Mar 20 14:46 ..
+drwxr-xr-x.   2 root root    0 Mar 30 11:18 block
+drwxr-xr-x.  35 root root    0 Mar 30 12:15 bus
+drwxr-xr-x.  60 root root    0 Mar 30 11:18 class
+drwxr-xr-x.   4 root root    0 Mar 29 00:13 dev
+drwxr-xr-x.  16 root root    0 Mar 29 00:13 devices
+drwxr-xr-x.   6 root root    0 Mar 29 00:13 firmware
+drwxr-xr-x.   9 root root    0 Mar 29 00:13 fs
+drwxr-xr-x.   2 root root    0 Mar 30 12:15 hypervisor
+drwxr-xr-x.  14 root root    0 Mar 29 00:13 kernel
+drwxr-xr-x. 192 root root    0 Mar 30 12:15 module
+drwxr-xr-x.   2 root root    0 Mar 30 12:15 power
+[root@localhost module]# ls -al
+total 0
+drwxr-xr-x. 192 root root 0 Mar 30 12:15 .
+dr-xr-xr-x.  13 root root 0 Mar 29 00:14 ..
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 8250
+drwxr-xr-x.   5 root root 0 Mar 30 12:16 ac97_bus
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 acpi
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 acpiphp
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 battery
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 blk_cgroup
+drwxr-xr-x.   3 root root 0 Mar 30 12:16 block
+drwxr-xr-x.   6 root root 0 Mar 30 12:16 bluetooth
+drwxr-xr-x.   6 root root 0 Mar 30 12:16 bnep
+drwxr-xr-x.   5 root root 0 Mar 30 12:16 bridge
+drwxr-xr-x.   7 root root 0 Mar 30 12:16 e1000
+drwxr-xr-x.   5 root root 0 Mar 30 12:16 ext4
+...
+[root@localhost module]# cd ext4
+[root@localhost ext4]# ls -al
+total 0
+drwxr-xr-x.   5 root root    0 Mar 30 12:16 .
+drwxr-xr-x. 192 root root    0 Mar 30 12:15 ..
+-r--r--r--.   1 root root 4096 Mar 30 12:17 coresize
+drwxr-xr-x.   2 root root    0 Mar 30 12:17 holders
+-r--r--r--.   1 root root 4096 Mar 30 12:17 initsize
+-r--r--r--.   1 root root 4096 Mar 30 12:17 initstate
+drwxr-xr-x.   2 root root    0 Mar 30 12:17 notes
+-r--r--r--.   1 root root 4096 Mar 30 12:17 refcnt
+-r--r--r--.   1 root root 4096 Mar 30 12:17 rhelversion
+drwxr-xr-x.   2 root root    0 Mar 30 12:17 sections
+-r--r--r--.   1 root root 4096 Mar 30 12:17 srcversion
+-r--r--r--.   1 root root 4096 Mar 30 12:17 taint
+--w-------.   1 root root 4096 Mar 30 12:17 uevent
+[root@localhost ext4]# cat initsize
+0
+[root@localhost ext4]# cat initstate 
+live
+
+
+# what's being monitored by systemd-udevd after the intial booting
+[root@localhost ~]# udevadm monitor
+monitor will print the received events for:
+UDEV - the event which udev sends out after rule processing  -> the result after udev processing
+KERNEL - the kernel uevent  -> the signal for udev to start processing
+
+KERNEL[30767.217725] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[30767.278955] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+KERNEL[30767.279198] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[30767.279341] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+UDEV  [30767.408972] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [30767.451076] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+UDEV  [30767.457013] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [30767.457128] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+
+... ## the features/modules of hardward are detected and processed
+KERNEL[30767.736352] add      /module/ipheth (module)
+UDEV  [30767.738133] add      /module/ipheth (module)
+KERNEL[30767.748925] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/eth0 (net)
+UDEV  [30767.749392] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+KERNEL[30767.749421] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/eth0/queues/rx-0 (queues)
+UDEV  [30767.749447] add      /bus/usb/drivers/ipheth (drivers)
+KERNEL[30767.749471] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/eth0/queues/tx-0 (queues)
+KERNEL[30767.749526] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+KERNEL[30767.749554] add      /bus/usb/drivers/ipheth (drivers)
+KERNEL[30767.885879] move     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2 (net)
+UDEV  [30767.980890] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2 (net)
+UDEV  [30767.980974] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/eth0/queues/tx-0 (queues)
+UDEV  [30767.981008] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/eth0/queues/rx-0 (queues)
+
+...
+KERNEL[30841.768177] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.1 (usb)
+KERNEL[30841.774107] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2/queues/rx-0 (queues)
+KERNEL[30841.774342] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2/queues/tx-0 (queues)
+KERNEL[30841.774401] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2 (net)
+UDEV  [30841.778782] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.0 (usb)
+KERNEL[30841.817974] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+KERNEL[30841.818074] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+KERNEL[30841.824711] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [30841.824805] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.0 (usb)
+KERNEL[30841.824864] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [30841.844814] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.1 (usb)
+UDEV  [30841.844940] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2/queues/tx-0 (queues)
+UDEV  [30841.844989] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2/queues/rx-0 (queues)
+UDEV  [30841.845043] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.1 (usb)
+UDEV  [30841.845629] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2/net/ens35u1c4i2 (net)
+UDEV  [30841.853369] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+UDEV  [30841.854268] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:4.2 (usb)
+UDEV  [30841.880989] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [30841.912117] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+
+
+# tools to manage udevd
+
+$ man udevadm
+UDEVADM(8)                                                            udevadm                                                           UDEVADM(8)
+
+NAME
+       udevadm - udev management tool
+
+SYNOPSIS
+       udevadm [--debug] [--version] [--help]
+
+       udevadm info options
+
+       udevadm trigger [options]
+
+       udevadm settle [options]
+
+       udevadm control command
+
+       udevadm monitor [options]
+
+       udevadm test [options] devpath
+
+       udevadm test-builtin [options] command devpath
+
+DESCRIPTION
+       udevadm expects a command and command specific options. It controls the runtime behavior of systemd-udevd, requests kernel events, manages
+       the event queue, and provides simple debugging mechanisms.
+
+   udevadm monitor [options]
+       Listens to the kernel uevents and events sent out by a udev rule and prints the devpath of the event to the console. It can be used to
+       analyze the event timing, by comparing the timestamps of the kernel uevent and the udev event.
+
+
+[root@localhost ~]# man -k udev
+dracut-pre-trigger.service (8) - runs the dracut hooks before udevd is triggered
+dracut-pre-udev.service (8) - runs the dracut hooks before udevd is started
+systemd-udevd (8)    - Device event managing daemon
+systemd-udevd-control.socket (8) - Device event managing daemon
+systemd-udevd-kernel.socket (8) - Device event managing daemon
+systemd-udevd.service (8) - Device event managing daemon
+udev (7)             - Dynamic device management
+udev.conf (5)        - Configuration for device event managing daemon
+udevadm (8)          - udev management tool
+
+
+# probes hardware
+# e.g when a USB drive is plugged in 
+[root@localhost ~]# udevadm monitor
+monitor will print the received events for:
+UDEV - the event which udev sends out after rule processing
+KERNEL - the kernel uevent
+
+KERNEL[61976.004235] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.004318] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+KERNEL[61976.004391] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [61976.144584] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.210818] add      /module/usb_storage (module)
+KERNEL[61976.211011] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3 (scsi)
+KERNEL[61976.211100] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3/scsi_host/host3 (scsi_host)
+
