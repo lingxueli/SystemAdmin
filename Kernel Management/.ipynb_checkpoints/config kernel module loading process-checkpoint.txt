@@ -1,0 +1,190 @@
+1. static configuration of the loading process
+
+MODULES-LOAD.D(5)                                modules-load.d                               MODULES-LOAD.D(5)
+
+NAME
+       modules-load.d - Configure kernel modules to load at boot
+
+SYNOPSIS
+       /etc/modules-load.d/*.conf
+
+       /run/modules-load.d/*.conf
+
+       /usr/lib/modules-load.d/*.conf
+
+DESCRIPTION
+       systemd-modules-load.service(8) reads files from the above directories which contain kernel modules to
+       load during boot in a static list. Each configuration file is named in the style of
+       /etc/modules-load.d/program.conf. Note that it is usually a better idea to rely on the automatic module
+       loading by PCI IDs, USB IDs, DMI IDs or similar triggers encoded in the kernel modules themselves
+       instead of static configuration like this. In fact, most modern kernel modules are prepared for
+       automatic loading already.
+
+CONFIGURATION FORMAT
+       The configuration files should simply contain a list of kernel module names to load, separated by
+       newlines. Empty lines and lines whose first non-whitespace character is # or ; are ignored.
+
+EXAMPLE
+       Example 1. /etc/modules-load.d/virtio-net.conf example:
+
+           # Load virtio-net.ko at boot
+           virtio-net
+
+SEE ALSO
+       systemd(1), systemd-modules-load.service(8), systemd-delta(1), modprobe(8)
+
+These files provide static configuration of the loading process. 
+/usr/lib/modules-load.d/*.conf - for default modules, it's the counterpart that's not really used
+/etc/modules-load.d/*.conf - for custom modules, all static configuration should go to here.
+
+
+[root@localhost ~]# man modules-load.d
+[root@localhost ~]# cd /usr/lib/modules-load.d/
+[root@localhost modules-load.d]# ls -al
+total 12
+drwxr-xr-x.  2 root root   59 Mar 10 23:08 .
+dr-xr-xr-x. 38 root root 4096 Feb 14 10:46 ..
+-rw-r--r--.  1 root root    5 Feb 21 22:32 fuse-overlayfs.conf
+-rw-r--r--.  1 root root    5 Jul 21  2020 open-vm-tools.conf
+[root@localhost modules-load.d]# cat open-vm-tools.conf 
+fuse
+[root@localhost modules-load.d]# cat fuse-overlayfs.conf 
+fuse
+
+# it states "start the module fuse"
+# What is FUSE?
+FUSE is a userspace filesystem framework. It consists of a kernel module (fuse.ko), a userspace library (libfuse.*) and a mount utility (fusermount).
+
+
+[root@localhost modules-load.d]# cd /etc/modules-load.d/
+[root@localhost modules-load.d]# ls -al
+total 12
+drwxr-xr-x.   2 root root    6 Dec 17 16:30 .
+drwxr-xr-x. 146 root root 8192 Mar 29 23:01 ..
+
+
+
+#  who loads these kernel modules?
+systemd-modules-load.service vs systemd-udev.service
+
+# systemd-modules-load.service deals with all kernel modules based on static configuration
+# systemd-udev.service deals with device drivers only
+
+$ man 8 systemd-modules-load.service
+
+SYSTEMD-MODULES-LOAD.SERVICE(8)         systemd-modules-load.service        SYSTEMD-MODULES-LOAD.SERVICE(8)
+
+NAME
+       systemd-modules-load.service, systemd-modules-load - Load kernel modules at boot
+
+SYNOPSIS
+       systemd-modules-load.service
+
+       /usr/lib/systemd/systemd-modules-load
+
+DESCRIPTION
+       systemd-modules-load.service is an early boot service that loads kernel modules based on static
+       configuration.
+
+       See modules-load.d(5) for information about the configuration of this service.
+
+KERNEL COMMAND LINE
+       systemd-modules-load.service understands the following kernel command line parameters:
+
+       modules_load=, rd.modules_load=
+           Takes a comma-separated list of kernel modules to statically load during early boot. The option
+           prefixed with "rd."  is read by the initial RAM disk only.
+
+SEE ALSO
+       systemd(1), modules-load.d(5),
+
+
+$ man 8 systemd-udevd.service
+SYSTEMD-UDEVD.SERVICE(8)                   systemd-udevd.service                   SYSTEMD-UDEVD.SERVICE(8)
+
+NAME
+       systemd-udevd.service, systemd-udevd-control.socket, systemd-udevd-kernel.socket, systemd-udevd -
+       Device event managing daemon
+
+SYNOPSIS
+       systemd-udevd.service
+
+       systemd-udevd-control.socket
+
+       systemd-udevd-kernel.socket
+
+       /usr/lib/systemd/systemd-udevd [--daemon] [--debug] [--children-max=] [--exec-delay=]
+                                      [--event-timeout=] [--resolve-names=early|late|never] [--version]
+                                      [--help]
+
+DESCRIPTION
+       systemd-udevd listens to kernel uevents. For every event, systemd-udevd executes matching
+       instructions specified in udev rules. See udev(7).
+
+       The behavior of the daemon can be configured using udev.conf(5), its command line options,
+       environment variables, and on the kernel command line, or changed dynamically with udevadm control.
+
+
+
+
+# tools to manage udevd
+
+$ man udevadm
+UDEVADM(8)                                                            udevadm                                                           UDEVADM(8)
+
+NAME
+       udevadm - udev management tool
+
+SYNOPSIS
+       udevadm [--debug] [--version] [--help]
+
+       udevadm info options
+
+       udevadm trigger [options]
+
+       udevadm settle [options]
+
+       udevadm control command
+
+       udevadm monitor [options]
+
+       udevadm test [options] devpath
+
+       udevadm test-builtin [options] command devpath
+
+DESCRIPTION
+       udevadm expects a command and command specific options. It controls the runtime behavior of systemd-udevd, requests kernel events, manages
+       the event queue, and provides simple debugging mechanisms.
+
+   udevadm monitor [options]
+       Listens to the kernel uevents and events sent out by a udev rule and prints the devpath of the event to the console. It can be used to
+       analyze the event timing, by comparing the timestamps of the kernel uevent and the udev event.
+
+
+[root@localhost ~]# man -k udev
+dracut-pre-trigger.service (8) - runs the dracut hooks before udevd is triggered
+dracut-pre-udev.service (8) - runs the dracut hooks before udevd is started
+systemd-udevd (8)    - Device event managing daemon
+systemd-udevd-control.socket (8) - Device event managing daemon
+systemd-udevd-kernel.socket (8) - Device event managing daemon
+systemd-udevd.service (8) - Device event managing daemon
+udev (7)             - Dynamic device management
+udev.conf (5)        - Configuration for device event managing daemon
+udevadm (8)          - udev management tool
+
+
+# probes hardware
+# e.g when a USB drive is plugged in 
+[root@localhost ~]# udevadm monitor
+monitor will print the received events for:
+UDEV - the event which udev sends out after rule processing
+KERNEL - the kernel uevent
+
+KERNEL[61976.004235] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.004318] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+KERNEL[61976.004391] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [61976.144584] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.210818] add      /module/usb_storage (module)
+KERNEL[61976.211011] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3 (scsi)
+KERNEL[61976.211100] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3/scsi_host/host3 (scsi_host)
+

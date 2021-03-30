@@ -206,6 +206,21 @@ UDEV  [30841.854268] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1
 UDEV  [30841.880989] unbind   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
 UDEV  [30841.912117] remove   /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
 
+There're static configuration of the loading process as well, telling the management process which kernel modules to load.
+
+MODULES-LOAD.D(5)                                modules-load.d                               MODULES-LOAD.D(5)
+
+NAME
+       modules-load.d - Configure kernel modules to load at boot
+
+SYNOPSIS
+       /etc/modules-load.d/*.conf
+
+       /run/modules-load.d/*.conf
+
+       /usr/lib/modules-load.d/*.conf
+
+
 
 # tools to manage udevd
 

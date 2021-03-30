@@ -1,0 +1,137 @@
+#  list currectly loaded modules
+
+lsmod (8)            - Show the status of modules in the Linux Kernel
+
+LSMOD(8)                                           lsmod                                           LSMOD(8)
+
+NAME
+       lsmod - Show the status of modules in the Linux Kernel
+
+SYNOPSIS
+       lsmod
+
+DESCRIPTION
+       lsmod is a trivial program which nicely formats the contents of the /proc/modules, showing what
+       kernel modules are currently loaded.
+
+SEE ALSO
+       insmod(8), modprobe(8), modinfo(8) depmod(8)
+
+
+It lists ass the kernel modules that are currently used
+[root@localhost ~]# lsmod
+Module                  Size  Used by
+ipheth                 16384  0
+uinput                 20480  1
+xt_CHECKSUM            16384  1
+xt_conntrack           16384  1
+ipt_REJECT             16384  2
+nf_nat_tftp            16384  0
+ipt_MASQUERADE         16384  4
+nft_ct                 20480  20
+nf_tables_set          49152  22
+nf_nat                 45056  3 ipt_MASQUERADE,nf_nat_tftp,nft_chain_nat
+ext4                  761856  1
+pcspkr                 16384  0
+dm_region_hash         20480  1 dm_mirror
+dm_log                 20480  2 dm_region_hash,dm_mirror
+dm_mod                151552  11 dm_log,dm_mirror
+fuse                  131072  5
+...
+
+
+
+# find more information about a kernel module
+MODINFO(8)                                        modinfo                                        MODINFO(8)
+
+NAME
+       modinfo - Show information about a Linux Kernel module
+
+SYNOPSIS
+       modinfo [-0] [-F field] [-k kernel] [modulename|filename...]
+
+       modinfo -V
+
+       modinfo -h
+
+DESCRIPTION
+       modinfo extracts information from the Linux Kernel modules given on the command line. If the module
+       name is not a filename, then the /lib/modules/version directory is searched, as is also done by
+       modprobe(8) when loading kernel modules.
+
+       modinfo by default lists each attribute of the module in form fieldname : value, for easy reading.
+       The filename is listed the same way (although it's not really an attribute).
+
+
+# list more info of a module
+[root@localhost ~]# modinfo fuse
+filename:       /lib/modules/4.18.0-240.15.1.el8_3.x86_64/kernel/fs/fuse/fuse.ko.xz
+alias:          devname:fuse
+alias:          char-major-10-229    ---> alias: another way to address the module
+alias:          fs-fuseblk
+alias:          fs-fuse
+license:        GPL
+description:    Filesystem in Userspace
+author:         Miklos Szeredi <miklos@szeredi.hu>
+alias:          fs-fusectl
+rhelversion:    8.3
+srcversion:     10354C849687FF870B47A5F
+depends:        
+intree:         Y
+name:           fuse
+vermagic:       4.18.0-240.15.1.el8_3.x86_64 SMP mod_unload modversions 
+sig_id:         PKCS#7
+signer:         CentOS kernel signing key
+sig_key:        43:C1:A4:E8:DF:2E:B3:D4:43:C1:4B:38:46:94:93:EB:C4:27:08:0D
+sig_hashalgo:   sha256
+....
+parm:           max_user_bgreq:Global limit for the maximum number of backgrounded requests an unprivileged user can set (uint)
+parm:           max_user_congthresh:Global limit for the maximum congestion threshold an unprivileged user can set (uint)
+---> parm: the parameters that can be set while loading the module
+
+# load/unload kernel modules
+
+MODPROBE(8)                                       modprobe                                      MODPROBE(8)
+
+NAME
+       modprobe - Add and remove modules from the Linux Kernel
+
+SYNOPSIS
+       modprobe [-v] [-V] [-C config-file] [-n] [-i] [-q] [-b] [modulename] [module parameters...]
+
+       modprobe [-r] [-v] [-n] [-i] [modulename...]
+
+       modprobe [-c]
+
+       modprobe [--dump-modversions] [filename]
+
+DESCRIPTION
+       modprobe intelligently adds or removes a module from the Linux kernel: note that for convenience,
+       there is no difference between _ and - in module names (automatic underscore conversion is
+       performed).  modprobe looks in the module directory /lib/modules/`uname -r` for all the modules and
+       other files, except for the optional configuration files in the /etc/modprobe.d directory (see
+       modprobe.d(5)).  modprobe will also use module options specified on the kernel command line in the
+       form of <module>.<option> and blacklists in the form of modprobe.blacklist=<module>.
+
+       -r, --remove
+           This option causes modprobe to remove rather than insert a module. If the modules it depends on
+           are also unused, modprobe will try to remove them too. Unlike insertion, more than one module
+           can be specified on the command line (it does not make sense to specify module parameters when
+           removing modules).
+
+           There is usually no reason to remove modules, but some buggy modules require it. Your
+           distribution kernel may not have been built to support removal of modules at all.
+
+
+# load ext4 module
+[root@localhost ~]# modprobe ext4
+
+[root@localhost ~]# lsmod | grep ext
+ext4                  761856  1
+mbcache                16384  1 ext4
+jbd2                  131072  1 ext4
+
+
+# unload ext4 module
+[root@localhost ~]# modprobe -r ext4
+modprobe: FATAL: Module ext4 is in use.
