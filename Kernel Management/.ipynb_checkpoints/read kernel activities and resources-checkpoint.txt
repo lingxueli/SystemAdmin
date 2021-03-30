@@ -338,3 +338,23 @@ COMMANDS
 # more specific info about release version
 [root@localhost ~]# cat /etc/redhat-release 
 CentOS Linux release 8.3.2011
+
+
+# kernel name
+[root@localhost proc]# uname -s
+Linux
+
+# kernel version
+[root@localhost proc]# uname -r
+4.18.0-240.15.1.el8_3.x86_64
+
+4.18.0 - Linux kernel version
+240.15.1 - Redhat specific package version
+el8_3 - Enterprise Linux - Redhat/Centos  8.3
+
+# when the kernel is built/compiled
+[root@localhost proc]# uname -v
+#1 SMP Mon Mar 1 17:16:16 UTC 2021
+
+[root@localhost proc]# cat /etc/redhat-release 
+CentOS Linux release 8.3.2011

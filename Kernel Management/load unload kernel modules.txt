@@ -13,7 +13,7 @@ author:         Remy Card, Stephen Tweedie, Andrew Morton, Andreas Dilger, Theod
 alias:          fs-ext4
 alias:          ext3
 alias:          fs-ext3
-alias:          ext2
+alias:          eredxt2
 alias:          fs-ext2
 rhelversion:    8.2
 srcversion:     408EBC8810B3BE8D2C737DF
