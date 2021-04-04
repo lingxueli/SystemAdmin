@@ -1,6 +1,5 @@
 $ man systemctl
 
-
        get-default
            Return the default target to boot into. This returns the target
            unit name default.target is aliased (symlinked) to.
@@ -9,11 +8,14 @@ $ man systemctl
            Set the default target to boot into. This sets (symlinks) the
            default.target alias to the given target unit.
 
-
+# see current default target
 [root@localhost lisa]# systemctl get-default
 graphical.target
 
 # install dependencies before making the change
+
+# what're the dependencies, e.g. graphical.target needs "Server with GUI"
+
 $ man yum
    Group Command
        Groups are virtual collections of packages. DNF keeps track  of  groups
