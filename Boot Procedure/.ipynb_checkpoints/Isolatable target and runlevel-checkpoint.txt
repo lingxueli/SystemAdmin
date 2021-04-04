@@ -36,7 +36,7 @@ SYNOPSIS
            As a special case, if one of the arguments is help, a list of
            allowed values will be printed and the program will exit.
 
-
+# show active targets
 $ systemctl -t target
 swap.target            loaded active active Swap                       
 sysinit.target         loaded active active System Initialization      
@@ -50,7 +50,7 @@ SUB    = The low-level unit activation state, values depend on unit type.
 To show all installed unit files use 'systemctl list-unit-files'.
 
 
-# list all including inactive target
+# show all targets including inactive target
 $ systemctl -t target --all
 ● syslog.target             not-found inactive dead   syslog.target            
   time-sync.target          loaded    inactive dead   System Time Synchronized 
@@ -94,5 +94,42 @@ runlevel5.target:AllowIsolate=yes
 runlevel6.target:AllowIsolate=yes
 system-update.target:AllowIsolate=yes
 
-# reboots the system
+
+# isolatable target can be set as the default target
+# mapping between runlevel and systemd target
+
+RUNLEVEL(8)                                  runlevel                                  RUNLEVEL(8)
+
+NAME
+       runlevel - Print previous and current SysV runlevel
+
+SYNOPSIS
+       runlevel [options...]
+
+OVERVIEW
+       "Runlevels" are an obsolete way to start and stop groups of services used in SysV init.
+
+       Table 1. Mapping between runlevels and systemd targets
+       ┌─────────┬───────────────────┐
+       │Runlevel │ Target            │
+       ├─────────┼───────────────────┤
+       │0        │ poweroff.target   │
+       ├─────────┼───────────────────┤
+       │1        │ rescue.target     │
+       ├─────────┼───────────────────┤
+       │2, 3, 4  │ multi-user.target │
+       ├─────────┼───────────────────┤
+       │5        │ graphical.target  │
+       ├─────────┼───────────────────┤
+       │6        │ reboot.target     │
+       └─────────┴───────────────────┘
+
+
+
+# These targets are isolatable. You can switch the current state of the system to any one of these targets.
+
+# switch to rescue.target
+$ systemctl isolate rescue.target
+
+# reboot the system
 $ systemctl isolate reboot.target
