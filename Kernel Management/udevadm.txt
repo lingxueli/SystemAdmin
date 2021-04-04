@@ -1,0 +1,62 @@
+
+# tools to manage udevd
+
+$ man udevadm
+UDEVADM(8)                                                            udevadm                                                           UDEVADM(8)
+
+NAME
+       udevadm - udev management tool
+
+SYNOPSIS
+       udevadm [--debug] [--version] [--help]
+
+       udevadm info options
+
+       udevadm trigger [options]
+
+       udevadm settle [options]
+
+       udevadm control command
+
+       udevadm monitor [options]
+
+       udevadm test [options] devpath
+
+       udevadm test-builtin [options] command devpath
+
+DESCRIPTION
+       udevadm expects a command and command specific options. It controls the runtime behavior of systemd-udevd, requests kernel events, manages
+       the event queue, and provides simple debugging mechanisms.
+
+   udevadm monitor [options]
+       Listens to the kernel uevents and events sent out by a udev rule and prints the devpath of the event to the console. It can be used to
+       analyze the event timing, by comparing the timestamps of the kernel uevent and the udev event.
+
+
+[root@localhost ~]# man -k udev
+dracut-pre-trigger.service (8) - runs the dracut hooks before udevd is triggered
+dracut-pre-udev.service (8) - runs the dracut hooks before udevd is started
+systemd-udevd (8)    - Device event managing daemon
+systemd-udevd-control.socket (8) - Device event managing daemon
+systemd-udevd-kernel.socket (8) - Device event managing daemon
+systemd-udevd.service (8) - Device event managing daemon
+udev (7)             - Dynamic device management
+udev.conf (5)        - Configuration for device event managing daemon
+udevadm (8)          - udev management tool
+
+
+# probes hardware
+# e.g when a USB drive is plugged in 
+[root@localhost ~]# udevadm monitor
+monitor will print the received events for:
+UDEV - the event which udev sends out after rule processing
+KERNEL - the kernel uevent
+
+KERNEL[61976.004235] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.004318] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0 (usb)
+KERNEL[61976.004391] bind     /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+UDEV  [61976.144584] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1 (usb)
+KERNEL[61976.210818] add      /module/usb_storage (module)
+KERNEL[61976.211011] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3 (scsi)
+KERNEL[61976.211100] add      /devices/pci0000:00/0000:00:11.0/0000:02:03.0/usb1/1-1/1-1:1.0/host3/scsi_host/host3 (scsi_host)
+
