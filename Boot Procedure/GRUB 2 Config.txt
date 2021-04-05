@@ -1,3 +1,10 @@
+GRUB 2 sits on the boot sector of the server's hard drive. It loads the kernel and initramfs. 
+
+kernel controls the booting process and executes neccessary processes to boot the system. 
+
+initramfs loads kernel modules for hardwares, as well as the initial scripts. It's a mini file system that is mounted by kernel during boot.
+
+
 # GRUB 2 man page
 
 $ man 8 grub2-mkconfig
