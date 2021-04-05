@@ -109,8 +109,14 @@ device.map  fonts  grub.cfg  grubenv  i386-pc
 
 1. modify GRUB config file: /etc/default/grub
 
-# Change boot arguments: remove rhgb quiet. Debug info will show up
+# Change boot arguments: remove "rhgb quiet". Debug info will show up
 # Change boot menu timer to 10sec
+
+
+rhgb = redhat graphical boot - This is a GUI mode booting screen with most of the information hidden while the user sees a rotating activity icon spining and brief information as to what the computer is doing.
+
+quiet = hides the majority of boot messages before rhgb starts. These are supposed to make the common user more comfortable. They get alarmed about seeing the kernel and initializing messages, so they hide them for their comfort.
+
 
 [root@localhost grub.d]# vi /etc/default/grub
 [root@localhost grub.d]# cat /etc/default/grub 

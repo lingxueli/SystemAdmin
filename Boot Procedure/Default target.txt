@@ -75,3 +75,6 @@ $ yum group install "Server with GUI"
 
 # change default target
 [root@localhost lisa]# systemctl set-default graphical.target
+
+systemctl set-default TARGET
+systemctl enable SERVICE

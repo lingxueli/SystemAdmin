@@ -1,4 +1,5 @@
 # isolate target = switch to that target
+# these targets can be run independently
 
 $ man systemctl
        isolate UNIT
