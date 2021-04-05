@@ -12,6 +12,7 @@ SEE ALSO
        info grub
     
 $ info grub
+-> menu
 6.1 Simple configuration handling
 =================================
 
@@ -46,6 +47,8 @@ it must be quoted.  For example:
 
 in a BIOS system: the config file is under /boot/grub2/grub.cfg
 in a UEFI system: the config file is under /boot/efi/EFI/redhat
+# EFI (Extensible Firmware Interface)
+
 
 [root@localhost lisa]# cat /etc/default/grub 
 GRUB_TIMEOUT=5
@@ -56,6 +59,27 @@ GRUB_TERMINAL_OUTPUT="console"
 GRUB_CMDLINE_LINUX="crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82f6b65 rd.lvm.lv=cl/sda2 rhgb quiet"
 GRUB_DISABLE_RECOVERY="true"
 GRUB_ENABLE_BLSCFG=true
+
+
+[root@localhost ~]# cd /etc/grub.d/
+[root@localhost grub.d]# ls -al
+total 104
+drwx------.   2 root root   288 Mar 10 23:08 .
+drwxr-xr-x. 146 root root  8192 Apr  4 16:06 ..
+-rwxr-xr-x.   1 root root  8958 Mar  2 13:51 00_header
+-rwxr-xr-x.   1 root root  1043 Jun 15  2020 00_tuned
+-rwxr-xr-x.   1 root root   232 Mar  2 13:51 01_users
+-rwxr-xr-x.   1 root root   832 Mar  2 13:51 08_fallback_counting
+-rwxr-xr-x.   1 root root 14088 Mar  2 13:51 10_linux
+-rwxr-xr-x.   1 root root   830 Mar  2 13:51 10_reset_boot_success
+-rwxr-xr-x.   1 root root   889 Mar  2 13:51 12_menu_auto_hide
+-rwxr-xr-x.   1 root root 11696 Mar  2 13:51 20_linux_xen
+-rwxr-xr-x.   1 root root  2559 Mar  2 13:51 20_ppc_terminfo
+-rwxr-xr-x.   1 root root 10670 Mar  2 13:51 30_os-prober
+-rwxr-xr-x.   1 root root  1412 Mar  2 13:51 30_uefi-firmware
+-rwxr-xr-x.   1 root root   214 Mar  2 13:51 40_custom
+-rwxr-xr-x.   1 root root   216 Mar  2 13:51 41_custom
+-rw-r--r--.   1 root root   483 Mar  2 13:51 README
 
 [root@localhost grub.d]# cat 01_users
 #!/bin/sh -e
@@ -81,9 +105,13 @@ device.map  fonts  grub.cfg  grubenv  i386-pc
 /boot/efi/EFI/centos
 [root@localhost centos]# ls
 
-# modify GRUB config file
+# how to modify default GRUB 2 config
+
+1. modify GRUB config file: /etc/default/grub
+
 # Change boot arguments: remove rhgb quiet. Debug info will show up
-# Change boot menu timer
+# Change boot menu timer to 10sec
+
 [root@localhost grub.d]# vi /etc/default/grub
 [root@localhost grub.d]# cat /etc/default/grub 
 GRUB_TIMEOUT=10
@@ -95,10 +123,23 @@ GRUB_CMDLINE_LINUX="crashkernel=auto resume=UUID=ce900ef4-22cc-4e07-9924-9308c82
 GRUB_DISABLE_RECOVERY="true"
 GRUB_ENABLE_BLSCFG=true
 
-# push GRUB config change to boot config file
+2. push GRUB config change to boot config file: /boot/grub2/grub.cfg
 [root@localhost grub.d]# grub2-mkconfig -o /boot/grub2/grub.cfg
 Generating grub configuration file ...
 done
+
+
+GRUB-MKCONFIG(1)                      General Commands Manual                     GRUB-MKCONFIG(1)
+
+NAME
+       grub-mkconfig — Generate a GRUB configuration file.
+
+SYNOPSIS
+       grub-mkconfig [-o | --output=FILE]
+
+DESCRIPTION
+       grub-mkconfig generates a configuration file for GRUB.
+
 
 # where to find the boot parameters?
 [root@localhost grub.d]# man 7 bootparam
@@ -106,3 +147,26 @@ BOOTPARAM(7)                            Linux Programmer's Manual               
 
 NAME
        bootparam - introduction to boot time parameters of the Linux kernel
+
+   The argument list
+       The kernel command line is parsed into a list of strings (boot arguments) separated by spa‐
+       ces.  Most of the boot arguments have the form:
+
+           name[=value_1][,value_2]...[,value_10]
+
+   General non-device-specific boot arguments
+       'init=...'
+              This sets the initial command to be executed by the kernel.  If this is not set,  or
+              cannot  be  found,  the  kernel will try /sbin/init, then /etc/init, then /bin/init,
+              then /bin/sh and panic if all of this fails.
+
+       'resume=...'
+              This tells the kernel the location of the suspend-to-disk data  that  you  want  the
+              machine to resume from after hibernation.  Usually, it is the same as your swap par‐
+              tition or file.  Example:
+
+                  resume=/dev/hda2
+
+   Boot arguments for use by kernel developers
+   Boot arguments for ramdisk use
+   Boot arguments for SCSI devices
