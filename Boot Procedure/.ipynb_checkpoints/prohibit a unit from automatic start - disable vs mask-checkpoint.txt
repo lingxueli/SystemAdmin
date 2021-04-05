@@ -1,0 +1,36 @@
+prohibit a unit (service or target) from automatic start - disable vs mask.txt
+       mask UNIT...
+           Mask one or more units, as specified on the command line. This will link these unit
+           files to /dev/null, making it impossible to start them. This is a stronger version of
+           disable, since it prohibits all kinds of activation of the unit, including enablement
+           and manual activation. Use this option with care. This honors the --runtime option to
+           only mask temporarily until the next reboot of the system. The --now option may be used
+           to ensure that the units are also stopped. This command expects valid unit names only,
+           it does not accept unit file paths.
+
+       unmask UNIT...
+           Unmask one or more unit files, as specified on the command line. This will undo the
+           effect of mask. This command expects valid unit names only, it does not accept unit
+           file paths.
+
+       enable UNIT..., enable PATH...
+           Enable one or more units or unit instances. This will create a set of symlinks, as
+           encoded in the "[Install]" sections of the indicated unit files. After the symlinks
+           have been created, the system manager configuration is reloaded (in a way equivalent to
+           daemon-reload), in order to ensure the changes are taken into account immediately. Note
+           that this does not have the effect of also starting any of the units being enabled. If
+           this is desired, combine this command with the --now switch, or invoke start with
+           appropriate arguments later. Note that in case of unit instance enablement (i.e.
+           enablement of units of the form foo@bar.service), symlinks named the same as instances
+           are created in the unit configuration directory, however they point to the single
+           template unit file they are instantiated from.
+
+       disable UNIT...
+           Disables one or more units. This removes all symlinks to the unit files backing the
+           specified units from the unit configuration directory, and hence undoes any changes
+           made by enable or link. Note that this removes all symlinks to matching unit files,
+           including manually created symlinks, and not just those actually created by enable or
+           link. Note that while disable undoes the effect of enable, the two commands are
+           otherwise not symmetric, as disable may remove more symlinks than a prior enable
+           invocation of the same unit created.
+
