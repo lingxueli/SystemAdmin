@@ -21,12 +21,35 @@ initramfs = initial ram disk, also known as initrd
          - kernel modules for hardwares: it loads udev deamon to take care of the hardware initialization
          - initial scripts: it loads the first process /sbin/init . This process is linked to Systemd.
 
+       /bin/, /sbin/, /usr/sbin/
+           These compatibility symlinks point to /usr/bin/, ensuring that scripts and binaries
+           referencing these legacy paths correctly find their binaries.
+
+       /usr/
+           Vendor-supplied operating system resources. Usually read-only, but this is not
+           required. Possibly shared between multiple hosts. This directory should not be modified
+           by the administrator, except when installing or removing vendor-supplied packages.
+
+       /usr/bin/
+           Binaries and executables for user commands that shall appear in the $PATH search path.
+           It is recommended not to place binaries in this directory that are not useful for
+           invocation from a shell (such as daemon binaries); these should be placed in a
+           subdirectory of /usr/lib/ instead.
+
+
     What does kernel do?
 
         In the minimal operating environment, kernel finds the file system image from /boot, and mount it on the /sysroot directory. This is a temporay root file system.
         Later, the kernel unmounts the initrd image, and mount the actual physical root file system on /.
 
         After root file system is ready, kernel executes the Systemd process with PID 1 and passes control over to it.
+
+       /boot/
+           The boot partition used for bringing up the system. On EFI systems, this is possibly
+           the EFI System Partition (ESP), also see systemd-gpt-auto-generator(8). This directory
+           is usually strictly local to the host, and should be considered read-only, except when
+           a new kernel or boot loader is installed. This directory only exists on systems that
+           run on physical or emulated hardware that requires boot loaders.
 
 4. Systemd run the default target
 

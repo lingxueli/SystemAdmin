@@ -1,0 +1,11 @@
+1. a one-time change of the boot argument
+
+From the boot menu, follow the instruction on the bottom of the screen -> "e" for edit. This will edit how GRUB 2 starts the kernel.
+
+Another option "c" is for a full GRUB command prompt
+
+the line of boot arguments starts with linux ($root)/vmlinuz ...
+
+2. how to make the change of boot argument persistent
+
+Edit the GRUB 2 config file /etc/default/grub, push the change to the GRUB script by "grub2-mkconfig -o /boot/grub2/grub.cfg" command

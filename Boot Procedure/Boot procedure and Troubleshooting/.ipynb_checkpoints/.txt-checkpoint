@@ -1,0 +1,30 @@
+Follow the instruction on the bottom of the screen
+
+Boot menu -> option 'e' for edit GRUB command prompt
+
+-> option 'c' for a full GRUB command prompt
+
+Choose 'e', the line for boot argument starts with linxu ($root)/vmlinuz
+
+This changes boot argument temporarily. To change permanently, pls update the grub2 config file and push its change to GRUB script by grub2-mkconfig.
+
+1. boot argument rd.break
+
+
+it stops the boot procedure while it's still in the initramfs stage
+It's used in the process of recovering the root password
+
+2. init=/bin/sh or init=/bin/bash
+
+it starts the shell imediately after loading the kernel and initramfs
+
+3.
+
+systemd.unit=emergency.target
+systemd.unit=rescue.target
+
+this starts a different operation mode. 
+
+You can use "systemctl list-units" to see the number of loaded unitds.
+
+It brings you to a shell where you still have access to the command line
