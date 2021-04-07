@@ -1,6 +1,8 @@
 Ctrl + Alt for to escapte the focus of VM.
 
-The rescue disk is on the installation disk
+Rescue disk is used when the system doens't boot at all.
+
+The rescue disk is on the installation disk.
 
 1. Boot form installation disk:
     Press Esc from the very beginning. You need to do it quick, before the normal boot memu starts.
@@ -14,10 +16,10 @@ Install Red Hat Enterprise Linux 8 in Basic graphics mode:
     It reinstalls the machine. It's your last resort if all of the troubleshootings won't work.
 
 Run a Memory Test:
-    This is used to mark a bad memroy chip, so the machine can boot from other good areas in the memory.
+    This is used to mark a bad memroy chip when memory has errors, so the machine can boot from other good areas in the memory.
     
 Boot from Local Drive:
-    instead of the boot loader running on the hard disk, it will run on a different disk?
+    It's used when you cannot boot from GRUB on the hard disk. It'll install the GRUB 2 from the hard disk.
 
 3. After select "rescue a Red Hat Enterpsise linux system", Linux is going to find an installed linux system (rescue system) and mount it under /mnt/sysimage. 
 
