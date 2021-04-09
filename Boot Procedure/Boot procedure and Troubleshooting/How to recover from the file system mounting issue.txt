@@ -1,8 +1,9 @@
-You'll see this error msg: "Give root password for maintenance".
+If there's an issue with mounting the file system, you'll see this error msg: "Give root password for maintenance".
 
-It appears when fsck tries to verify the integrity of the file system in /etc/fstab during booting.
+It appears when fsck tries to verify the integrity of the file system in /etc/fstab during booting and the integrity check fails. 
 
-However, fsck check fails.
+The system asks for a manual intervention by showing this error msg.
+
 
 When this occurs, you should:
 
@@ -10,7 +11,11 @@ When this occurs, you should:
 
 2. use journalctl -xb to see logs as suggested
 
-3. remount the root file system and analyze what's wrong with /etc/fstab:
+3. remount the root file system and analyze what's wrong with /etc/fstab and fix it:
+
+$ mount -o remount,rw /
+$ vi /etc/fstab
+
 
 $ man mount
 
@@ -23,4 +28,3 @@ File System independent mount options
     remount
         Attempt to mount an already mounted file system
         
-$ mount -o remount,rw /

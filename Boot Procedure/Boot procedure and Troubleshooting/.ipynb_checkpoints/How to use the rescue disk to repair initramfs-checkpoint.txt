@@ -78,6 +78,7 @@ reproducible="yes"
 
 
 # reinstall to repair
+# without force option, it will not overwrite the existing one
 $ dracut --force
 
 

@@ -1,0 +1,34 @@
+1. a one-time change of the boot argument
+
+From the boot menu, follow the instruction on the bottom of the screen -> "e" for edit. This will edit how GRUB 2 starts the kernel.
+
+Another option "c" is for a full GRUB command prompt
+
+the line of boot arguments starts with linux ($root)/vmlinuz ...
+
+2. how to make the change of boot argument persistent
+
+Edit the GRUB 2 config file /etc/default/grub, push the change to the GRUB script by "grub2-mkconfig -o /boot/grub2/grub.cfg" command
+
+
+Severl boot arguments for troubleshooting target
+1. boot argument rd.break
+
+
+it stops the boot procedure while it's still in the initramfs stage
+It's used in the process of recovering the root password
+
+2. init=/bin/sh or init=/bin/bash
+
+it starts the shell imediately after loading the kernel and initramfs
+
+3.
+
+systemd.unit=emergency.target
+systemd.unit=rescue.target
+
+this starts a different operation mode. 
+
+You can use "systemctl list-units" to see the number of loaded unitds.
+
+It brings you to a shell where you still have access to the command line
