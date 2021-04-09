@@ -1,0 +1,83 @@
+Assuming the bootloader is fine, these are the signs indicates the initramfs is broken.
+you will not be able to see:
+
+1. the root directory gets mounted on /
+2. systemd is started
+
+Tools to fix initramfs:
+
+    dracut
+
+If used without arguments, it creates a new initramfs for the kernel currently loaded
+
+
+$ man -k initram
+$ man dracut
+Name
+    a low level tool to generate initramfs image
+Description
+    Create a initramfs image for the kernel with the version <version>. If version is omitted, the version of the running kernel will be used...
+    
+
+-f, --force
+overwrite existing initramfs file.
+
+FILES         
+
+       /etc/dracut.conf             ==> master config file, you can modify the main file or the cutom file
+           see dracut.conf5
+
+       /etc/dracut.conf.d/*.conf    ==> custom config
+           see dracut.conf5
+
+       /usr/lib/dracut/dracut.conf.d/*.conf       ==> system defaul config
+           see dracut.conf5
+
+
+These config file can be used to include options for dracut command
+To install initramfs with extra setup, you should look into dracut config files listed above.
+
+[root@localhost ~]# cat /etc/dracut.conf
+# PUT YOUR CONFIG IN separate files
+# in /etc/dracut.conf.d named "<name>.conf"
+# SEE man dracut.conf(5) for options
+
+[root@localhost ~]# cd /usr/lib/dracut/dracut.conf.d/
+[root@localhost dracut.conf.d]# ls -al
+total 20
+drwxr-xr-x. 2 root root 134 Mar 10 23:08 .
+drwxr-xr-x. 4 root root 236 Mar 10 23:07 ..
+-rw-r--r--. 1 root root 536 Feb 22 08:57 01-dist.conf
+-rw-r--r--. 1 root root  22 Feb 24 08:56 01-microcode.conf
+-rw-r--r--. 1 root root  26 Feb 22 08:57 02-rescue.conf
+-rw-r--r--. 1 root root  65 Dec 17 18:01 50-nss-softokn.conf
+-rw-r--r--. 1 root root 277 Feb 24 08:56 99-microcode-override.conf
+
+
+[root@localhost dracut.conf.d]# cat 01-dist.conf
+# dracut config file customized for RedHat/Fedora.
+
+# i18n
+i18n_vars="/etc/sysconfig/keyboard:KEYTABLE-KEYMAP /etc/sysconfig/i18n:SYSFONT-FONT,FONTACM-FONT_MAP,FONT_UNIMAP"
+i18n_default_font="eurlatgr"
+i18n_install_all="yes"
+
+
+stdloglvl=3
+sysloglvl=5
+install_optional_items+=" vi /etc/virc ps grep cat rm "
+prefix="/"
+systemdutildir=/usr/lib/systemd
+systemdsystemunitdir=/usr/lib/systemd/system
+systemdsystemconfdir=/etc/systemd/system
+udevdir=/usr/lib/udev
+hostonly="yes"
+hostonly_cmdline="no"
+early_microcode="yes"
+reproducible="yes"
+
+
+# reinstall to repair
+$ dracut --force
+
+
