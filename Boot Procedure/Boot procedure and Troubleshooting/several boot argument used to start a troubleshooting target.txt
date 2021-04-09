@@ -18,6 +18,18 @@ Severl boot arguments for troubleshooting target
 it stops the boot procedure while it's still in the initramfs stage
 It's used in the process of recovering the root password
 
+dracut (8)           - low-level tool for generating an initramfs/initrd image
+dracut.bootup (7)    - boot ordering in the initramfs
+dracut.cmdline (7)   - dracut kernel command line options
+dracut.conf (5)      - configuration file(s) for dracut
+dracut.kernel (7)    - dracut kernel command line options
+dracut.modules (7)   - dracut modules
+
+DRACUT.CMDLINE(7)                dracut                DRACUT.CMDLINE(7)
+
+       rd.break  (rd = RAM disk)
+           drop to a shell at the end
+
 2. init=/bin/sh or init=/bin/bash
 
 it starts the shell imediately after loading the kernel and initramfs

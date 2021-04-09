@@ -1,0 +1,131 @@
+How to enter root shell without root password/How to reset root password
+
+1. Enter into edit mode of the boot mene: Press e from GRUB 2 boot menu
+
+2. It returns these commands and variables:
+
+load_video
+set gfx_payload=keep
+insmod gzio
+linux ($root) ...
+initrd ($root) ...
+
+This is the user interface of GRUB 2 boot loader, not the boot loader itself or any coding language.
+https://www.gnu.org/software/grub/manual/grub/grub.html
+Refer to Section 14, 15 and 16
+
+linux ($root) ...
+linux: Load a Linux kernel image from file. The rest of the line is passed verbatim as the kernel command-line. Any initrd must be reloaded after using this command
+
+initrd ($root) ...
+initrd: Load an initial ramdisk for a Linux kernel image, and set the appropriate parameters in the Linux setup area in memory. This may only be used after the linux command (see linux) has been run
+
+3. Add rd.break to the end of linux ($root) ... (i.e. rd.break as a boot parameter), press Ctrl + X to start (i.e. boot with this option)
+
+load_video
+set gfx_payload=keep
+insmod gzio
+linux ($root) ... rd.break
+initrd ($root) ...
+
+
+boot argument rd.break:
+
+it stops the boot procedure while it's still in the initramfs stage
+It's used in the process of recovering the root password
+
+Man page of rd.break (rd = RAM disk)
+dracut (8)           - low-level tool for generating an initramfs/initrd image
+dracut.bootup (7)    - boot ordering in the initramfs
+dracut.cmdline (7)   - dracut kernel command line options
+dracut.conf (5)      - configuration file(s) for dracut
+dracut.kernel (7)    - dracut kernel command line options
+dracut.modules (7)   - dracut modules
+
+DRACUT.CMDLINE(7)                dracut                DRACUT.CMDLINE(7)
+
+       rd.break
+           drop to a shell at the end
+
+
+Adding rd.break to the end of the line with kernel parameters in Grub stops the start up process before the regular root filesystem is mounted. 
+
+it brings you to the end of the boot stage where initramfs is loaded, just before a mount of the root file system on the directory /sysroot. The file system is not mounted onto the tmp root dir - /sysroot yet.
+
+    What is sysroot in the boot process?
+        What does kernel do?
+
+            In the minimal operating environment, kernel finds the file system image from /boot, and mount it on the /sysroot directory. This is a temporay root file system.
+            Later, the kernel unmounts the initrd image, and mount the actual physical root file system on /.
+
+
+5. Now it brings you to the shell of the emergency mode 
+Emergency mode, on the other hand, does mount the regular root filesystem, but it only mounts it in a read-only mode
+
+6. In emergency mode, remount the root filesystem with read/write access, so that later you can change the password:
+
+$ mount -o remount,rw /sysroot
+
+7. make /sysroot the new root directory:
+
+$ chroot /sysroot
+This commands start a new shell where the /sysroot directory will appear as /
+
+chroot:  run command or interactive shell with special root directory
+
+chroot NEWROOT
+Run COMMAND with root directory set to NEWROOT.
+
+Now this command get you into the root shell
+
+4. passwd
+# set password for root user
+
+5. Load Selinux policy.
+
+At this stage, SELinux has not been activated yet, if you reboot now, no one will be able to log in, /etc/shadow will be messed up. It will become unaccessible.
+
+Loading the SELinux policy will make it possible to change the context type of /etc/shadow
+
+load_policy -i
+# load the SELinux policy
+
+
+LOAD_POLICY(8)                                  NSA                                 LOAD_POLICY(8)
+
+NAME
+       load_policy - load a new SELinux policy into the kernel
+
+SYNOPSIS
+       load_policy [-qi]
+
+DESCRIPTION
+       load_policy  loads  the installed policy file into the kernel.  The existing policy boolean
+       values are automatically preserved across policy reloads rather than  being  reset  to  the
+       default values in the policy file.
+
+
+       -i     initial  policy load. Only use this if this is the first time policy is being loaded
+              since boot (usually called from initramfs).
+
+6. set the correct context type to /etc/shadow, so that other users could log in as before
+
+chcon -t shadow_t /etc/shadow
+
+
+CHCON(1)                                   User Commands                                  CHCON(1)
+
+NAME
+       chcon - change file SELinux security context
+
+SYNOPSIS
+       chcon [OPTION]... CONTEXT FILE...
+       chcon [OPTION]... [-u USER] [-r ROLE] [-l RANGE] [-t TYPE] FILE...
+       chcon [OPTION]... --reference=RFILE FILE...
+
+
+       -t, --type=TYPE
+              set type TYPE in the target security context
+
+
+7. reboot
