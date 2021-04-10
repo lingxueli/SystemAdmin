@@ -1,0 +1,35 @@
+1. #!/bin/bash
+
+shebang
+
+Other shell can be specified as well, e.g. shebang for perl script
+
+#!/usr/bin/perl
+
+
+2. exit 0
+
+This ends the script with code 0 - succeed
+Any other values indicate failure.
+
+3. echo $?
+
+this shows the exit code of the last command
+
+
+4. make the script executable and execute it
+
+$ chmod +x hello
+
+$ bash hello
+
+
+5. $PATH
+
+$ bash hello
+
+# the path of the script needs to be in $PATH
+
+#  if not, execute it with a prefix ./
+
+$ ./hello
