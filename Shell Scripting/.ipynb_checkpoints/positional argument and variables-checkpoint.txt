@@ -1,0 +1,37 @@
+1. command arguments $1 $2 
+$ useradd lisa
+
+$1 is the first arguement
+$2 is the 2nd...
+
+
+$3 is empty if there're only 2 arguments
+
+2. a more flexible way to access command's argument
+
+using the for loop with these variables:
+$# - a counter that shows how many argumetns were used when starting the script. 
+$@ - all arugments that were used to start the script.
+
+
+
+#!/bin/bash
+
+echo you have entered $# arguments
+
+for i in "$@" do
+    echo $i
+done
+exit 0
+
+
+$ man bash
+   Special Parameters
+       @      Expands to the positional parameters, starting from one.  When the expansion  occurs
+              within  double  quotes, each parameter expands to a separate word.  That is, "$@" is
+              equivalent to "$1" "$2" ...  If the double-quoted expansion occurs  within  a  word,
+              the expansion of the first parameter is joined with the beginning part of the origi‐
+              nal word, and the expansion of the last parameter is joined with the  last  part  of
+              the  original  word.  When there are no positional parameters, "$@" and $@ expand to
+              nothing (i.e., they are removed).
+       #      Expands to the number of positional parameters in decimal.

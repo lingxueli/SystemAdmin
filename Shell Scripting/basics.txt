@@ -16,6 +16,10 @@ Any other values indicate failure.
 
 this shows the exit code of the last command
 
+$ man bash
+   Special Parameters
+       ?      Expands to the exit status of the most recently executed foreground pipeline.
+
 
 4. make the script executable and execute it
 
