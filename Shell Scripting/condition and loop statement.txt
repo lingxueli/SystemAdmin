@@ -1,0 +1,157 @@
+if
+for
+while
+unitl
+case
+
+
+1. if statement and test command
+
+Example
+
+#!/bin/bash
+# test if the file given is a file or directory
+
+if [ -f $1 ]
+then
+    echo "$1 is a file"
+elif [ -d $1 ]
+then
+    echo "$1 is a directory"
+else
+    echo "I don't know what \$1 is"   => use \ to escape the character. the output is "I don't know what $1 is"  
+fi
+exit 0
+
+
+[root@localhost]# help if
+if: if COMMANDS; then COMMANDS; [ elif COMMANDS; then COMMANDS; ]... [ else COMMANDS; ] fi
+    Execute commands based on conditional.
+    
+    The `if COMMANDS' list is executed.  If its exit status is zero, then the
+    `then COMMANDS' list is executed.  Otherwise, each `elif COMMANDS' list is
+    executed in turn, and if its exit status is zero, the corresponding
+    `then COMMANDS' list is executed and the if command completes.  Otherwise,
+    the `else COMMANDS' list is executed, if present.  The exit status of the
+    entire construct is the exit status of the last command executed, or zero
+    if no condition tested true.
+    
+    Exit Status:
+    Returns the status of the last command executed.
+
+
+
+2. for loop
+
+Example 1 -  for (( expr1 ; expr2 ; expr3 )) ; do list ; done
+
+#!/bin/bash
+
+for (( COUNTER=100; COUNTER>1; COUNTER-- )); do
+    echo $COUNTER
+done
+exit 0
+
+Example 2 -  for name [ [ in [ word ... ] ] ; ] do list ; done
+
+for i in {100..104}; do ping -c 1 192.168.4.$i >/dev/null && echo 192.168.4.$i is up; done
+
+$ man bash
+
+   Compound Commands
+       A  compound  command is one of the following.  In most cases a list in a command's descrip‐
+       tion may be separated from the rest of the command by one or more newlines, and may be fol‐
+       lowed by a newline in place of a semicolon.
+
+       (list) list  is  executed  in  a  subshell  environment  (see COMMAND EXECUTION ENVIRONMENT
+              below).  Variable assignments and builtin commands that affect the shell's  environ‐
+              ment  do not remain in effect after the command completes.  The return status is the
+              exit status of list.
+
+       { list; }
+              list is simply executed in the current shell environment.  list must  be  terminated
+              with  a  newline or semicolon.  This is known as a group command.  The return status
+              is the exit status of list.  Note that unlike the metacharacters ( and ),  {  and  }
+              are  reserved  words  and must occur where a reserved word is permitted to be recog‐
+              nized.  Since they do not cause a word break, they must be separated  from  list  by
+              whitespace or another shell metacharacter.
+
+       for name [ [ in [ word ... ] ] ; ] do list ; done
+              The  list  of words following in is expanded, generating a list of items.  The vari‐
+              able name is set to each element of this list in turn, and  list  is  executed  each
+              time.   If the in word is omitted, the for command executes list once for each posi‐
+              tional parameter that is set (see PARAMETERS below).  The return status is the  exit
+              status  of  the last command that executes.  If the expansion of the items following
+              in results in an empty list, no commands are executed, and the return status is 0.
+
+       for (( expr1 ; expr2 ; expr3 )) ; do list ; done
+              First, the arithmetic expression expr1 is evaluated according to the rules described
+              below  under  ARITHMETIC EVALUATION.  The arithmetic expression expr2 is then evalu‐
+              ated repeatedly until it evaluates to zero.  Each time expr2 evaluates to a non-zero
+              value,  list  is  executed and the arithmetic expression expr3 is evaluated.  If any
+              expression is omitted, it behaves as if it evaluates to 1.  The return value is  the
+              exit  status  of  the  last command in list that is executed, or false if any of the
+              expressions is invalid.
+
+[root@localhost]# help for
+for: for NAME [in WORDS ... ] ; do COMMANDS; done
+    Execute commands for each member in a list.
+    
+    The `for' loop executes a sequence of commands for each member in a
+    list of items.  If `in WORDS ...;' is not present, then `in "$@"' is
+    assumed.  For each element in WORDS, NAME is set to that element, and
+    the COMMANDS are executed.
+    
+    Exit Status:
+    Returns the status of the last command executed.
+
+3. while loop
+
+[root@localhost]# help while
+while: while COMMANDS; do COMMANDS; done
+    Execute commands as long as a test succeeds.
+    
+    Expand and execute COMMANDS as long as the final command in the
+    `while' COMMANDS has an exit status of zero.
+    
+    Exit Status:
+    Returns the status of the last command executed.
+
+4. until loop - keep the interations until the condition is met
+
+[root@localhost]# help until
+until: until COMMANDS; do COMMANDS; done
+    Execute commands as long as a test does not succeed.
+    
+    Expand and execute COMMANDS as long as the final command in the
+    `until' COMMANDS has an exit status which is not zero.
+    
+    Exit Status:
+    Returns the status of the last command executed.
+
+
+5. case statement
+
+case WORD in [PATTERN [| PATTERN]...) COMMANDS ;;]... esac
+case WORD in [PATTERN ...) COMMANDS ;;]... esac
+case WORD in ... esac
+
+it supports wildcard match
+
+case $1 in
+    start)
+    ;;
+    stop)
+    ;;
+    *)    => anything else
+    ;;
+
+[root@localhost]# help case
+case: case WORD in [PATTERN [| PATTERN]...) COMMANDS ;;]... esac
+    Execute commands based on pattern matching.
+    
+    Selectively execute COMMANDS based upon WORD matching PATTERN.  The
+    `|' is used to separate multiple patterns.
+    
+    Exit Status:
+    Returns the status of the last command executed.

@@ -1,0 +1,11 @@
+Using || and &&
+
+
+[ -z $1 ] && echo no argument provided
+
+The second half executes only when the first half is true
+
+
+ping -c 1 10.0.0.20 2>/dev/null || echo node is not available
+
+The second half executes only when the first half is false
