@@ -1,0 +1,160 @@
+Firewalld uses zones to determined the identify of the packet.
+
+A network connection can be in only one zone at a time. A zone can contain multiple network connections.
+
+A zone could be defined by services, ports, protocols, ip addresses. Check zone config file for details.
+
+
+Firewalld inspects the packet properties in the order of 
+
+1. source IP address
+2. network connection
+3. default zone if neither of above is recognized
+
+to determine the zone a packet associates with.
+
+
+There're predefined zones which may be customized. They are templates that can be used to determine which traffic to drop or block. 
+
+
+    public zone is the default zone.
+    Key topic: what are those predefined zones. It could be found in the config file.
+    
+The config file of predifined zones:
+
+
+[root@localhost ~]# ls -al /usr/lib/firewalld/zones/
+total 44
+drwxr-xr-x. 2 root root 203 Feb 14 10:53 .
+drwxr-xr-x. 7 root root  81 Jan 22 23:32 ..
+-rw-r--r--. 1 root root 299 Aug 11  2020 block.xml
+-rw-r--r--. 1 root root 293 Aug 11  2020 dmz.xml
+-rw-r--r--. 1 root root 291 Aug 11  2020 drop.xml
+-rw-r--r--. 1 root root 304 Aug 11  2020 external.xml
+-rw-r--r--. 1 root root 397 Aug 11  2020 home.xml
+-rw-r--r--. 1 root root 412 Aug 11  2020 internal.xml
+-rw-r--r--. 1 root root 809 Nov 26  2019 libvirt.xml
+-rw-r--r--. 1 root root 729 Jan  5 08:45 nm-shared.xml
+-rw-r--r--. 1 root root 343 Aug 11  2020 public.xml
+-rw-r--r--. 1 root root 162 Aug 11  2020 trusted.xml
+-rw-r--r--. 1 root root 339 Aug 11  2020 work.xml
+
+[root@localhost zones]# cat public.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+</zone>
+
+[root@localhost zones]# cat public.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+</zone>
+
+# public zone allows services ssh, dhcpv6-client and cockpit
+# it's not the systemd service. It's the firewalld service.
+# firewalld service defines the rules used for packet filtering.
+
+
+[root@localhost zones]# cat block.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone target="%%REJECT%%">
+  <short>Block</short>
+  <description>Unsolicited incoming network packets are rejected. Incoming packets that are related to outgoing network connections are accepted. Outgoing network connections are allowed.</description>
+</zone>
+
+
+By default, these predefined zones don't define many rules related to network operation.
+They are templates and can be customized. You can add new rules on top of it.
+
+When using a management tool such as firewall-cmd to edit these zones' default config at /usr/lib/firewalld/zones/, the config is copied to /etc/firewalld/zones/ automatically.
+
+Or you can manually copy and edit it.
+
+FIREWALLD.ZONE(5)                         firewalld.zone                         FIREWALLD.ZONE(5)
+
+NAME
+       firewalld.zone - firewalld zone configuration files
+
+SYNOPSIS
+       /etc/firewalld/zones/zone.xml
+       /usr/lib/firewalld/zones/zone.xml
+
+DESCRIPTION
+       A firewalld zone configuration file contains the information for a zone. These are the zone
+       description, services, ports, protocols, icmp-blocks, masquerade, forward-ports and rich
+       language rules in an XML file format. The file name has to be zone_name.xml where length of
+       zone_name is currently limited to 17 chars.
+
+
+       This is the structure of a zone configuration file:
+
+           <?xml version="1.0" encoding="utf-8"?>
+           <zone [version="versionstring"] [target="ACCEPT|%%REJECT%%|DROP"]>
+             [ <short>short description</short> ]
+             [ <description>description</description> ]
+             [ <interface name="string"/> ]
+             [ <source address="address[/mask]"|mac="MAC"|ipset="ipset"/> ]
+...
+
+       The config can contain these tags and attributes. Some of them are mandatory, others
+       optional.
+
+
+
+
+Firewalld Service config
+
+These services define the fitering rules regarding the protocol, port, ip address etc.
+They could overlap with the zone config, such as protocol, port config. They could allow the traffic from the same port/protocol.
+
+[root@localhost zones]# cd /usr/lib/firewalld/services/
+[root@localhost services]# ls -al
+total 688
+drwxr-xr-x. 2 root root 8192 Jan 22 23:50 .
+drwxr-xr-x. 7 root root   81 Jan 22 23:32 ..
+-rw-r--r--. 1 root root  211 Aug 11  2020 cockpit.xml
+-rw-r--r--. 1 root root  305 Aug 11  2020 dhcpv6-client.xml
+-rw-r--r--. 1 root root  227 Aug 11  2020 dhcp.xml
+-rw-r--r--. 1 root root  463 Aug 11  2020 ssh.xml
+...
+
+[root@localhost services]# cat ssh.xml
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>SSH</short>
+  <description>Secure Shell (SSH) is a protocol for logging into and executing commands on remote machines. It provides secure encrypted communications. If you plan on accessing your machine remotely via SSH over a firewalled interface, enable this option. You need the openssh-server package installed for this option to be useful.</description>
+  <port protocol="tcp" port="22"/>
+</service>
+
+
+[root@localhost services]# cat dhcpv6-client.xml
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>DHCPv6 Client</short>
+  <description>This option allows a DHCP for IPv6 (DHCPv6) client to obtain addresses and other IPv6 settings from DHCPv6 server.</description>
+  <port protocol="udp" port="546"/>
+  <destination ipv6="fe80::/64"/>
+</service>
+
+FIREWALLD.SERVICE(5)                     firewalld.service                    FIREWALLD.SERVICE(5)
+
+NAME
+       firewalld.service - firewalld service configuration files
+
+SYNOPSIS
+       /etc/firewalld/services/service.xml
+       /usr/lib/firewalld/services/service.xml
+
+DESCRIPTION
+       A firewalld service configuration file provides the information of a service entry for
+       firewalld. The most important configuration options are ports, modules and destination
+       addresses.

@@ -1,0 +1,52 @@
+Firewall service works by filtering data packets. 
+
+Firewall service could filter packet based on the packet header.
+Header contains info such as IP addresss, port, type of data. 
+
+It filters the packet without disruption to the current network connections.
+
+
+1. netfilter - a framework to handle network operations 
+
+It lies in the kernel modules to provide network services such as packet filtering.
+
+Firewalld service is based on netfilter.
+
+------------------------------------
+
+https://www.netfilter.org/
+
+Netfilter is a framework provided by the Linux kernel that allows various networking-related operations to be implemented in the form of customized handlers.
+
+The netfilter project is a community-driven collaborative FOSS project that provides packet filtering software for the Linux 2.4.x and later kernel series. The netfilter project is commonly associated with iptables.
+
+The netfilter project enables packet filtering, network address [and port] translation (NA[P]T), packet logging, userspace packet queueing and other packet mangling.
+
+The netfilter hooks are a framework inside the Linux kernel that allows kernel modules to register callback functions at different locations of the Linux network stack. The registered callback function is then called back for every packet that traverses the respective hook within the Linux network stack.
+
+iptables is a generic firewalling software that allows you to define rulesets. Each rule within an IP table consists of a number of classifiers (iptables matches) and one connected action (iptables target).
+
+nftables is the successor of iptables, it allows for much more flexible, scalable and performance packet classification.
+
+2. iptables and nftables
+
+They are untilies built on top of netfilter framework to handle the network operations such as packet filtering. nftables is the replacement of its legacy version - iptables
+
+
+However, it also supports other network operations such as Network address translation, port forwarding.
+
+------------------------------------
+iptables is a user-space utility program that allows a system administrator to configure the IP packet filter rules of the Linux kernel firewall, implemented as different Netfilter modules.
+
+nftables is a subsystem of the Linux kernel providing filtering and classification of network packets/datagrams/frames. It has been available since Linux kernel 3.13 released on 19 January 2014. nftables replaces the legacy iptables portions of Netfilter
+
+
+3. firewalld
+
+firewalld is the tool for system administration to manage packet filtering.
+
+It's based on the nftables and netfilter.
+
+
+------------------------------------
+firewalld is a firewall management tool for Linux operating systems. It provides firewall features by acting as a front-end for the Linux kernel's netfilter framework via the nftables userspace utility, acting as an alternative to the nft command line program.

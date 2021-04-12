@@ -1,0 +1,213 @@
+Check status of firewalld
+
+[root@localhost services]# firewall-cmd --state
+running
+[root@localhost services]# systemctl status firewalld -l --no-pager
+● firewalld.service - firewalld - dynamic firewall daemon
+   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2021-04-03 17:38:14 MDT; 1 weeks 1 days ago
+     Docs: man:firewalld(1)
+ Main PID: 1099 (firewalld)
+    Tasks: 2 (limit: 11099)
+   Memory: 26.1M
+   CGroup: /system.slice/firewalld.service
+           └─1099 /usr/libexec/platform-python -s /usr/sbin/firewalld --nofork --nopid
+
+Apr 03 17:38:09 localhost.localdomain systemd[1]: Starting firewalld - dynamic firewall daemon...
+Apr 03 17:38:14 localhost.localdomain systemd[1]: Started firewalld - dynamic firewall daemon.
+Apr 03 17:38:14 localhost.localdomain firewalld[1099]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure configuration option. It will be removed in a future release. Please consider disabling it now.
+
+
+
+Add services, add ports, and manage zones
+
+1. add firewalld http servcie to the zone
+
+[root@localhost ~]# firewall-cmd --get-default-zone 
+public
+
+# add http service to the public zone
+# it copies the default zone config into the customized config and add the new rule
+
+[root@localhost ~]# firewall-cmd --permanent --add-service=http
+success
+
+
+# update firewalld rules in runtime
+# permanent config (static) is pushed to the runtime
+
+[root@localhost ~]# firewall-cmd --reload
+success
+
+# test to confirm the activation of the new rule
+
+[root@localhost ~]# firewall-cmd --list-services 
+cockpit dhcpv6-client http ssh vnc-server
+
+# verify config
+[root@localhost ~]# cat /usr/lib/firewalld/zones/public.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+</zone>
+
+
+[root@localhost ~]# cat /etc/firewalld/zones/public.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+  <service name="vnc-server"/>
+  <service name="http"/>
+  <port port="2022" protocol="tcp"/>
+</zone>
+
+# these services and port are accepted traffic.
+
+
+2. Add runtime rules to the zone - add ports
+
+# this changes the runtime config of the zone
+
+[root@localhost ~]# firewall-cmd --list-ports
+2022/tcp
+[root@localhost ~]# firewall-cmd --add-port 443/tcp
+success
+[root@localhost ~]# firewall-cmd --list-ports
+2022/tcp 443/tcp
+
+
+# it's not a permanent change
+
+[root@localhost ~]# cat /etc/firewalld/zones/public.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Public</short>
+  <description>For use in public areas. You do not trust the other computers on networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+  <service name="vnc-server"/>
+  <service name="http"/>
+  <port port="2022" protocol="tcp"/>
+</zone>
+
+
+3. Add permanent rules (static) to the zone - add ports
+
+[root@localhost ~]# firewall-cmd --add-port 5901-5910/tcp --permanent --zone internal
+success
+
+[root@localhost ~]# cat /etc/firewalld/zones/internal.xml
+<?xml version="1.0" encoding="utf-8"?>
+<zone>
+  <short>Internal</short>
+  <description>For use on internal networks. You mostly trust the other computers on the networks to not harm your computer. Only selected incoming connections are accepted.</description>
+  <service name="ssh"/>
+  <service name="mdns"/>
+  <service name="samba-client"/>
+  <service name="dhcpv6-client"/>
+  <service name="cockpit"/>
+  <port port="5901-5910" protocol="tcp"/>
+</zone>
+
+
+4. switch zone and activate the new rules
+
+Switch zone by change the default zone.
+Further update will be applied to the new default zone.
+
+Because only default zone accepts changes to the runtime rules.
+
+If you want to activate the new rules to a non-default zone, you need to set it as a default zone.
+
+Because non-default zone accept changes to the permanent rules only. If change needs to be made to the runtime, you need to push it to the runtime by
+firewall-cmd --reload
+This command works on the default zone only. You need to set it as the default zone in order to make the change happen.
+
+[root@localhost ~]# firewall-cmd --set-default-zone internal
+success
+[root@localhost ~]# firewall-cmd --get-default-zone
+internal
+
+Activate the new rules in the zone. Push the permanent config (static) to the runtime.
+
+[root@localhost ~]# firewall-cmd --reload
+success
+
+Confirm
+[root@localhost ~]# firewall-cmd --list-ports
+5901-5910/tcp
+
+FIREWALL-CMD(1)                            firewall-cmd                            FIREWALL-CMD(1)
+
+NAME
+       firewall-cmd - firewalld command line client
+
+SYNOPSIS
+       firewall-cmd [OPTIONS...]
+
+DESCRIPTION
+       firewall-cmd is the command line client of the firewalld daemon. It provides interface to
+       manage runtime and permanent configuration.
+
+       The runtime configuration in firewalld is separated from the permanent configuration. This
+       means that things can get changed in the runtime or permanent configuration.
+
+   Permanent Options
+       --permanent
+           The permanent option --permanent can be used to set options permanently. These changes
+           are not effective immediately, only after service restart/reload or system reboot.
+           Without the --permanent option, a change will only be part of the runtime
+           configuration.
+
+           If you want to make a change in runtime and permanent configuration, use the same call
+           with and without the --permanent option.
+
+           The --permanent option can be optionally added to all options further down where it is
+           supported.
+
+...
+       --reload
+           Reload firewall rules and keep state information. Current permanent configuration will
+           become new runtime configuration, i.e. all runtime only changes done until reload are
+           lost with reload if they have not been also in permanent configuration.
+
+           Note: Runtime changes applied via the direct interface are not affected and will
+           therefore stay in place until firewalld daemon is restarted completely.
+       
+   Options to Adapt and Query Zones
+       Options in this section affect only one particular zone. If used with --zone=zone option,
+       they affect the zone zone. If the option is omitted, they affect default zone (see
+       --get-default-zone).
+
+       [--permanent] [--zone=zone] --add-service=service [--timeout=timeval]
+           Add a service for zone. If zone is omitted, default zone will be used. This option can
+           be specified multiple times. If a timeout is supplied, the rule will be active for the
+           specified amount of time and will be removed automatically afterwards.  timeval is
+           either a number (of seconds) or number followed by one of characters s (seconds), m
+           (minutes), h (hours), for example 20m or 1h.
+
+           The service is one of the firewalld provided services. To get a list of the supported
+           services, use firewall-cmd --get-services.
+
+           The --timeout option is not combinable with the --permanent option.
+
+       [--permanent] [--zone=zone] --add-port=portid[-portid]/protocol [--timeout=timeval]
+           Add the port for zone. If zone is omitted, default zone will be used. This option can
+           be specified multiple times. If a timeout is supplied, the rule will be active for the
+           specified amount of time and will be removed automatically afterwards.  timeval is
+           either a number (of seconds) or number followed by one of characters s (seconds), m
+           (minutes), h (hours), for example 20m or 1h.
+
+           The port can either be a single port number or a port range portid-portid. The protocol
+           can either be tcp, udp, sctp or dccp.
+
+           The --timeout option is not combinable with the --permanent option.

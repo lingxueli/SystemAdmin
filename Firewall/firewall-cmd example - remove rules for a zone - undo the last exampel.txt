@@ -1,0 +1,48 @@
+Current default zone is internal
+
+1. undo the public zone new rules
+
+[root@localhost ~]# firewall-cmd --remove-service http --zone public --permanent
+success
+
+
+2. undo the internal zone new rules
+
+
+[root@localhost ~]# firewall-cmd --remove-port 5901-5910/tcp --permanent
+success
+
+[root@localhost ~]# firewall-cmd --reload
+success
+
+[root@localhost ~]# firewall-cmd --list-ports
+
+# internal zone config change is made to the permanent(static) and runtime
+
+
+3. switch zone and activate the previous rules
+
+Switch zone by change the default zone.
+Further update will be applied to the new default zone.
+
+Because only default zone accepts changes to the runtime rules.
+
+If you want to activate the new rules to a non-default zone, you need to set it as a default zone.
+
+Because non-default zone accept changes to the permanent rules only. If change needs to be made to the runtime, you need to push it to the runtime by
+firewall-cmd --reload
+This command works on the default zone only. You need to set it as the default zone in order to make the change happen.
+
+
+[root@localhost ~]# firewall-cmd --set-default-zone public
+success
+[root@localhost ~]# firewall-cmd --get-default-zone
+public
+
+# activate
+[root@localhost ~]# firewall-cmd --reload
+success
+
+# confirm
+[root@localhost ~]# firewall-cmd --list-service
+cockpit dhcpv6-client ssh vnc-server
