@@ -100,8 +100,9 @@ DESCRIPTION
 
 
 How to switch to the alternative port
+This example adds additioal port to the sshd service
 
-1. update config
+1. update sshd config
 
 $ vi /etc/ssh/sshd_config
 
@@ -110,7 +111,8 @@ $ vi /etc/ssh/sshd_config
 # SELinux about this change.
 # semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
 #
-#Port 22
+Port 22
+Port 2022
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
@@ -154,7 +156,7 @@ DESCRIPTION
        -l, --list
               List records of the specified object type
 
-3. update firewall
+3. update firewall to allow traffic from port 2022/tcp
 
 $ firewall-cmd --add-port=2022/tcp
 $ firewall-cmd --add-port=2022/tcp --permanent
@@ -165,7 +167,7 @@ $ firewall-cmd --add-port=2022/tcp --permanent
 
 How to limit the access to only the specified users
 
-1. update config
+1. update sshd config
 
 
 $ vi /etc/ssh/sshd_config
