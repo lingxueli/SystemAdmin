@@ -1,0 +1,188 @@
+How to disable root login
+
+1. modify sshd config, not ssh config
+
+Update the following: 
+
+PermitRootLogin no
+
+[root@localhost ~]# vi /etc/ssh/sshd_config
+
+#       $OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# This sshd was compiled with PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+
+# The strategy used for options in the default sshd_config shipped with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented.  Uncommented options override the
+# default value.
+
+# If you want to change the port on a SELinux system, you have to tell
+# SELinux about this change.
+# semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
+
+
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+
+# Authentication:
+
+#LoginGraceTime 2m
+PermitRootLogin yes
+#StrictModes yes
+#MaxAuthTries 6
+#MaxSessions 10
+
+
+2. restart sshd service
+
+$ systemctl restart sshd
+
+
+Reference
+
+SSHD_CONFIG(5)                        BSD File Formats Manual                       SSHD_CONFIG(5)
+
+NAME
+     sshd_config — OpenSSH SSH daemon configuration file
+
+DESCRIPTION
+     sshd(8) reads configuration data from /etc/ssh/sshd_config (or the file specified with -f on
+     the command line).  The file contains keyword-argument pairs, one per line.  For each key‐
+     word, the first obtained value will be used.  Lines starting with ‘#’ and empty lines are
+     interpreted as comments.  Arguments may optionally be enclosed in double quotes (") in order
+     to represent arguments containing spaces.
+     
+     The possible keywords and their meanings are as follows (note that keywords are case-insensi‐
+     tive and arguments are case-sensitive):
+
+
+     PermitRootLogin
+             Specifies whether root can log in using ssh(1).  The argument must be yes,
+             prohibit-password, forced-commands-only, or no.  The default is prohibit-password.
+
+             If this option is set to prohibit-password (or its deprecated alias,
+             without-password), password and keyboard-interactive authentication are disabled for
+             root.
+
+             If this option is set to forced-commands-only, root login with public key authentica‐
+             tion will be allowed, but only if the command option has been specified (which may be
+             useful for taking remote backups even if root login is normally not allowed).  All
+             other authentication methods are disabled for root.
+
+             If this option is set to no, root is not allowed to log in.
+
+FILES
+     /etc/ssh/sshd_config
+             Contains configuration data for sshd(8).  This file should be writable by root only,
+             but it is recommended (though not necessary) that it be world-readable.
+
+
+
+SSH_CONFIG(5)                         BSD File Formats Manual                        SSH_CONFIG(5)
+
+NAME
+     ssh_config — OpenSSH SSH client configuration files
+
+DESCRIPTION
+     ssh(1) obtains configuration data from the following sources in the following order:
+
+           1.   command-line options
+           2.   user's configuration file (~/.ssh/config)
+           3.   system-wide configuration file (/etc/ssh/ssh_config)
+
+
+
+How to switch to the alternative port
+
+1. update config
+
+$ vi /etc/ssh/sshd_config
+
+
+# If you want to change the port on a SELinux system, you have to tell
+# SELinux about this change.
+# semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
+#
+#Port 22
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+
+
+Reference
+
+     Port    Specifies the port number that sshd(8) listens on.  The default is 22.  Multiple
+             options of this type are permitted.  See also ListenAddress.
+
+2. update Selinux port context label
+
+
+To add a label to the port, if it was not occupied by other service
+$ semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
+
+If the port was used by other service, use the following option to modify it
+$ semanage port -m  -t ssh_port_t -p tcp #PORTNUMBER
+
+Reference
+
+--add -t TYPE -p PROTOCOL -r RANGE port_name
+--modify -t TYPE -p PROTOCOL -r RANGE port_name
+-l, --list
+
+semanage-port(8)                                                                  semanage-port(8)
+
+NAME
+       semanage-port - SELinux Policy Management port mapping tool
+
+SYNOPSIS
+       semanage  port  [-h]  [-n] [-N] [-S STORE] [ --add -t TYPE -p PROTOCOL -r RANGE port_name |
+       port_range | --delete -p PROTOCOL port_name | port_range | --deleteall | --extract | --list
+       [-C] | --modify -t TYPE -p PROTOCOL -r RANGE port_name | port_range ]
+
+DESCRIPTION
+       semanage  is used to configure certain elements of SELinux policy without requiring modifi‐
+       cation to or recompilation from policy sources.  semanage port controls the port number  to
+       port type definitions.
+
+       -l, --list
+              List records of the specified object type
+
+3. update firewall
+
+$ firewall-cmd --add-port=2022/tcp
+$ firewall-cmd --add-port=2022/tcp --permanent
+
+
+4. restart sshd
+
+
+How to limit the access to only the specified users
+
+1. update config
+
+
+$ vi /etc/ssh/sshd_config
+
+AllowUsers user
+
+
+     AllowUsers
+             This keyword can be followed by a list of user name patterns, separated by spaces.
+             If specified, login is allowed only for user names that match one of the patterns.
+             Only user names are valid; a numerical user ID is not recognized.  By default, login
+             is allowed for all users.  If the pattern takes the form USER@HOST then USER and HOST
+             are separately checked, restricting logins to particular users from particular hosts.
+             HOST criteria may additionally contain addresses to match in CIDR address/masklen
+             format.  The allow/deny directives are processed in the following order: DenyUsers,
+             AllowUsers, DenyGroups, and finally AllowGroups.
+
+             See PATTERNS in ssh_config(5) for more information on patterns.
+
+2. restart sshd

@@ -1,0 +1,136 @@
+$  man sshd_config
+    Port
+    PermitRootLogin
+    
+    MaxAuthTries
+             Specifies the maximum number of authentication attempts permitted per connection.
+             Once the number of failures reaches half this value, additional failures are logged.
+             The default is 6.
+
+     PasswordAuthentication
+             Specifies whether password authentication is allowed.  The default is yes.
+
+    GSSAPIAuthentication
+             Specifies whether user authentication based on GSSAPI is allowed.  The default is no.
+    # used when Kerberos authentication is used
+    
+     UseDNS  Specifies whether sshd(8) should look up the remote host name, and to check that the
+             resolved host name for the remote IP address maps back to the very same IP address.
+
+             If this option is set to no (the default) then only addresses and not host names may
+             be used in ~/.ssh/authorized_keys from and sshd_config Match Host directives.
+
+ 
+      MaxSessions
+             Specifies the maximum number of open shell, login or subsystem (e.g. sftp) sessions
+             permitted per network connection.  Multiple sessions may be established by clients
+             that support connection multiplexing.  Setting MaxSessions to 1 will effectively dis‐
+             able session multiplexing, whereas setting it to 0 will prevent all shell, login and
+             subsystem sessions while still permitting forwarding.  The default is 10.
+
+     # max number of sessions per IP address. If multiple users are connection from this IP, you might need to increase the limit beyond the default value of 10
+     
+     
+     TCPKeepAlive
+             Specifies whether the system should send TCP keepalive messages to the other side.
+             If they are sent, death of the connection or crash of one of the machines will be
+             properly noticed.  However, this means that connections will die if the route is down
+             temporarily, and some people find it annoying.  On the other hand, if TCP keepalives
+             are not sent, sessions may hang indefinitely on the server, leaving "ghost" users and
+             consuming server resources.
+
+             The default is yes (to send TCP keepalive messages), and the server will notice if
+             the network goes down or the client host crashes.  This avoids infinitely hanging
+             sessions.
+
+             To disable TCP keepalive messages, the value should be set to no.
+     
+     # it's used in combination with these paramaters: ClientAliveCountMax, ClientAliveInterval
+     
+          ClientAliveCountMax
+             Sets the number of client alive messages which may be sent without sshd(8) receiving
+             any messages back from the client.  If this threshold is reached while client alive
+             messages are being sent, sshd will disconnect the client, terminating the session.
+             It is important to note that the use of client alive messages is very different from
+             TCPKeepAlive.  The client alive messages are sent through the encrypted channel and
+             therefore will not be spoofable.  The TCP keepalive option enabled by TCPKeepAlive is
+             spoofable.  The client alive mechanism is valuable when the client or server depend
+             on knowing when a connection has become inactive.
+
+             The default value is 3.  If ClientAliveInterval is set to 15, and ClientAliveCountMax
+             is left at the default, unresponsive SSH clients will be disconnected after approxi‐
+             mately 45 seconds.
+
+     ClientAliveInterval
+             Sets a timeout interval in seconds after which if no data has been received from the
+             client, sshd(8) will send a message through the encrypted channel to request a
+             response from the client.  The default is 0, indicating that these messages will not
+             be sent to the client.
+
+ClientAliveInterval * ClientAliveCountMax = Time limit to keep an inactive session alive
+
+
+Example
+     
+     TCPKeepAlive yes
+     ClientAliveCountMax 10
+     ClientAliveInterval 30
+     
+      # the inactive session keeps alive for 5 mins
+      
+      
+If you cannot change the sshd settings, you can achieve the same result by changing the similar setting from the ssh client.
+
+update for all users on the client server - /etc/ssh/ssh_config
+update for a single user on the client server - ~/.ssh/config
+
+TCPKeepAlive yes
+ServerAliveCountMax 10
+ServerAliveInterval 30
+
+
+SSH_CONFIG(5)                         BSD File Formats Manual                        SSH_CONFIG(5)
+
+NAME
+     ssh_config — OpenSSH SSH client configuration files
+
+DESCRIPTION
+     ssh(1) obtains configuration data from the following sources in the following order:
+
+           1.   command-line options
+           2.   user's configuration file (~/.ssh/config)
+           3.   system-wide configuration file (/etc/ssh/ssh_config)
+
+     ServerAliveCountMax
+             Sets the number of server alive messages (see below) which may be sent without ssh(1)
+             receiving any messages back from the server.  If this threshold is reached while
+             server alive messages are being sent, ssh will disconnect from the server, terminat‐
+             ing the session.  It is important to note that the use of server alive messages is
+             very different from TCPKeepAlive (below).  The server alive messages are sent through
+             the encrypted channel and therefore will not be spoofable.  The TCP keepalive option
+             enabled by TCPKeepAlive is spoofable.  The server alive mechanism is valuable when
+             the client or server depend on knowing when a connection has become inactive.
+
+             The default value is 3.  If, for example, ServerAliveInterval (see below) is set to
+             15 and ServerAliveCountMax is left at the default, if the server becomes unrespon‐
+             sive, ssh will disconnect after approximately 45 seconds.
+
+
+     ServerAliveInterval
+             Sets a timeout interval in seconds after which if no data has been received from the
+             server, ssh(1) will send a message through the encrypted channel to request a
+             response from the server.  The default is 0, indicating that these messages will not
+             be sent to the server.
+
+     TCPKeepAlive
+             Specifies whether the system should send TCP keepalive messages to the other side.
+             If they are sent, death of the connection or crash of one of the machines will be
+             properly noticed.  However, this means that connections will die if the route is down
+             temporarily, and some people find it annoying.
+
+             The default is yes (to send TCP keepalive messages), and the client will notice if
+             the network goes down or the remote host dies.  This is important in scripts, and
+             many users want it too.
+
+             To disable TCP keepalive messages, the value should be set to no.  See also
+             ServerAliveInterval for protocol-level keepalives.

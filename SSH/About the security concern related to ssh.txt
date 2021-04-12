@@ -1,0 +1,6 @@
+To enhance security and prevent internet intruder log in as root:
+
+1. Disable root login
+2. disable password login
+3. configure a nondefault port for ssh to listen on
+4. allow only specified user to log in on ssh
