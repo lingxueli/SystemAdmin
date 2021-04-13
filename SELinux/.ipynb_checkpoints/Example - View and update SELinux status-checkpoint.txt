@@ -1,0 +1,65 @@
+1. switch between disable and enable mode requires reboot. 
+
+It requires reboot because selinux is deeply interwoven with the Linux kernel.
+
+It should be changed via the config file. 
+
+Because the config file makes the change persistent between the reboot. 
+
+2. switch between enable modes, i.e. enforcing and permissive, doesn't require reboot. 
+
+It can be done by command such as setenforce. 
+To make the change persistent, update the config file.
+
+Example - switch between enable modes
+
+# view current status of SELinux
+[root@localhost ~]# getenforce
+Enforcing
+
+
+# Enable SELinux for the current session
+
+$ setenforce 0
+$ getenforce
+
+
+[root@localhost ~]# cat /etc/sysconfig/selinux
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+# SELINUXTYPE= can take one of these three values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected. 
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+
+Example - switch between disable and enable
+
+It's currently in the enforcing mode.
+
+1. disable SELinux
+
+set SELinux=disabled in the config file /etc/sysconfig/selinux
+$ reboot
+$ getenforce
+
+Now it's disabled.
+
+2. Change the status from disabled to enforcing for the current session
+
+$ setenforce 1
+You'll receive the error msg. Because the switch from disabled to enabled requires a reboot.
+
+3. Set up the change in the config file and reboot
+
+set SELinux=enforcing in the config file /etc/sysconfig/selinux
+$ reboot
+$ sestatis -v
+
+Now the status is changed successfully.

@@ -29,6 +29,21 @@ DESCRIPTION
        fall back to a less privileged mode of operation if denied access.
 
 
+[root@localhost ~]# cat  /etc/selinux/config
+
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=enforcing
+# SELINUXTYPE= can take one of these three values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected. 
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+
+
 
 getenforce (8)       - get the current mode of SELinux
 setenforce (8)       - modify the mode SELinux is running in
@@ -96,7 +111,7 @@ OPTIONS
                      The init process context
                      The controlling terminal file context
 
-
+# more detailed status of Selinux and key policies
 [root@localhost ~]# sestatus
 SELinux status:                 enabled
 SELinuxfs mount:                /sys/fs/selinux
@@ -108,7 +123,6 @@ Policy MLS status:              enabled
 Policy deny_unknown status:     allowed
 Memory protection checking:     actual (secure)
 Max kernel policy version:      32
-
 
 [root@localhost ~]# sestatus -v
 SELinux status:                 enabled
@@ -137,54 +151,3 @@ Controlling terminal:           unconfined_u:object_r:user_devpts_t:s0
 /sbin/agetty                    system_u:object_r:getty_exec_t:s0
 /sbin/init                      system_u:object_r:bin_t:s0 -> system_u:object_r:init_exec_t:s0
 /usr/sbin/sshd                  system_u:object_r:sshd_exec_t:s0
-
-Example:
-
-# view current status of SELinux
-[root@localhost ~]# getenforce
-Enforcing
-
-
-# Enable SELinux for the current session
-
-$ setenforce 0
-$ getenforce
-
-# if it s disabled, edit the config file and change it to enforcing. The change would be persisitent between reboot. 
-
-# After change, reboot the system before continue. Because SELinux is part of the kernel.
-
-[root@localhost ~]# cat /etc/sysconfig/selinux
-
-# This file controls the state of SELinux on the system.
-# SELINUX= can take one of these three values:
-#     enforcing - SELinux security policy is enforced.
-#     permissive - SELinux prints warnings instead of enforcing.
-#     disabled - No SELinux policy is loaded.
-SELINUX=enforcing
-# SELINUXTYPE= can take one of these three values:
-#     targeted - Targeted processes are protected,
-#     minimum - Modification of targeted policy. Only selected processes are protected. 
-#     mls - Multi Level Security protection.
-SELINUXTYPE=targeted
-
-
-Example
-
-1. disable SELinux
-
-set SELinux=disabled in the config file /etc/sysconfig/selinux
-$ reboot
-$ getenforce
-
-2. Change the status from disabled to enforcing for the current session
-
-$ setenforce 1
-You'll receive the error msg as stated in the man page of setenforce
-
-3. Make the change persistent
-set SELinux=enforcing in the config file /etc/sysconfig/selinux
-$ reboot
-$ sestatis -v
-
-Now the status is changed successfully.

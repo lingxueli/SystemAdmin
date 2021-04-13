@@ -1,0 +1,21 @@
+if Selinux is enabled, and nothing else is set, all system calls are denied.
+
+SELinux building blocks are used to define what're allowed to access beyond that.
+
+
+Source domain: the object that is tring to access something. It could be a process or a user.
+
+Target domain: the object that is accessed. It could be a file or directory, a network port.
+
+Policy and rules: 
+
+    Policy is the collection of rules defines the access permissions from source domain to target domain.
+    Rule is a specific part of the policy defines the TYPE of access permission a source domain has to the target domain.
+     
+Context and Context labels:
+    
+    Context is used to categorize the objects of source domain and target domain
+    
+    Context labels are used to define the access permissions. 
+    
+    Context and labels are used by policy and rules. Rules match context labels of source objects to the context labels of target objects and define the permissions based on the match.

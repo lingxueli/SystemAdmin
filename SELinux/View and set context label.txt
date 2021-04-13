@@ -1,10 +1,12 @@
-Context or context labels shows the category of SELinux objects. SELinux rules are created to match the context of source objects to the context of target objects.
+    Context is used to categorize the objects of source domain and target domain
+    
+    Context labels are used to define the access permissions. 
+    
+    Context and labels are used by policy and rules. Rules match context labels of source objects to the context labels of target objects and define the permissions based on the match.
 
-It can be used by: 
-    File and directories
-    Ports
-    Process
-    Users
+Context labels can be used by objects such as
+    File and directories and ports in target domain
+    Process and user in source domain
 
 
 
@@ -25,6 +27,10 @@ unconfined_u:object_r:admin_home_t:s0 file.acls
     system_u:object_r:admin_home_t:s0 initial-setup-ks.cfg
 unconfined_u:object_r:admin_home_t:s0 suidfiles
 unconfined_u:object_r:admin_home_t:s0 suidfiles2
+
+unconfined_u:object_r:admin_home_t:s0 etc
+User:Role:Type
+
 
 $ man ps
        Z      Add a column of security data.  Identical to -M (for SELinux).
@@ -51,6 +57,10 @@ system_u:system_r:kernel_t:s0   root       11735  0.0  0.0      0     0 ?       
 system_u:system_r:ksmtuned_t:s0 root       11783  0.0  0.0   7284   796 ?        S    23:15   0:00 sleep 60
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 root 11822 0.0  0.2 58692 3920 pts/0 R+ 23:16   0:00 ps auxZ
 unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 root 11823 0.0  0.0 7320 776 pts/0 R+ 23:16   0:00 tail
+
+system_u:system_r:init_t:s0     /usr/lib/systemd/systemd
+User:Role:Type
+
 
 
 $ man ss
@@ -99,15 +109,22 @@ udp    UNCONN  0        0                 0.0.0.0:59471           0.0.0.0:*     
 udp    UNCONN  0        0                 0.0.0.0:sunrpc          0.0.0.0:*      users:(("rpcbind",pid=953,proc_ctx=system_u:system_r:rpcbind_t:s0,fd=5),("systemd",pid=1,proc_ctx=system_u:system_r:init_t:s0,fd=42))
 
 
+system_u:system_r:chronyd_t
+User:Role:Type
+
 Here's how to read a context label
 
 system_u:system_r:chronyd_t
 User:Role:Type
 
 
+SELinux user can be set with specific SELinux roles.
+Only context type is expected in RHCSA
+
 How to set context types
 
-
+1. semanage - recommended. It's not installed by default. You'll remember how to install it.
+2. chcon - do not use this unless it's a unique circumstance
 
 semanage(8)                                                                       semanage(8)
 
