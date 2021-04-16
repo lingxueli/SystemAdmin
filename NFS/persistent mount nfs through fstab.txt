@@ -1,0 +1,90 @@
+$ cat /etc/fstab
+server1:/share   /mnt     nfs    sync      0  0
+
+
+FSTAB(5)                                   File Formats                                   FSTAB(5)
+
+NAME
+       fstab - static information about the filesystems
+
+SYNOPSIS
+       /etc/fstab
+
+DESCRIPTION
+       The file fstab contains descriptive information about the filesystems the system can mount.
+       fstab is only read by programs, and not written; it is the duty of the system administrator
+       to  properly  create  and  maintain  this file.  The order of records in fstab is important
+       because fsck(8), mount(8), and umount(8) sequentially iterate  through  fstab  doing  their
+       thing.
+
+       Each filesystem is described on a separate line.  Fields on each line are separated by tabs
+       or spaces.  Lines starting with '#' are comments.  Blank lines are ignored.
+
+       The following is a typical example of an fstab entry:
+
+              LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2
+
+       The first field (fs_spec).
+              This field describes the block special device or remote filesystem to be mounted.
+
+              For NFS mounts, this field is <host>:<dir>, e.g., `knuth.aeb.nl:/'.  For filesystems
+              with no storage, any string can be used, and will show up in df(1) output, for exam‐
+              ple.  Typical usage is `proc' for procfs;  `mem',  `none',  or  `tmpfs'  for  tmpfs.
+              Other special filesystems, like udev and sysfs, are typically not listed in fstab.
+
+       The third field (fs_vfstype).
+              This field describes the type of the filesystem.   Linux  supports  many  filesystem
+              types:  ext4,  xfs,  btrfs,  f2fs, vfat, ntfs, hfsplus, tmpfs, sysfs, proc, iso9660,
+              udf, squashfs, nfs, cifs, and many more.  For more details, see mount(8).
+
+       The fourth field (fs_mntops).
+              This field describes the mount options associated with the filesystem.
+
+              It is formatted as a comma-separated list of options.  It contains at least the type
+              of  mount (ro or rw), plus any additional options appropriate to the filesystem type
+              (including performance-tuning options).  For details, see mount(8) or swapon(8).
+
+              Basic filesystem-independent options are:
+
+              defaults
+                     use default options: rw, suid, dev, exec, auto, nouser, and async.
+
+
+
+
+NFS(5)                                  File Formats Manual                                 NFS(5)
+
+NAME
+       nfs - fstab format and options for the nfs file systems
+
+SYNOPSIS
+       /etc/fstab
+
+DESCRIPTION
+       NFS is an Internet Standard protocol created by Sun Microsystems in 1984. NFS was developed
+       to allow file sharing between systems residing on a local area network.  Depending on  ker‐
+       nel configuration, the Linux NFS client may support NFS versions 2, 3, 4.0, 4.1, or 4.2.
+
+
+
+   The sync mount option
+       The NFS client treats the sync mount option differently than some other file systems (refer
+       to  mount(8)  for  a  description of the generic sync and async mount options).  If neither
+       sync nor async is specified (or if the async option is specified), the  NFS  client  delays
+       sending application writes to the server until any of these events occur:
+
+              Memory pressure forces reclamation of system memory resources.
+
+              An application flushes file data explicitly with sync(2), msync(2), or fsync(3).
+
+              An application closes a file with close(2).
+
+              The file is locked/unlocked via fcntl(2).
+              
+       In  other words, under normal circumstances, data written by an application may not immedi‐
+       ately appear on the server that hosts the file.
+
+       If the sync option is specified on a mount point, any system call that writes data to files
+       on  that  mount  point  causes that data to be flushed to the server before the system call
+       returns control to user space.  This provides greater data cache coherence  among  clients,
+       but at a significant performance cost.

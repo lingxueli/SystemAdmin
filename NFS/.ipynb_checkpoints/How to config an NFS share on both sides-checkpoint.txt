@@ -1,0 +1,240 @@
+On NFS server - server2 (a minimal install is okay)
+1. define the NFS content that is intented to share
+2. install and start NFS service
+3. configure firewall to allow NFS traffic
+
+
+On NFS client - server1
+1. find what is exported from server2
+2. mount the export to the local root directory
+
+
+
+On NFS server - server2
+
+# create some content to share
+$ mkdir -p /nfsdata /users/user1 /users/user2
+$ cp /etc/[a-c]* /nfsdata
+
+# config the nfs export
+
+# config file of nfs EXPORT: /etc/exports
+
+$ vi /etc/exports
+/nfsdata. *(rw,no_root_squash)
+/users. *(rw,no_root_squash)
+
+
+exports(5)                              File Formats Manual                             exports(5)
+
+NAME
+       exports - NFS server export table
+
+DESCRIPTION
+       The file /etc/exports contains a table of local physical file systems on an NFS server that
+       are accessible to NFS clients.  The contents of the file are  maintained  by  the  server's
+       system administrator.
+
+
+       The file format is similar to the SunOS exports file. Each line contains  an  export  point
+       and  a whitespace-separated list of clients allowed to mount the file system at that point.
+       Each listed client may be immediately followed by a parenthesized, comma-separated list  of
+       export  options for that client. No whitespace is permitted between a client and its option
+       list.
+
+
+        # export point = local file path
+
+       To apply changes to this file, run exportfs -ra or restart the NFS server.
+
+   Machine Name Formats
+       NFS clients may be specified in a number of ways:
+
+       wildcards
+              Machine names may contain the wildcard characters * and ?, or may contain  character
+              class  lists  within  [square  brackets].  This can be used to make the exports file
+              more compact; for instance, *.cs.foo.edu matches all hosts in the domain cs.foo.edu.
+              As  these  characters  also  match the dots in a domain name, the given pattern will
+              also match all hosts within any subdomain of cs.foo.edu.
+               
+   General Options
+       exportfs understands the following export options:
+
+       rw     Allow both read and write requests on this NFS volume. The default  is  to  disallow
+              any  request  which changes the filesystem.  This can also be made explicit by using
+              the ro option.
+
+
+   User ID Mapping
+       nfsd bases its access control to files on the server machine on the uid and gid provided in
+       each  NFS  RPC  request. The normal behavior a user would expect is that she can access her
+       files on the server just as she would on a normal file system. This requires that the  same
+       uids  and  gids are used on the client and the server machine. This is not always true, nor
+       is it always desirable.
+
+       Very often, it is not desirable that the root user on a client machine is also  treated  as
+       root  when  accessing  files  on the NFS server. To this end, uid 0 is normally mapped to a
+       different id: the so-called anonymous or nobody uid. This mode of operation  (called  `root
+       squashing') is the default, and can be turned off with no_root_squash.
+
+        # to restrict remote root user's access on NFS server, option no_root_squas is used
+
+
+       By  default,  exportfs chooses a uid and gid of 65534 for squashed access. These values can
+       also be overridden by the anonuid and anongid options.   Finally,  you  can  map  all  user
+       requests to the anonymous uid by specifying the all_squash option.
+
+
+       Here's the complete list of mapping options:
+
+       root_squash
+              Map  requests from uid/gid 0 to the anonymous uid/gid. Note that this does not apply
+              to any other uids or gids that might be equally sensitive, such as user bin or group
+              staff.
+
+       no_root_squash
+              Turn off root squashing. This option is mainly useful for diskless clients.
+
+       all_squash
+              Map  all  uids  and  gids  to the anonymous user. Useful for NFS-exported public FTP
+              directories, news spool directories, etc.  The  opposite  option  is  no_all_squash,
+              which is the default setting.
+
+
+# install and start NFS service
+
+# service to be installed: nfs-utils
+# service to be started: nfs-server
+
+$ yum install -y nfs-utils
+$ systemctl enable --now nfs-server
+
+
+[root@localhost ~]# yum whatprovides */nfs
+nfs-utils-1:2.3.3-35.el8.x86_64 : NFS utilities and supporting clients and daemons for the kernel NFS
+                                : server
+Repo        : @System
+Matched from:
+Filename    : /var/lib/nfs
+
+[root@localhost ~]# systemctl list-units | grep nfs
+found nfs-client. Please install nfs-server instead                                                                                    
+
+
+# config firewall
+
+# firewall services to be added: nfs rpc-bind mountd
+
+$ firewall-cmd --add-service nfs --permanent
+$ firewall-cmd --add-service rpc-bind --permanent  # Remote Procedure Call (RPC) service
+$ firewall-cmd --add-service mountd --permanent
+
+$ firewall-cmd --reload
+
+FIREWALL-CMD(1)                            firewall-cmd                            FIREWALL-CMD(1)
+
+NAME
+       firewall-cmd - firewalld command line client
+
+SYNOPSIS
+       firewall-cmd [OPTIONS...]
+
+DESCRIPTION
+       firewall-cmd is the command line client of the firewalld daemon. It provides interface to
+       manage runtime and permanent configuration.
+
+       The runtime configuration in firewalld is separated from the permanent configuration. This
+       means that things can get changed in the runtime or permanent configuration.
+
+
+       [--permanent] --get-services
+           Print predefined services as a space separated list.
+
+       [--permanent] [--zone=zone] --list-services
+           List services added for zone as a space separated list. If zone is omitted, default
+           zone will be used.
+           
+   Service Options
+       
+       Options in this section affect only one particular service.
+
+       [--permanent] --info-service=service
+           Print information about the service service. The output format is:
+
+               service
+                 ports: port1 ..
+                 protocols: protocol1 ..
+                 source-ports: source-port1 ..
+                 helpers: helper1 ..
+                 destination: ipv1:address1 ..
+
+firewall-cmd --get-services | grep rpc    => rpc-bind and a few other things
+firewall-cmd --get-services | grep nfs    => nfs
+firewall-cmd --get-services | grep mount  => mountd
+
+remote procedure call (RPC)
+
+In distributed computing, a remote procedure call (RPC) is when a computer program causes a procedure (subroutine) to execute in a different address space (commonly on another computer on a shared network), which is coded as if it were a normal (local) procedure call, without the programmer explicitly coding the details for the remote interaction. 
+
+That is, the programmer writes essentially the same code whether the subroutine is local to the executing program, or remote. This is a form of client–server interaction (caller is client, executor is server), typically implemented via a request–response message-passing system
+
+
+[root@localhost ~]# firewall-cmd --info-service rpc-bind 
+rpc-bind
+  ports: 111/tcp 111/udp
+  protocols: 
+  source-ports: 
+  modules: 
+  destination: 
+  includes: 
+  helpers: 
+[root@localhost ~]# firewall-cmd --info-service nfs
+nfs
+  ports: 2049/tcp
+  protocols: 
+  source-ports: 
+  modules: 
+  destination: 
+  includes: 
+  helpers: 
+[root@localhost ~]# firewall-cmd --info-service mountd
+mountd
+  ports: 20048/tcp 20048/udp
+  protocols: 
+  source-ports: 
+  modules: 
+  destination: 
+  includes: 
+  helpers: 
+
+
+On NFS client - server1
+
+# discover which share is available
+1. root mount: mount the root directory of NFS server, under the mount point, you'll only see the shares that you have access to.
+
+2. showmount -e nfsserver
+It require extra firewall setting. Because showmount depends on portmapper service, which users random UDP ports. firewalld nfs service open port 2049 only. It doesn't allow portmapper service.
+
+If the traffic is rejected by firewall, it returns nothing.
+
+
+
+
+# install the RPM packages that contains showmount 
+# it can be skipped if you use root mount
+$ yum instal -y nfs-utils
+
+showmount -e 192.168.219.133
+[root@localhost ~]# showmount -e 192.168.219.133
+clnt_create: RPC: Program not registered
+
+
+# mount the remote file system to local
+# it root mounts everything from the remote but only visible files are accessible
+$ mount server2.example.con:/ /mnt
+
+
+# test
+$ mount | grep server2
+$ ls /mnt

@@ -3,6 +3,10 @@ autoFS(auto file system) service: mount the device upon an attempt to access it.
 $ yum whatprovides */autofs
 autofs-1:5.1.4-43.el8.x86_64 : A tool for automatically mounting and unmounting filesystems
 
+$ yum whatprovides */automount
+autofs-1:5.1.4-43.el8.x86_64 : A tool for automatically mounting and unmounting filesystems
+
+
 $ yum install -y autofs
 
 [root@localhost ~]# man -k autofs
@@ -16,6 +20,9 @@ automount (8)        - manage autofs mount points
 
 # how to configure automount for NFS
 
+1. master file /etc/auto.master defines the mapper file
+2. secondary mapper file as directed by the master file defines mount
+
 1. direct map
 
 $ mkdir /autodir
@@ -24,9 +31,15 @@ $ mkdir /autodir
 $ vi /ect/auto.master
 /- /ect/auto.master.d/auto.dir
 
+# mount point: /-  
+# mapper file: /ect/auto.master.d/auto.dir
+
 # specify mount detailes in the mapper file
 $ vi /ect/auto.master.d/auto.dir
 /autodir server20:/common
+
+# mount point: /autodir
+# NFS path: server20:/common
 
 # start autoFS service
 $ systemctl enable --now autofs
@@ -70,6 +83,12 @@ Anything under server20:/home will be mounted under local path /nfshome
 *: local path, anything
 &: the matching item in the remote server
 
+
+
+
+
+
+
 AUTO.MASTER(5)                          File Formats Manual                         AUTO.MASTER(5)
 
 NAME
@@ -95,3 +114,19 @@ EXAMPLE
        mnt.map.  All accesses to paths in the map auto.data will trigger mounts when they are  ac‐
        cessed  and  the Name Service Switch configuration will be used to locate the source of the
        map auto.data.
+       
+       
+       For direct maps the mount point is always specified as:
+
+       /-
+
+       and  the key used within the direct map is the full path to the mount point. The direct map
+       may have multiple entries in the master map.
+
+       For indirect maps access is by using the path scheme:
+
+       /mount-point/key
+
+       where mount-point is one of the entries listed in the master map. The key is a  single  di‐
+       rectory  component  and  is matched against entries in the map given in the entry (See aut‐
+       ofs(5)).
