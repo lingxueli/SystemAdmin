@@ -1,0 +1,62 @@
+# how to manage local time
+DATE(1)                                    User Commands                                   DATE(1)
+
+NAME
+       date - print or set the system date and time
+
+SYNOPSIS
+       date [OPTION]... [+FORMAT]
+       date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
+
+DESCRIPTION
+       Display the current time in the given FORMAT, or set the system date.
+
+       Mandatory arguments to long options are mandatory for short options too.
+
+       -d, --date=STRING
+              display time described by STRING, not 'now'
+
+       -s, --set=STRING
+              set time described by STRING
+
+       FORMAT controls the output.  Interpreted sequences are:
+
+       %%     a literal %
+
+       %d     day of month (e.g., 01)
+       %D     date; same as %m/%d/%y
+       %m     month (01..12)
+       %Y     year
+
+DATE STRING
+       The  --date=STRING  is a mostly free format human readable date string such as "Sun, 29 Feb
+       2004 16:21:42 -0800" or "2004-02-29 16:21:42" or even "next Thursday".  A date  string  may
+       contain items indicating calendar date, time of day, time zone, day of week, relative time,
+       relative date, and numbers.  An empty string indicates the beginning of the day.  The  date
+       string  format is more complex than is easily documented here but is fully described in the
+       info documentation.
+
+EXAMPLES
+       Convert seconds since the epoch (1970-01-01 UTC) to a date
+
+              $ date --date='@2147483647'
+
+       Show the time on the west coast of the US (use tzselect(1) to find TZ)
+
+              $ TZ='America/Los_Angeles' date
+
+       Show the local time for 9AM next Friday on the west coast of the US
+
+              $ date --date='TZ="America/Los_Angeles" 09:00 next Fri'
+
+
+
+# show the current time in a controlled format
+[root@localhost ~]# date +%d/%m/%y
+16/03/21
+[root@localhost ~]# date +%d-%m-%y
+16-03-21
+
+# set current time to be 16:03
+$ date -s 16:03
+

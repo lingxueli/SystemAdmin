@@ -1,3 +1,7 @@
+# a powerful tool to manage software time
+# timedatectl talks to chronyd process
+
+
 chrony is an implementation of the Network Time Protocol. It's to get the right time from the internet
 
 CHRONYD(8)                             System Administration                            CHRONYD(8)
@@ -28,6 +32,19 @@ DESCRIPTION
        This file configures the chronyd daemon. The compiled-in location is /etc/chrony.conf, but
        other locations can be specified on the chronyd command line with the -f option.
 
+           stratum stratum
+               This option sets the stratum of the server which will be reported to clients when
+               the local reference is active. The specified value is in the range 1 through 15,
+               and the default value is 10. It should be larger than the maximum expected stratum
+               in the network when external NTP servers are accessible.
+
+               Stratum 1 indicates a computer that has a true real-time reference directly
+               connected to it (e.g. GPS, atomic clock, etc.), such computers are expected to be
+               very close to real time. Stratum 2 computers are those which have a stratum 1
+               server; stratum 3 computers have a stratum 2 server and so on. A value of 10
+               indicates that the clock is so many hops away from a reference clock that its time
+               is fairly unreliable.
+
 
 DIRECTIVES
    Time sources
@@ -51,8 +68,6 @@ DIRECTIVES
            driftfile /var/lib/chrony/drift
            dumpdir /var/run/chrony
 
-# a powerful tool to manage software time
-# timedatectl talks to chronyd process
 
 timedatectl (1)      - Control the system time and date
 
@@ -156,107 +171,7 @@ SEE ALSO
        systemd-timesyncd.service(8), systemd-firstboot(1)
 
 
-# /etc/chrony.conf contains a list of NTP servers on the Internet that should be contacted.
-# run this command to turn on the NTP service
-$ timedatectl set-ntp 1
 
-
-
-# how to manage local time
-DATE(1)                                    User Commands                                   DATE(1)
-
-NAME
-       date - print or set the system date and time
-
-SYNOPSIS
-       date [OPTION]... [+FORMAT]
-       date [-u|--utc|--universal] [MMDDhhmm[[CC]YY][.ss]]
-
-DESCRIPTION
-       Display the current time in the given FORMAT, or set the system date.
-
-       Mandatory arguments to long options are mandatory for short options too.
-
-       -d, --date=STRING
-              display time described by STRING, not 'now'
-
-       -s, --set=STRING
-              set time described by STRING
-
-       FORMAT controls the output.  Interpreted sequences are:
-
-       %%     a literal %
-
-       %d     day of month (e.g., 01)
-       %D     date; same as %m/%d/%y
-       %m     month (01..12)
-       %Y     year
-
-DATE STRING
-       The  --date=STRING  is a mostly free format human readable date string such as "Sun, 29 Feb
-       2004 16:21:42 -0800" or "2004-02-29 16:21:42" or even "next Thursday".  A date  string  may
-       contain items indicating calendar date, time of day, time zone, day of week, relative time,
-       relative date, and numbers.  An empty string indicates the beginning of the day.  The  date
-       string  format is more complex than is easily documented here but is fully described in the
-       info documentation.
-
-EXAMPLES
-       Convert seconds since the epoch (1970-01-01 UTC) to a date
-
-              $ date --date='@2147483647'
-
-       Show the time on the west coast of the US (use tzselect(1) to find TZ)
-
-              $ TZ='America/Los_Angeles' date
-
-       Show the local time for 9AM next Friday on the west coast of the US
-
-              $ date --date='TZ="America/Los_Angeles" 09:00 next Fri'
-
-# epoch time represents the secs passed since 1/1/1979 in UTC
-# convert epoch time stamp to human time
-# @2147483647 is the epoch string represents the secs passed since 1/1/1979 in UTC
-
-[root@localhost ~]# date --date='@2147483647'
-Mon Jan 18 20:14:07 MST 2038
-
-[root@localhost ~]# date --date='@0'
-Wed Dec 31 17:00:00 MST 1969
-
-# show the current time in a controlled format
-[root@localhost ~]# date +%d/%m/%y
-16/03/21
-[root@localhost ~]# date +%d-%m-%y
-16-03-21
-
-# set current time to be 16:03
-$ date -s 16:03
-
-
-# how to manage hardware time
-HWCLOCK(8)                             System Administration                            HWCLOCK(8)
-
-NAME
-       hwclock - time clocks utility
-
-SYNOPSIS
-       hwclock [function] [option...]
-
-DESCRIPTION
-       hwclock  is an administration tool for the time clocks.  It can: display the Hardware Clock
-       time; set the Hardware Clock to a specified time; set the Hardware Clock  from  the  System
-       Clock;  set  the System Clock from the Hardware Clock; compensate for Hardware Clock drift;
-       correct the System Clock timescale; set the kernel's timezone,  NTP  timescale,  and  epoch
-       (Alpha only); and predict future Hardware Clock values based on its drift rate.
-
-       -s, --hctosys
-              Set the System Clock from the Hardware Clock.  The time read from the Hardware Clock
-              is compensated to account for systematic drift before using it  to  set  the  System
-              Clock.  See the discussion below, under The Adjust Function.
-       -w, --systohc
-              Set the Hardware Clock from the System Clock, and update the timestamps in /etc/adj‐
-              time.  With the --update-drift option also (re)calculate the drift factor.   Try  it
-              without the option if --systohc fails.  See --update-drift below.
 
 
 # a few important commands of timedatectl 
@@ -309,4 +224,3 @@ COMMANDS
            existed service listed in the environment variable $SYSTEMD_TIMEDATED_NTP_SERVICES of
            systemd-timedated.service. If the argument is false, then this disables and stops the
            all services listed in $SYSTEMD_TIMEDATED_NTP_SERVICES.
-
