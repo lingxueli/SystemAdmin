@@ -4,11 +4,26 @@
 [lisa@localhost ~]$ sudo useradd conuser1
 [lisa@localhost ~]$ echo conuser1 | sudo passwd --stdin conuser1
 
+PASSWD(1)                                 User utilities                                PASSWD(1)
+
+NAME
+       passwd - update user's authentication tokens
+
+SYNOPSIS
+       passwd [-k] [-l] [-u [-f]] [-d] [-e] [-n mindays] [-x maxdays] [-w warndays] [-i inactive‐
+       days] [-S] [--stdin] [-?] [--usage] [username]
+
+       --stdin
+              This option is used to indicate that passwd should read the new password from stan‐
+              dard input, which can be a pipe.
+
 [lisa@localhost ~]$ su conuser1
 
 # for rootless container, the directory to store the systemd unit file is different from what's used by a root container
 [conuser1@localhost ~]$ mkdir ~/.config/systemd/user -p
 
+       -p, --parents
+              no error if existing, make parent directories as needed
 
 # launch the container in detach mode
 [conuser1@localhost ~]$ podman run -dt --name rootless-container ubi8
@@ -18,11 +33,11 @@ ERRO[0000] cannot mkdir /run/user/1000/libpod: mkdir /run/user/1000/libpod: perm
 # to create a directory, you need the write permission to the parent directory
 [conuser1@localhost ~]$ ls -ld /run/user/1000
 drwx------. 13 lisa lisa 340 Mar 20 20:29 /run/user/1000
+
 # close the previous terminal window where the login user is lisa
 # restart the terminal session, login as conuser1
 
-
-
+# launch the container in detach mode again
 [conuser1@localhost ~]$ podman run -dt --name rootless-container ubi8
 Completed short name "ubi8" with unqualified-search registries (origin: /etc/containers/registries.conf)
 Trying to pull registry.access.redhat.com/ubi8:latest...
@@ -107,7 +122,7 @@ CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
            Talk to the service manager of the calling user, rather than the
            service manager of the system.
            
-# reload systemd manager
+# reload systemd manager for the current user not the whole system
 
 [conuser1@localhost ~]$ systemctl --user daemon-reload
 Failed to connect to bus: No such file or directory
@@ -121,7 +136,7 @@ In computing, D-Bus is a Message-oriented middleware mechanism that allows commu
 [conuser1@localhost ~]$ systemctl --user daemon-reload
 
 
-# start a new container based on systemd config file
+# start a new container from systemd for the current user
 
 [conuser1@localhost ~]$ systemctl --user enable --now root-container.service
 [conuser1@localhost ~]$ systemctl --user status rootless-container
@@ -156,6 +171,8 @@ CONTAINER ID  IMAGE                                   COMMAND    CREATED        
 # features of rootless container
 
 # user lingering: when the user exits, the system spawns a user manager and keeps it running in the backgroud. The service initiated by that users are still running, as if the user is still active.
+
+# to turn on the user lingering, use the login manager - loginctl
 
 LOGINCTL(1)                        loginctl                        LOGINCTL(1)
 
@@ -212,6 +229,7 @@ IdleSinceHint=0
 IdleSinceHintMonotonic=0
 Linger=yes      ### user lingering is enabled
 
+# when user lingering is enabled, the container remains active after the user logs off.
 
 # restart systemd service to recreate the container
 [conuser1@localhost ~]$ systemctl --user restart rootless-container.service
@@ -237,5 +255,3 @@ Mar 20 21:39:15 localhost.localdomain systemd[2452]: Stopped Podman container-r>
 Mar 20 21:39:15 localhost.localdomain systemd[2452]: Starting Podman container->
 Mar 20 21:39:16 localhost.localdomain podman[3706]: 9499589f0974c235308fd614cc9>
 Mar 20 21:39:16 localhost.localdomain systemd[2452]: Started Podman container-r>
-
-
