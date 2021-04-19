@@ -1,38 +1,51 @@
-# login to the registry and download the container image
+Port mapping:
+
+A containerized application/database may need to talk to other application/database running in a different container on the same or different host. Port mappping is used to specify the network port used between the system host and container.
+
+Normal user cannot map a host port below 1024 to a container port.
+
+
+Example:
+
+Containerized Apache web server needs to talk to a mysql database instance running in a different container.
+
+
+# search for the container; login to the registry and download the container image
 
 [root@localhost ~]# podman search httpd | grep rhel7 | grep redhat | less
 
 redhat.io   registry.redhat.io/rhscl/httpd-24-rhel7                                      Apache HTTP 2.4 Server                           0                 
 
-
-
-       │podman-login(1)       │ Login to a container registry.          │
-
-# uses red hat credentials
 [root@localhost ~]# podman login registry.redhat.io
 Username: lingxue.li1203	
 Password: 
 Login Succeeded!
 
-       │podman-pull(1)        │ Pull an image from a registry.          │
+       │podman-login(1)       │ Login to a container registry.          │
+
 
 [root@localhost ~]# podman pull registry.redhat.io/rhscl/httpd-24-rhel7 
+
+       │podman-pull(1)        │ Pull an image from a registry.          │
+
+# container is not running
 [root@localhost ~]# podman ps
 CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+# image is downloaded
 [root@localhost ~]# podman images
 REPOSITORY                               TAG     IMAGE ID      CREATED     SIZE
 registry.redhat.io/rhscl/httpd-24-rhel7  latest  7f619078de75  3 days ago  329 MB
-[root@localhost ~]# podman image
-Error: missing command 'podman image COMMAND'
-Try 'podman image --help' for more information.
 
 
 # run the container as a deamon - detached mode
-# port mapping: host port 10000 map to container port 8000
-# container name: rhel7-port-map
-# image name: httpd-24-rhel7
+
 [root@localhost ~]# podman run -dp 10000:8000 --name rhel7-port-map httpd-24-rhel7
 1c15c7f2307e991412f6b71e06a99b283d99e3c013d378710b91cb47a4613eff
+
+# port mapping: host port 10000 map to container port 8000
+# name assign to the running container: rhel7-port-map
+# image to run: httpd-24-rhel7
 
 podman-run(1)                                   General Commands Manual                                  podman-run(1)
 
@@ -85,8 +98,10 @@ SYNOPSIS
 
        Use podman port to see the actual mapping: podman port $CONTAINER $CONTAINERPORT.
 
-# verify
-# port mapping: 0.0.0.0:10000->8000/tcp
+# confirm
+# port mapping:
+# phost port 10000 map to container port 8000
+# 0.0.0.0:10000->8000/tcp
 [root@localhost ~]# podman ps
 CONTAINER ID  IMAGE           COMMAND               CREATED        STATUS            PORTS                    NAMES
 1c15c7f2307e  httpd-24-rhel7  /usr/bin/run-http...  9 minutes ago  Up 9 minutes ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
@@ -94,5 +109,10 @@ CONTAINER ID  IMAGE           COMMAND               CREATED        STATUS       
 
 [root@localhost ~]# podman port rhel7-port-map
 8000/tcp -> 0.0.0.0:10000
+
+
+       │podman-port(1)        │ List port mappings for a         │
+       │                      │ container.                       │
+
 
 inbound web traffic on host port 10000 will be redirected to the container

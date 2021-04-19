@@ -1,0 +1,30 @@
+OCI-compliant:
+
+open container initiative(OCI) is the industry standard specifications for container images.
+
+An OCI compliant tool, such as poman (pod manager) and docker, can be used to execute and manage the OCI-compliant container images.
+
+
+container naming conventions
+i.e. container FQIN (fully qualified image name)
+
+storage location (registry_name)
+owner or organization name (user_name)
+a unique repository name (repo_name)
+optional version (tag)
+
+registry_name/user_name/repo_name:tag
+
+
+
+common registry name:
+
+red hat container catalog - registry.redhat.io or registry.access.redhat.com
+red hat quay - quay.io for private containers
+
+
+Root container vs rootless container
+
+Root container is launched by root user. This gives container full access to the administrative functions. However, the security is compromised if the container is misconfigured. 
+
+Rootless container refers to the ability for an unprivileged user to create, run and manage containers without the compromise of the security. They add a new security layer; even if the container engine, runtime, or orchestrator is compromised, the attacker won’t gain root privileges on the host. With rootless containers, you can run a containerized process as any other process without needing to escalate any user’s privileges. 

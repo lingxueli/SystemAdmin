@@ -1,3 +1,5 @@
+ENV variables may be consumed by containerized applications for proper operation.
+
 ENV variables needs to be passed to containers at the time of launching the container
 
 $ man podman-run
@@ -43,13 +45,13 @@ Copying config 4199acc83c done
 Writing manifest to image destination
 Storing signatures
 
-# verify
+# verify in the container terminal session
 
 [root@b16057273e9b /]# echo $HISTSIZE $SECRET
 500 secret123
 
 
-# clean up
+# clean up, stop and remove container
 
 [root@localhost ~]# podman stop rhel8-env-vars
 b16057273e9bd80726a171c5de2ef581f2ff8568864232cd6965aeac0bf62cc3

@@ -1,3 +1,6 @@
+
+
+
 podman(1)                                       General Commands Manual                                      podman(1)
 
 NAME
@@ -41,7 +44,7 @@ COMMANDS
        │podman-version(1)     │ Display the Podman version information. │
 
 
-
+# Displays Podman related system information
 [root@localhost ~]# podman info | less
 host:
   arch: amd64
@@ -70,7 +73,7 @@ host:
   os: linux
   remoteSocket:
     path: /run/podman/podman.sock
-  rootless: false                    ### running the command as root user
+  rootless: false                    ### run podman as root user only
   slirp4netns:
     executable: ""
     package: ""
@@ -80,7 +83,7 @@ host:
   uptime: 33h 21m 45.37s (Approximately 1.38 days)
 
 
-registries:
+registries:                          ### registries used by the container tool such as podman
   search:
   - registry.access.redhat.com
   - registry.redhat.io
@@ -88,13 +91,49 @@ registries:
 
 
 store:
-  configFile: /etc/containers/storage.conf     ### running the command as root user
+  configFile: /etc/containers/storage.conf  # it stores the config data used by container tools
   containerStore:
     number: 0
     paused: 0
     running: 0
     stopped: 0
 
+
+[root@localhost man]# cat /etc/containers/storage.conf
+# This file is is the configuration file for all tools
+# that use the containers/storage library.
+# See man 5 containers-storage.conf for more information
+# The "container storage" table contains all of the server options.
+[storage]
+
+# Default Storage Driver
+driver = "overlay"
+
+# Temporary storage location
+runroot = "/var/run/containers/storage"
+
+# Primary Read/Write location of container storage
+graphroot = "/var/lib/containers/storage"
+
+# Storage path for rootless users
+#
+# rootless_storage_path = "$HOME/.local/share/containers/storage"
+...
+
+containers-storage.conf(5)         May 2017         containers-storage.conf(5)
+
+NAME
+       storage.conf - Syntax of Container Storage configuration file
+
+DESCRIPTION
+       The STORAGE configuration file specifies all of the available container
+       storage options for tools using shared container storage, but in a TOML
+       format that can be more easily modified and versioned.
+...
+
+
+
+# if you use a rootless container, the config is slightly different
 
 [lisa@localhost ~]$ podman info | grep rootless
   rootless: true

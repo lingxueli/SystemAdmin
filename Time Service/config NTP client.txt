@@ -24,7 +24,7 @@ NTPSynchronized=yes
 TimeUSec=Mon 2021-01-25 00:06:39 MST
 RTCTimeUSec=Mon 2021-01-25 00:06:39 MST
 
-# this config file specify the servers that should be used for NTP time sync
+# In chronyd config file specify the servers that should be used for NTP time sync
 [root@localhost /]# vim /etc/chrony.conf
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
@@ -61,7 +61,30 @@ RTCTimeUSec=Mon 2021-01-25 01:08:21 MST
 
 $ chronyc sources 
 
-
 # set up name resolution to server1.abc.com if the time server exists
 # if name resolution is not set, use IP address instead
 /etc/hosts
+
+
+
+CHRONYC(1)                                  User manual                                 CHRONYC(1)
+
+NAME
+       chronyc - command-line interface for chrony daemon
+
+SYNOPSIS
+       chronyc [OPTION]... [COMMAND]...
+
+DESCRIPTION
+       chronyc is a command-line interface program which can be used to monitor chronyd’s
+       performance and to change various operating parameters whilst it is running.
+
+       If no commands are specified on the command line, chronyc will expect input from the user.
+       The prompt chronyc> will be displayed when it is being run from a terminal. If chronyc’s
+       input or output are redirected from or to a file, the prompt is not shown.
+
+
+   Time sources
+       sources [-v]
+           This command displays information about the current time sources that chronyd is
+           accessing.

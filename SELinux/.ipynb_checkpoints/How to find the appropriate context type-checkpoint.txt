@@ -11,160 +11,13 @@ How to find the appropriate context type
 
 How to install the man pages of SELinux-specific man page i.e. _selinux
 
-By default these are not provided. You will need to install the package that provides SELinux policy - "sepolicy"
-from the package, use the tool that generates the man page based on sepolicy.
-Sync man db.
+By default these are not provided. You will need to 
+1. install the package that provides SELinux policy - "sepolicy"
+2. Then generates the man page based on sepolicy.
+3. Sync man db.
 
 
-1. by default, the manauls are not provided. Output is very short.  
-[root@localhost ~]# man -k _selinux
-pam_selinux (8)      - PAM module to set the default security context
-
-2. install the packages that provides sepolicy
-
-[root@localhost ~]# yum provides */sepolicy
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 23:30:14 ago on Tue 09 Mar 2021 11:46:12 PM MST.
-policycoreutils-devel-2.9-9.el8.i686 : SELinux policy core policy devel utilities
-Repo        : baseos
-Matched from:
-Filename    : /usr/bin/sepolicy
-Filename    : /usr/share/bash-completion/completions/sepolicy
-
-$ yum -y install policycoreutils-devel
-
-
-3. generate the man pages 
-
-[root@localhost ~]# man -k sepolicy
-sepolicy (8)         - SELinux Policy Inspection tool
-sepolicy-booleans (8) - Query SELinux Policy to see description of booleans
-sepolicy-communicate (8) - Generate a report showing if two SELinux Policy Domains can commun...
-sepolicy-generate (8) - Generate an initial SELinux policy module template.
-sepolicy-interface (8) - Print interface information based on the installed SELinux Policy
-sepolicy-manpage (8) - Generate a man page based on the installed SELinux Policy
-sepolicy-network (8) - Examine the SELinux Policy and generate a network report
-sepolicy-transition (8) - Examine the SELinux Policy and generate a process transition report
-
-
-sepolicy(8)                                                                       sepolicy(8)
-
-NAME
-       sepolicy - SELinux Policy Inspection tool
-
-SYNOPSIS
-       sepolicy  [-h] [-P policy_path ] {booleans,communicate,generate,interface,manpage,net‐
-       work,transition} OPTIONS
-
-       Arguments:
-       manpage
-       Generate SELinux man pages sepolicy-manpage(8)
-       
-DESCRIPTION
-       sepolicy is a tools set that will query the installed SELinux policy and generate use‐
-       ful reports, man pages, or even new policy modules.  See  the  argument  specific  man
-       pages for options and descriptions.
-
-OPTIONS
-       -P, --policy
-              Alternate   policy   to   analyze.  (Defaults  to  currently  installed  policy
-              /sys/fs/selinux/policy)
-
-       -h, --help
-              Display help message
-
-
-sepolicy-manpage(8)                                                       sepolicy-manpage(8)
-
-NAME
-       sepolicy-manpage - Generate a man page based on the installed SELinux Policy
-
-SYNOPSIS
-       sepolicy manpage [-w] [-h] [-p PATH ] [-r ROOTDIR ] [-a | -d ]
-
-DESCRIPTION
-       Use sepolicy manpage to generate manpages based on SELinux Policy.
-
-OPTIONS
-       -a, --all
-              Generate Man Pages for All Domains
-
-       -d, --domain
-              Generate a Man Page for the specified domain. (Supports multiple commands)
-
-       -h, --help
-              Display help message
-
-       -p, --path
-              Specify the directory to store the created man pages. (Default to /tmp)
-
-       -r, --root
-              Specify alternate root directory to generate man pages from. (Default to /)
-
-       -w, --web
-              Generate an additional HTML man pages for the specified domain(s).
-
-
-# this command generates man pages from sepolicy
-[root@localhost ~]# sepolicy manpage -p /usr/share/man/man8 -a
-
-$ man man
-       The table below shows the section numbers of the manual followed by the types of pages they contain.
-
-       1   Executable programs or shell commands
-       2   System calls (functions provided by the kernel)
-       3   Library calls (functions within program libraries)
-       4   Special files (usually found in /dev)
-       5   File formats and conventions eg /etc/passwd
-       6   Games
-       7   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)
-       8   System administration commands (usually only for root)
-       9   Kernel routines [Non standard]
-
-FILES
-       /etc/man_db.conf
-              man-db configuration file.
-
-       /usr/share/man
-              A global manual page hierarchy.
-
-       /usr/share/man/index.(bt|db|dir|pag)
-              A traditional global index database cache.
-
-       /var/cache/man/index.(bt|db|dir|pag)
-              An FHS compliant global index database cache.
-
-
-
-[root@localhost ~]# man -k _selinux
-pam_selinux (8)      - PAM module to set the default security context
-# it's not changed yet
-
-4. syn man db with all the man pages that are installed
-$  mandb
-1 man subdirectory contained newer manual pages.
-875 manual pages were added.
-0 stray cats were added.
-0 old database entries were purged.
-
-MANDB(8)                              Manual pager utils                             MANDB(8)
-
-NAME
-       mandb - create or update the manual page index caches
-
-SYNOPSIS
-       mandb [-dqsucpt?V] [-C file] [manpath]
-       mandb [-dqsut] [-C file] -f filename ...
-
-
-[root@localhost ~]# man -k _selinux | wc
-    863    9453   73529
-
-5. find the man page that documents SELinux settings for httpd service
+After it's installed, find the man page that documents SELinux settings for httpd service
 [root@localhost ~]# man -k _selinux | grep http
 apache_selinux (8)   - Security Enhanced Linux Policy for the httpd processes
 httpd_helper_selinux (8) - Security Enhanced Linux Policy for the httpd_helper processes
@@ -176,3 +29,20 @@ httpd_suexec_selinux (8) - Security Enhanced Linux Policy for the httpd_suexec p
 httpd_sys_script_selinux (8) - Security Enhanced Linux Policy for the httpd_sys_script processes
 httpd_unconfined_script_selinux (8) - Security Enhanced Linux Policy for the httpd_unconfined...
 httpd_user_script_selinux (8) - Security Enhanced Linux Policy for the httpd_user_script proc...
+
+httpd_selinux(8)             SELinux Policy httpd             httpd_selinux(8)
+
+NAME
+       httpd_selinux - Security Enhanced Linux Policy for the httpd processes
+
+DESCRIPTION
+       Security-Enhanced Linux secures the httpd processes via flexible manda‐
+       tory access control.
+
+       The httpd processes execute with the  httpd_t  SELinux  type.  You  can
+       check  if  you have these processes running by executing the ps command
+       with the -Z qualifier.
+
+       For example:
+
+       ps -eZ | grep httpd_t

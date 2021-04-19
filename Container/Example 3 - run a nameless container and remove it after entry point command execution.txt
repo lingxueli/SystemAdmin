@@ -18,7 +18,7 @@ SYNOPSIS
    --rmi=true|false
        After exit of the container, remove the image unless another container is using it. The default is false.
 
-
+# it's nameless because there's no name assigned to the local container using the --name option
 [lisa@localhost ~]$ podman run --rm ubi7 ls
 Completed short name "ubi7" with unqualified-search registries (origin: /home/lisa/.config/containers/registries.conf)
 Trying to pull registry.access.redhat.com/ubi7:latest...
@@ -48,5 +48,11 @@ tmp
 usr
 var
 
+
+
 [lisa@localhost ~]$ podman ps
 CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+       │podman-ps(1)          │ Prints out information about     │
+       │                      │ containers.                      │
+       ├──────────────────────┼──────────────────────────────────┤

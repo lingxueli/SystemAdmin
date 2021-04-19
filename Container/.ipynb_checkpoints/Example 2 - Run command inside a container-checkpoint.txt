@@ -48,18 +48,6 @@ DESCRIPTION
        will generate a random string name. The name is useful any place you need to identify a container.  This works
        for both background and foreground containers.
 
-# This command downloads and runs the lastest version of that image
-# no FQIN(Full qualified image name) is given. It searches through the registries provided in config file and pull the first image it found.
-
-# ubi8 - Red Hat Universal Base Image 8
-# Red Hat Universal Base Images (UBI) are OCI-compliant container base operating system images.
-# It includes a set of three base images (Standard, Minimal, and Init) to provide optimum starting points for a variety of use cases and are freely redistributable.
-
-
-
-# -t: open a terminal for interaction (-i)
-# it opens a terminal session inside the container as root user to interact with the containerized RHEL 8 OS.
-# hostname 3b9a2aa74f2b is the container ID that is auto-generated.
 
 [lisa@localhost ~]$ podman run -ti --name rhel8-base-os ubi8
 Completed short name "ubi8" with unqualified-search registries (origin: /home/lisa/.config/containers/registries.conf)
@@ -70,7 +58,19 @@ Copying blob fdb393d8227c done
 Copying config 4199acc83c done  
 Writing manifest to image destination
 Storing signatures
-[root@3b9a2aa74f2b /]# 
+
+# This command downloads and runs the lastest version of that image
+# When no FQIN(Full qualified image name) is given, it searches through the registries provided in config file and pull the first image it found.
+
+# ubi8 - Red Hat Universal Base Image 8
+# Red Hat Universal Base Images (UBI) are OCI-compliant container base operating system images.
+# It includes a set of three base images (Standard, Minimal, and Init) to provide optimum starting points for a variety of use cases and are freely redistributable.
+
+
+# -t: open a terminal for interaction (-i)
+# it opens a terminal session inside the container as root user to interact with the containerized RHEL 8 OS.
+# hostname 3b9a2aa74f2b is the container ID that is auto-generated.
+
 
 
 # run a few commands inside the container. Verify it's working
@@ -105,9 +105,16 @@ Linux 3b9a2aa74f2b 4.18.0-240.15.1.el8_3.x86_64 #1 SMP Mon Mar 1 17:16:16 UTC 20
 Red Hat Enterprise Linux release 8.3 (Ootpa)
 [root@3b9a2aa74f2b /]# date
 Thu Mar 18 04:58:59 UTC 2021
-# close the terminal session
+
+
+# close the terminal session inside the container
 [root@3b9a2aa74f2b /]# exit
+
 exit
+
+# the terminal is closed; the container is running
+
+# execute the command inside the running container directly from the host
 
        ├──────────────────────┼─────────────────────────────────────────┤
        │podman-image(1)       │ Manage images.                          │
@@ -142,6 +149,7 @@ registry.access.redhat.com/ubi8  latest  4199acc83c6a  5 weeks ago  213 MB
 [lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
 Error: can only create exec sessions on running containers: container state improper
 
+# it's supposed to work. if not, restart the container
 [lisa@localhost ~]$ podman run --name rhel8-base-os ubi8
 Error: error creating container storage: the container name "rhel8-base-os" is already in use by "3b9a2aa74f2bbe9659173acd82cab2c468844dd7d679333499a171a3ba7f3f4c". You have to remove that container to be able to reuse that name.: that name is already in use
 
@@ -156,13 +164,19 @@ Error: error creating container storage: the container name "rhel8-base-os" is a
 REPOSITORY                       TAG     IMAGE ID      CREATED      SIZE
 registry.access.redhat.com/ubi8  latest  4199acc83c6a  5 weeks ago  213 MB
 
+
+# command executed as exepected
 [lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
 Red Hat Enterprise Linux release 8.3 (Ootpa)
 
-       │podman-attach(1)      │ Attach to a running container.          │
 
-# reconnect to the container
+# reconnect to the container terminal while it's running
 [lisa@localhost ~]$ podman attach rhel8-base-os
+
+
+       │podman-attach(1)      │ Attach to a running container.   │
+
+
 [root@3b9a2aa74f2b /]# 
 [root@3b9a2aa74f2b /]# exit
 exit
@@ -178,6 +192,13 @@ exit
 
        │podman-ps(1)          │ Prints out information about            │
        │                      │ containers.                             │
+       
 # confirm
 [lisa@localhost ~]$ podman ps
 CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+       │podman-ps(1)          │ Prints out information about     │
+       │                      │ containers.                      │
+       ├──────────────────────┼──────────────────────────────────┤
+
+# container is removed, image is still there? I guess

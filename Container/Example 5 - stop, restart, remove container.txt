@@ -3,6 +3,8 @@
 1c15c7f2307e991412f6b71e06a99b283d99e3c013d378710b91cb47a4613eff
 [root@localhost ~]# podman ps
 CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+# list all containers including inactive ones
 [root@localhost ~]# podman ps -a
 CONTAINER ID  IMAGE           COMMAND               CREATED         STATUS                    PORTS                    NAMES
 1c15c7f2307e  httpd-24-rhel7  /usr/bin/run-http...  33 minutes ago  Exited (0) 7 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map

@@ -1,0 +1,146 @@
+In order to install the necessary software to manage containers, you'll find the package module named "container-tools" 
+
+1. if you're using redhat, not centos, set up the subscription and repositories to access the latest version of software packages
+
+# register the system to the Red Hat Subscription Management service
+$ subscription-manager register --username
+
+# attach the system with the RHEL subscription
+$ subscription-manager attach
+
+# inspect the repositories used based on the subscription
+$ yum repolist
+
+
+# now you can access the lastest versions of the software and you're ready to install the container tools.
+
+# example output from centos
+[root@localhost ~]# yum repolist
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+repo id                             repo name
+AppStream-exercise                  AppStream-exercise
+BaseOS-exercise                     BaseOS-exercise
+appstream                           CentOS Linux 8 - AppStream
+baseos                              CentOS Linux 8 - BaseOS
+extras                              CentOS Linux 8 - Extras
+
+
+
+$ man yum
+   Repolist Command
+       dnf [options] repolist [--enabled|--disabled|--all]
+              Depending on the exact command lists enabled,  disabled  or  all
+              known  repositories.  Lists all enabled repositories by default.
+              Provides more detailed information when -v option is used.
+
+       This command by default does not force a sync of expired metadata.  See
+       also Metadata Synchronization.
+
+
+
+
+subscription-manager(8)     Subscription Management    subscription-manager(8)
+
+NAME
+       subscription-manager  -  Registers systems to a subscription management
+       service and then attaches and manages subscriptions for software  prod‐
+       ucts.
+
+SYNOPSIS
+       subscription-manager command [options]
+
+DESCRIPTION
+       subscription-manager is a client program that registers a system with a
+       subscription management service such as the Customer  Portal  Subscrip‐
+       tion Management service or on-premise Subscription Asset Manager.
+
+       Red  Hat  provides content updates and support by issuing subscriptions
+       for its products. These subscriptions are applied to  systems;  once  a
+       subscription  for  a  product  is  attached to a system, that system is
+       allowed to install, update, and receive support for that software prod‐
+       uct.  IT  administrators need to track these subscriptions and how they
+       are attached. This subscription management is a feature  available  for
+       Red Hat platforms version 5.7 (and later) and version 6.1 (and later).
+
+
+2. install the container tools package
+
+# find the package module name for containers
+
+RPM - the default package format. Containers files as well as metadata that describes how to install the package
+module - In a module different versions and profiles can be provided
+Application stream - a specific version of the module
+Profile - a collection of packages that are installed together for a use case.
+
+[root@localhost ~]# yum module list | grep container
+Name                 Stream       Profiles                                 Summary                                                                                                                                                                             container-tools      rhel8 [d][e] common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      1.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      2.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+container-tools      rhel8 [d][e] common [d]                               Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and updated as frequently as every 12 weeks.
+container-tools      1.0          common [d]                               Stable versions of podman 1.0, buildah 1.5, skopeo 0.1, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and supported for 24 months.                                 
+container-tools      2.0          common [d]                               Stable versions of podman 1.6, buildah 1.11, skopeo 0.1, runc, conmon, etc as well as dependencies such as container-selinux built and tested together, and supported as documented on the Application Stream lifecycle page.    
+
+
+
+   Module Command
+       Modularity overview is available at man page dnf.modularity(7).  Module
+       subcommands take <module-spec>... arguments  that  specify  modules  or
+       profiles.
+
+       dnf [options] module install <module-spec>...
+              Install  module  profiles, including their packages.  In case no
+              profile was provided, all default profiles get installed.   Mod‐
+              ule streams get enabled accordingly.
+
+              This  command cannot be used for switching module streams. It is
+              recommended to remove all installed content from the module  and
+              reset  the  module  using the reset command. After you reset the
+              module, you can install the other stream.
+
+       dnf [options] module update <module-spec>...
+              Update packages associated with an active module stream, option‐
+              ally  restricted to a profile.  If the profile_name is provided,
+              only the packages referenced by that profile will be updated.
+
+       dnf [options] module list [--all] [module_name...]
+              Lists  all  module  streams, their profiles and states (enabled,
+              disabled, default).
+
+# Install the default profile and version of container module
+$ yum module install container-tools
+
+Installed:
+  crun-0.16-2.module_el8.3.0+699+d61d9c41.x86_64                                                                          
+  python-podman-api-1.2.0-0.2.gitd0a45fe.module_el8.3.0+475+c50ce30b.noarch                                               
+  python3-psutil-5.4.3-10.el8.x86_64                                                                                      
+  skopeo-1:1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64                                                                     
+  toolbox-0.0.8-1.module_el8.3.0+475+c50ce30b.noarch                                                                      
+  udica-0.2.4-1.module_el8.3.0+699+d61d9c41.noarch                                                                        
+
+Complete!
+
+# inspect installed container module
+[root@localhost ~]# yum module list container-tools
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 22:18:22 ago on Tue 16 Mar 2021 01:02:01 AM MDT.
+CentOS Linux 8 - AppStream
+Name            Stream       Profiles Summary                                                                             
+container-tools rhel8 [d][e] common [ Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc, conmo
+                             d] [i]   n, CRIU, Udica, etc as well as dependencies such as container-selinux built and test
+                                      ed together, and updated as frequently as every 12 weeks.
+container-tools 1.0          common [ Stable versions of podman 1.0, buildah 1.5, skopeo 0.1, runc, conmon, CRIU, Udica, e
+                             d]       tc as well as dependencies such as container-selinux built and tested together, and 
+                                      supported for 24 months.
+container-tools 2.0          common [ Stable versions of podman 1.6, buildah 1.11, skopeo 0.1, runc, conmon, etc as well a
+                             d]       s dependencies such as container-selinux built and tested together, and supported as
+                                       documented on the Application Stream lifecycle page.
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled

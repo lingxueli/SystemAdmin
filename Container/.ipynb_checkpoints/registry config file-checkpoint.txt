@@ -29,12 +29,13 @@ DESCRIPTION
        /etc/containers/registries.conf
 
 
+# it defines the registries to be used/blocked
 
 $ cat /etc/containers/registries.conf
 # The following registries are a set of secure defaults provided by Red Hat.
 # Each of these registries provides container images curated, patched
 # and maintained by Red Hat and its partners
-#[registries.search]
+#[registries.search]                =>[registries.search]: accepted registery
 #registries = ['registry.access.redhat.com', 'registry.redhat.io']
 
 # To ensure compatibility with docker we've included docker.io in the default search list. However Red Hat
@@ -52,7 +53,7 @@ registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io']
 
 # Registries that do not use TLS when pulling images or uses self-signed
 # certificates.
-[registries.insecure]
+[registries.insecure] => [registries.insecure] - accepted registries withtouh SSL/TLS certificates 
 registries = []
 
 # Blocked Registries, blocks the `docker daemon` from pulling from the blocked registry.  If you specify
@@ -62,8 +63,38 @@ registries = []
 # registries you want to allow users to pull and push from.  policy.json gives greater flexibility, and
 # supports all container runtimes and tools including the docker daemon, cri-o, buildah ...
 # The atomic CLI `atomic trust` can be used to easily configure the policy.json file.
-[registries.block]
+[registries.block]  => [registries.block]: blocked registery
 registries = []
+
+
+What's SSL and TLS?
+
+Transport Layer Security is a protocol that establishes an encrypted session between two computers on the Internet. It verifies the identity of the server and prevents hackers from intercepting any data.
+
+TLS (and its predecessor SSL) allows users to securely transmit sensitive data when using the HTTPS protocol. In other words, HTTPS is HTTP layered on top of TLS. This technology is ideal for applications such as banking, information authentication, email exchange, and any other procedure requiring a higher level of privacy and security. TLS helps provide an enhanced layer of protection by encrypting the otherwise readable data, making it difficult for hackers to obtain private information.
+
+This framework provides privacy between the different endpoints of data transmission and ensures the data’s integrity. It also uses digital certificates to help verify the authenticity of servers. These certificates are commonly referred to as TLS certificates.
+
+
+What's SSL and TLS certificate
+
+SSL refers to Secure Sockets Layer whereas TLS refers to Transport Layer Security.
+SSL and TLS are cryptographic protocols that authenticate data transfer between servers, systems, applications and users.
+
+This framework provides privacy between the different endpoints of data transmission and ensures the data’s integrity. It also uses digital certificates to help verify the authenticity of servers. These certificates are commonly referred to as TLS certificates.
+
+
+How does SSL and TLS certificate work?
+
+The authentication of these certificates happens using public key cryptography. This is  based on key pairs consisting of a public key and a private key. The decryption of encrypted data can happen only when both the public key and private key are present. TLS certificates use public key authentication to help verify that the data is being accessed by the intended recipient.
+
+
+Digital certificates, also known as identity certificates or public key certificates, are digital files that are used to certify the ownership of a public key. TLS certificates are a type of digital certificate, issued by a Certificate Authority (CA). The CA signs the certificate, certifying that they have verified that it belongs to the owners of the domain name which is the subject of the certificate.
+
+When a user tries to connect to a server, the server sends them its TLS certificate.
+
+The user then verifies the server’s certificate using CA certificates that are present on the user’s device to establish a secure connection. This verification process uses public key cryptography, such as RSA or ECC, to prove the CA signed the certificate. As long as you trust the CA, this demonstrates you are communicating with the server certificate’s subject (trusted recipient).
+
 
 
 
@@ -86,7 +117,3 @@ CONFIGURATION PRECEDENCE
        $HOME/.config/containers/registries.conf.d are loaded in alpha-numerical order.  Specified fields in a conf
        file will overwrite any previous setting.  Note that only files with the .conf prefix are loaded, other files
        and sub-directories are ignored.
-
-
-[lisa@localhost ~]$ podman info | grep configFile
-  configFile: /home/lisa/.config/containers/storage.conf
