@@ -1,15 +1,9 @@
 [root@localhost ~]# ps aux | head
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
 root           1  0.0  0.6 245312 11516 ?        Ss   04:30   0:24 /usr/lib/systemd/systemd --system --deserialize 21
-root           2  0.0  0.0      0     0 ?        S    04:30   0:00 [kthreadd]
-root           3  0.0  0.0      0     0 ?        I<   04:30   0:00 [rcu_gp]
-root           4  0.0  0.0      0     0 ?        I<   04:30   0:00 [rcu_par_gp]
-root           6  0.0  0.0      0     0 ?        I<   04:30   0:00 [kworker/0:0H-kblockd]
-root           9  0.0  0.0      0     0 ?        I<   04:30   0:00 [mm_percpu_wq]
-root          10  0.0  0.0      0     0 ?        S    04:30   0:09 [ksoftirqd/0]
-root          11  0.0  0.0      0     0 ?        I    04:30   0:27 [rcu_sched]
 root          12  0.0  0.0      0     0 ?        S    04:30   0:00 [migration/0]      => kernel threads, names between []
 
+# print the most basics info of the process
 $ ps aux 
     a      Lift the BSD-style "only yourself" restriction, which is imposed
               upon the set of all processes when some BSD-style (without "-")
@@ -63,7 +57,7 @@ $ ps fax
               all processes when used together with the a option.
 
 
-
+# print the process with the command that triggers it
 [root@localhost ~]# ps -ef | head
 UID          PID    PPID  C STIME TTY          TIME CMD
 root           1       0  0 04:30 ?        00:00:24 /usr/lib/systemd/systemd --system --deserialize 21
@@ -76,7 +70,7 @@ root          10       2  0 04:30 ?        00:00:09 [ksoftirqd/0]
 root          11       2  0 04:30 ?        00:00:27 [rcu_sched]
 root          12       2  0 04:30 ?        00:00:00 [migration/0]
 
-
+# print the parent and child relationships between processes
 [root@localhost ~]# ps fax | head
     PID TTY      STAT   TIME COMMAND
       2 ?        S      0:00 [kthreadd]
@@ -127,6 +121,11 @@ EXAMPLES
 
 [root@localhost ~]# man -k process | grep pgrep
 pgrep (1)            - look up or signal processes based on name and other attributes
+
+
+# how to look up the PID of process dd
+1. pgrep
+2. ps aux | grep dd
 
 [root@localhost ~]# pgrep dd
 2

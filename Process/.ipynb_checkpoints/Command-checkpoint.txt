@@ -1,14 +1,22 @@
 Switch between background and foreground:
 
+Used by foregroud process
 	& (in the end)		Bring to the background
-	fg (job id)		Bring to the foreground
-	jobs		Find job id
 	bg (job id)		Bring to the backgroud
-	nohup		no longer needed in RHEL 8
 
-	Ctrl - Z 	When the process takes too long, use it to pause the process in the foreground, later bring it to the background by bg.
+
 	Ctrl - C 	Cancel the process
-	Ctrl - D	Send End Of File(EOF) char, the proces stops waiting for further input 
+    Ctrl - Z 	pause the process in the foreground, so that later it can be run in the background.
+	Ctrl - D	Send End Of File(EOF) char, the proces stops waiting for I/O 
+
+
+
+Used by backgroud process
+	fg (job id)		Bring to the foreground
+    
+Used by fg, bg
+	jobs		Find job id
+
 
 	top		type k 		 to kill the process from top command
 
@@ -20,9 +28,7 @@ Process management
 	ps fax 		shows hierarchical relationship between parent and child process
 
 	ps fax | grep -B5 dd	to observe the matching line and 5(or any) lines before that, in order to get the parent process
-
-	in ps command, some option use hypen some do not. Because in history it comes from different system flavor.
-    
+   
     PID is the important part from ps output
 	ps aux | grep dd	You can the PID process whose names contains dd
 	pgrep dd	it does the same thing
@@ -45,25 +51,24 @@ Signals
 
 	man 7 signals	available signals could be sent to the process
 
-	SIGTERM 15		stop
-	SIGKILL	9	force to stop
+	SIGTERM 15		TERM signal, stop the process but sometime gets ignored; it's the default signal sent by kill command
+    
+	SIGKILL	9	KILL signal, force the process to stop
+    
 	SIGHUP 1		hang up. The process will reread the configuration file. 
 					Use it after making modificaitons to a process configuration file.
 
 	kill			send singal to the process
 
 	kill PID		defaul is stop SIGTERM 15
-					The process will cease activities and close open files. Sometimes process ignores it. That's why to use force stop.
 	kill -9	PID		force stop
-					risk losing data
-					system might become unstable if other processes depend on it
 
 	kill -l 	show a list of available signals
 
-	pkill name		kill by name instead of PID		
+	pkill name		kill by name instead of PID
 	killall	name	kill multiple processes using the same name
 
-	killall is convinient in multiprocessing environment (not multithread). In multiprocessing environment, a server starts serveral commands all with the same name. Rather than kill each one by PID, use killall. It happens in multithread environment too but less common. e.g. you can start "dd if=/dev/zero of=/dev/null &"" three times 
+	killall is convinient in multiprocessing environment (not multithread). In multiprocessing environment, a server starts serveral commands all with the same name. Rather than kill each one by PID, use killall.
     
 ---------------------------------------------------------------------------------------    
 Use top to manage process
@@ -73,11 +78,16 @@ Use top to manage process
 	from the output, it doesn't have nicecess/priority value. It has state value.
 
 	States values
-		R	runnning	either running in CPU, or in the queue waiting to get a slot in CPU
-		S 	sleeping	waiting for an event to complete
-		D 	uninterruptable sleep 		waiting for I/O, sleeping cannot be stopped
-		T 	stopped 	this happens when you use Ctrl-Z (pause) sequence to an interactive shell process
-		Z	Zombie		process has been stopped, but cannot be removed by its parent. Unmanageble.
+
+R	runnning	being served or waiting to be served
+
+D 	blocked or uninterruptable sleep		waiting for I/O
+
+S 	sleeping	waiting for an event to complete
+
+T 	stopped 	this happens when you use Ctrl-Z (pause) sequence to an interactive shell process
+
+Z	Zombie		process has been stopped, but cannot be removed by its parent. Unmanageble.
 
 	top can do the job of kill and renice
 
@@ -86,20 +96,28 @@ Use top to manage process
 ---------------------------------------------------------------------------------------        
 Load average
 
-	number of processes in running(R) + blocked state(D, waiting for I/O)
+	number of processes in running(R) + blocked state(D), because they are the consumers of the CPU resources and they're or would be served earlier than other processes.
 
 	It's represented on the top right corner of top, and also represented by uptime. Format: 1min 5min 15min
 
 	Keep load average < number of CPU cores most of the time, otherwise you have performance issue. Use lscup to find out the number of CPU cores.
     
+    lscpu displays the architecture of CPU such as number of CPUs and cores per CPU.
+    
 ---------------------------------------------------------------------------------------
 Tuned profile
 
-	Use a profile can boost system performance based on your use case, such as desktop, virtual machine, KVM(Kernal based virtual machine, it's a hypervisor/virtual host), network performance, throughput performance, powersaving etc. Installing software may bring in new profile.
+	Use a profile can boost system performance based on your use case, such as desktop, virtual machine, KVM(Kernal based virtual machine, it's a hypervisor/virtual host), network performance, throughput performance, powersaving etc. 
+    
+    Install and start tuned service
 
 	yum -y install tuned 			
 	systemctl enable --now tuned 	start tuned profile
 	systemctl status tuned 			check whether tuned is running
+
+
+[root@localhost ~]# tuned
+tuned      tuned-adm  
 
 	tuned-adm	the interface to manage tuned deamon
 
