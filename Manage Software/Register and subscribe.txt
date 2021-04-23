@@ -1,17 +1,81 @@
-[root@localhost lisa]# yum install stratis-cli
-Updating Subscription Management repositories.
-Unable to read consumer identity
+[root@localhost ~]# man -k subscription
+rct (8)              - Displays information (headers) about or size and statistics of a entitleme...
+rhsm-debug (8)       - Compiles information about system's entitlements, products, and identity u...
+rhsm.conf (5)        - Configuration file for the subscription-manager tooling
+subscription-manager (8) - Registers systems to a subscription management service and then attach...
+subscriptions.conf (5) - subscription configuration file for cups
 
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
 
-Error: There are no enabled repositories in "/etc/yum.repos.d", "/etc/yum/repos.d", "/etc/distro.repos.d".
+1. register machine to your red hat account
+
+$ subscription-manager register
+
+2. check your subscriptions and activate one for the machine
+
+$ subscription-manager list --available
+$ subscription-manager attach --auto
+
+3. confirm
+$ subscription-manager --consumed
+
+4. clean up
+$ subscription-manager unregister
 
 
-How to register and subscribe a system to the Red Hat Customer Portal using Red Hat Subscription-Manager: https://access.redhat.com/solutions/253273
-If you have issue registering, follow this
-https://access.redhat.com/discussions/3312101
-https://developers.redhat.com/articles/renew-your-red-hat-developer-program-subscription
-https://access.redhat.com/discussions/4019751
+subscription-manager(8)              Subscription Management              subscription-manager(8)
+
+NAME
+       subscription-manager  -  Registers  systems  to a subscription management service and then
+       attaches and manages subscriptions for software products.
+
+SYNOPSIS
+       subscription-manager command [options]
+
+DESCRIPTION
+       subscription-manager is a client program that registers a system with a subscription  man‐
+       agement  service such as the Customer Portal Subscription Management service or on-premise
+       Subscription Asset Manager.
+
+COMMANDS AND OPTIONS
+       subscription-manager has specific options available for each command,  depending  on  what
+       operation  is  being performed. Subscription Manager commands are related to the different
+       subscription operations:
+
+              1. register
+
+              2. unregister
+
+              3. attach
+
+              4. auto-attach
+
+              5. remove
+
+
+              13. list
+
+              14. refresh
+
+              15. environments
+
+              16. repos
+              
+              
+       --auto-attach
+              Automatically attaches compatible subscriptions to this system.
+
+       --auto Automatically attaches the best-matched compatible subscription or subscriptions to
+              the system. This is the default unless --pool or --file are used.
+
+
+       --available
+              Lists available subscriptions which are not yet attached to the system.
+
+       --consumed
+              Lists all of the subscriptions currently attached to the system.
+
+
+Sample output
 [root@localhost ~]# subscription-manager register
 Registering to: subscription.rhsm.redhat.com:443/subscription
 Username: lingxue.li1203
@@ -96,27 +160,7 @@ Starts:              03/26/2020
 Ends:                03/26/2021
 Entitlement Type:    Physical
 
-Unable to find available subscriptions for all your installed products.
-https://access.redhat.com/discussions/4627751
 
-[root@localhost ~]# sudo subscription-manager attach --pool=8a85f999710f3aea01711d9148017bd8
-Successfully attached a subscription for: Red Hat Developer Subscription
-
-[root@localhost ~]# subscription-manager list
-+-------------------------------------------+
-    Installed Product Status
-+-------------------------------------------+
-Product Name:   Red Hat Enterprise Linux for x86_64 Beta
-Product ID:     486
-Version:        8.3 Beta
-Arch:           x86_64
-Status:         Not Subscribed
-Status Details: Not supported by a valid subscription.
-Starts:         
-Ends:           
-
-[root@localhost ~]# subscription-manager list --available
-No available subscription pools to list
 [root@localhost ~]# subscription-manager list
 +-------------------------------------------+
     Installed Product Status
@@ -133,23 +177,10 @@ Ends:
 [root@localhost ~]# subscription-manager remove --all
 1 local certificate has been deleted.
 1 subscription removed at the server.
+
 [root@localhost ~]# subscription-manager unregister
 Unregistering from: subscription.rhsm.redhat.com:443/subscription
 System has been unregistered.
+
 [root@localhost ~]# subscription-manager clean
 All local data removed
-[root@localhost ~]# subscription-manager register
-Registering to: subscription.rhsm.redhat.com:443/subscription
-Username: lingxue.li1203
-Password: 
-The system has been registered with ID: 0b76d1a2-5aff-41f1-9e42-d7683b5dfe08
-The registered system name is: localhost.localdomain
-[root@localhost ~]# subscription-manager refresh
-All local data refreshed
-[root@localhost ~]# subscription-manager attach --auto
-Installed Product Current Status:
-Product Name: Red Hat Enterprise Linux for x86_64 Beta
-Status:       Not Subscribed
-
-Unable to find available subscriptions for all your installed products.
-[root@localhost ~]# 

@@ -1,0 +1,170 @@
+A software could have multiple versions. One version is a module stream.
+
+A software could have multiple profiles. One profile is for a use case. e.g. minimal profile, default profile, server profile.
+
+   Module Command
+       Modularity  overview  is  available at man page dnf.modularity(7).  Module subcommands take <module-spec>... arguments that specify
+       modules or profiles.
+
+       dnf [options] module install <module-spec>...
+              Install module profiles, including their packages.  In case no profile was provided, all  default  profiles  get  installed.
+              Module streams get enabled accordingly.
+
+              This  command cannot be used for switching module streams. It is recommended to remove all installed content from the module
+              and reset the module using the reset command. After you reset the module, you can install the other stream.
+
+       dnf [options] module update <module-spec>...
+              Update packages associated with an active module stream, optionally restricted to a profile.  If the  profile_name  is  pro‐
+              vided, only the packages referenced by that profile will be updated.
+
+       dnf [options] module remove <module-spec>...
+              Remove  installed  module  profiles,  including  packages  that were installed with the dnf module install command. Will not
+              remove packages required by other installed module profiles or by other user-installed packages.  In  case  no  profile  was
+              provided, all installed profiles get removed.
+
+       dnf [options] module remove --all <module-spec>...
+              Remove  installed  module  profiles, including packages that were installed with the dnf module install command.  With --all
+              option it additionally removes all packages whose names are provided  by  specified  modules.  Packages  required  by  other
+              installed module profiles and packages whose names are also provided by any other module are not removed.
+
+       dnf [options] module enable <module-spec>...
+              Enable a module stream and make the stream RPMs available in the package set.
+
+              Modular  dependencies  are  resolved, dependencies checked and also recursively enabled. In case of modular dependency issue
+              the operation will be rejected. To perform the action anyway please use --skip-broken option.
+
+              This command cannot be used for switching module streams. It is recommended to remove all installed content from the module,
+              and reset the module using the reset command. After you reset the module, you can enable the other stream.
+
+       dnf [options] module disable <module-name>...
+              Disable  a module. All related module streams will become unavailable.  Consequently, all installed profiles will be removed
+              and the module RPMs will become unavailable in the package set. In case of modular dependency issue the  operation  will  be
+              rejected. To perform the action anyway please use --skip-broken option.
+
+       dnf [options] module reset <module-name>...
+              Reset  module  state  so  it's no longer enabled or disabled.  Consequently, all installed profiles will be removed and only
+              RPMs from the default stream will be available in the package set.
+
+       dnf [options] module provides <package-name-spec>...
+              Lists all modular packages matching <package-name-spec> from all modules (including disabled), along with  the  modules  and
+              streams they belong to.
+
+       dnf [options] module list [--all] [module_name...]
+              Lists all module streams, their profiles and states (enabled, disabled, default).
+
+       dnf [options] module list --enabled [module_name...]
+              Lists module streams that are enabled.
+
+       dnf [options] module list --disabled [module_name...]
+              Lists module streams that are disabled.
+
+       dnf [options] module list --installed [module_name...]
+              List module streams with installed profiles.
+
+       dnf [options] module info <module-spec>...
+              Print detailed information about given module stream.
+
+       dnf [options] module info --profile <module-spec>...
+              Print detailed information about given module profiles.
+
+       dnf [options] module repoquery <module-spec>...
+              List all available packages belonging to selected modules.
+
+       dnf [options] module repoquery --available <module-spec>...
+              List all available packages belonging to selected modules.
+
+       dnf [options] module repoquery --installed <module-spec>...
+              List all installed packages with same name like packages belonging to selected modules.
+
+# list all modules streams and profiles of all the packages
+[root@localhost ~]# yum module list | head -n 30
+Name                 Stream       Profiles                                 Summary                                                                                                                                                                                                                                                                    
+container-tools      rhel8 [d][e] common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
+httpd                2.4 [d][e]   common [d] [i], devel, minimal           Apache HTTP Server       
+
+...
+                       
+virt                 rhel [d][e]  common [d]                               Virtualization module                                                                                                                                                                                                            
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+
+[root@localhost ~]# yum module list | grep python
+                                                                                                                                                              
+python36             3.6 [d][e]   build, common [d]                        Python programming language, version 3.6                                                                                                                                                                                         
+python38             3.8 [d]      build, common [d]                        Python programming language, version 3.8                                                                                                                                             OR                                            
+[root@localhost ~]# yum module list python
+             
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+
+# detailed info
+
+[root@localhost ~]# yum module info python38
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:01:28 ago on Sun 14 Feb 2021 10:31:29 AM MST.
+Name             : python38
+Stream           : 3.8 [d][a]
+Profiles         : build, common [d]
+Default profiles : common
+Repo             : appstream
+Summary          : Python programming language, version 3.8
+Description      : This module gives users access to the internal Python 3.8 in RHEL8, as
+                 : well as provides some additional Python packages the users might need.
+                 : In addition to these you can install any python3-* package available
+                 : in RHEL and use it with Python from this module.
+
+# info about one application stream
+[root@localhost ~]# yum module list perl
+AppStream-exercise
+Name                  Stream                      Profiles                            Summary                                                 
+perl                  5.30                        common [d], minimal                 Practical Extraction and Report Language   ...             
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+[root@localhost ~]# yum module info perl:5.30
+Name             : perl
+Stream           : 5.30
+Profiles         : common [d], minimal
+Default profiles : common
+Repo             : AppStream-exercise
+Summary          : Practical Extraction and Report Language
+Description      : Perl is a high-level programming language with roots in C, sed, awk and shell scripting. Perl is good at handling processes and files, and is especially good at handling text. Perl's hallmarks are practicality and efficiency. While it is used to do a lot of different things, Perl's most common applications are system administration utilities and web programming.
+
+
+[root@localhost ~]# yum module list php
+Name                     Stream                      Profiles                                       Summary                                   
+php                      7.2 [d]                     common [d], devel, minimal                     PHP scripting language                    
+php                      7.3                         common [d], devel, minimal                     PHP scripting language                    
+php                      7.4                         common [d], devel, minimal                     PHP scripting language                    
+# work with a specific stream and profile
+[root@localhost ~]# yum module install php:7.2/devel
+
+[root@localhost ~]# yum module disable php:7.2
+
+[root@localhost ~]# yum module install php:7.3
+
+[root@localhost ~]# yum module list  php
+Name                    Stream                     Profiles                                          Summary                                  
+php                     7.2 [d]                    common [d], devel, minimal                        PHP scripting language                   
+php                     7.3 [e]                    common [d] [i], devel, minimal                    PHP scripting language                   
+php                     7.4                        common [d], devel, minimal                        PHP scripting language                             
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+[root@localhost ~]# yum module enable php:7.2
+
+
+   Distro-Sync command
+       dnf distro-sync [<package-spec>...]
+              As  necessary  upgrades,  downgrades  or  keeps  selected  installed packages to match the latest version available from any
+              enabled repository. If no package is given, all installed packages are considered.
+
+              See also Configuration Files Replacement Policy.
+
+# ensure all dependent packages are sync with the version that was just installed
+yum distro-sync

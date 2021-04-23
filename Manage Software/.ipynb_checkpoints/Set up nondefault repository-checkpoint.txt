@@ -1,0 +1,96 @@
+[root@localhost consumer]# man yum
+FILES
+       Cache Files
+              /var/cache/dnf
+
+       Main Configuration
+              /etc/dnf/dnf.conf
+
+       Repository
+              /etc/yum.repos.d/
+
+SEE ALSO
+       · dnf.conf(5), DNF Configuration Reference
+
+       · dnf-PLUGIN(8) for documentation on DNF plugins.
+
+       · dnf.modularity(7), Modularity overview.
+
+       · DNF project homepage (https://github.com/rpm-software-management/dnf/)
+
+       · How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
+
+       · YUM project homepage (http://yum.baseurl.org/)
+
+If you want to use non-default repo:
+In redhat, do not register using subscription-manager.
+In Centos, remove all files from /etc/yum.repos.d/ and define .repo in this directory.
+
+
+[root@localhost consumer]# cd /etc/yum.repos.d
+[root@localhost yum.repos.d]# ls -al
+total 64
+drwxr-xr-x.   2 root root 4096 Jan 22 23:32 .
+drwxr-xr-x. 140 root root 8192 Feb 13 17:01 ..
+-rw-r--r--.   1 root root  719 Nov  9 17:32 CentOS-Linux-AppStream.repo
+-rw-r--r--.   1 root root  704 Nov  9 17:32 CentOS-Linux-BaseOS.repo
+-rw-r--r--.   1 root root 1130 Nov  9 17:32 CentOS-Linux-ContinuousRelease.repo
+-rw-r--r--.   1 root root  318 Nov  9 17:32 CentOS-Linux-Debuginfo.repo
+-rw-r--r--.   1 root root  732 Nov  9 17:32 CentOS-Linux-Devel.repo
+-rw-r--r--.   1 root root  704 Nov  9 17:32 CentOS-Linux-Extras.repo
+-rw-r--r--.   1 root root  719 Nov  9 17:32 CentOS-Linux-FastTrack.repo
+-rw-r--r--.   1 root root  740 Nov  9 17:32 CentOS-Linux-HighAvailability.repo
+-rw-r--r--.   1 root root  693 Nov  9 17:32 CentOS-Linux-Media.repo
+-rw-r--r--.   1 root root  706 Nov  9 17:32 CentOS-Linux-Plus.repo
+-rw-r--r--.   1 root root  724 Nov  9 17:32 CentOS-Linux-PowerTools.repo
+-rw-r--r--.   1 root root  898 Nov  9 17:32 CentOS-Linux-Sources.repo
+
+
+[root@localhost yum.repos.d]# cat CentOS-Linux-AppStream.repo 
+# CentOS-Linux-AppStream.repo
+#
+# The mirrorlist system uses the connecting IP address of the client and the
+# update status of each mirror to pick current mirrors that are geographically
+# close to the client.  You should use this for CentOS updates unless you are
+# manually picking other mirrors.
+#
+# If the mirrorlist does not work for you, you can try the commented out
+# baseurl line instead.
+
+[appstream]
+name=CentOS Linux $releasever - AppStream
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=AppStream&infra=$infra
+#baseurl=http://mirror.centos.org/$contentdir/$releasever/AppStream/$basearch/os/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+
+[root@localhost yum.repos.d]# cat CentOS-Linux-BaseOS.repo 
+# CentOS-Linux-BaseOS.repo
+#
+# The mirrorlist system uses the connecting IP address of the client and the
+# update status of each mirror to pick current mirrors that are geographically
+# close to the client.  You should use this for CentOS updates unless you are
+# manually picking other mirrors.
+#
+# If the mirrorlist does not work for you, you can try the commented out
+# baseurl line instead.
+
+[baseos]
+name=CentOS Linux $releasever - BaseOS
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=BaseOS&infra=$infra
+#baseurl=http://mirror.centos.org/$contentdir/$releasever/BaseOS/$basearch/os/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+
+The basedurl and gpgkey could be:
+HTTP or FTP or file-based URL
+http://
+ftp://
+file://
+
+In a file based URL such as file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficia
+the 3rd / refers to the the local path /

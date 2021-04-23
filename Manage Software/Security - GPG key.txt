@@ -2,9 +2,9 @@ Downloadable packages are installed from root has root priviledge. Security is i
 
 How does GPG key work?
 
-User download the key and store it locally. - This is the first step in yum install.
+User download the key and store it locally. - This is the first step in yum install. It happens when you reach a repo for the first time.
 
-Later security is checked every time a package is downloaded from the repository.
+Later security is checked every time a package is downloaded from this repository, using this local key as a reference.
 
 Path to the GPG key:
 gpgkey=file:///etc/pki/rpm-gpg/

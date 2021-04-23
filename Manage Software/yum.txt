@@ -1,4 +1,28 @@
-       Available commands:
+# list available repo for the packages
+[root@localhost ~]# yum repolist
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+repo id                                       repo name
+AppStream-exercise                            AppStream-exercise
+BaseOS-exercise                               BaseOS-exercise
+appstream                                     CentOS Linux 8 - AppStream
+baseos                                        CentOS Linux 8 - BaseOS
+extras                                        CentOS Linux 8 - Extras
+
+
+   Repolist Command
+       dnf [options] repolist [--enabled|--disabled|--all]
+              Depending  on  the exact command lists enabled, disabled or all known repositories.
+              Lists all enabled repositories by default. Provides more detailed information  when
+              -v option is used.
+
+       This  command by default does not force a sync of expired metadata. See also Metadata Syn‐
+       chronization.
+
+Available commands:
    Search Command
        dnf [options] search [--all] <keywords>...
               Search package metadata for keywords. Keywords are matched  as  case-insensitive  substrings,  globbing  is  supported.   By
@@ -262,10 +286,15 @@ Description  : Nmap is a utility for network exploration or security auditing.  
 
 This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
 
-Last metadata expiration check: 0:26:21 ago on Sat 13 Feb 2021 08:03:45 PM MST.
+Last metadata expiration check: 0:26:21 ago on Sat 13 Feb 2021 08:03:45 PM MST.                       
+
 Installed Packages
-GConf2.x86_64                                          3.2.6-22.el8                                     @AppStream        
-ModemManager.x86_64                                    1.10.8-2.el8                                     @anaconda         
+GConf2.x86_64                                          3.2.6-22.el8                                     @AppStream   
+
+=>@AppStream is the repo name
+
+
+ModemManager.x86_64                                    1.10.8-2.el8                                     @anaconda   => @anaconda as the "repo" means the package is installed
 ModemManager-glib.x86_64                               1.10.8-2.el8                                     @anaconda         
 NetworkManager.x86_64                                  1:1.26.0-8.el8                                   @anaconda         
 NetworkManager-adsl.x86_64                             1:1.26.0-8.el8                                   @anaconda         

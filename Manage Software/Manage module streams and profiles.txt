@@ -76,23 +76,10 @@ A software could have multiple profiles. One profile is for a use case. e.g. min
        dnf [options] module repoquery --installed <module-spec>...
               List all installed packages with same name like packages belonging to selected modules.
 
+# list all modules streams and profiles of all the packages
 [root@localhost ~]# yum module list | head -n 30
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 10:16:38 ago on Sun 14 Feb 2021 12:12:46 AM MST.
-AppStream-exercise
-Name                 Stream       Profiles                                 Summary                                                                                                                                                                                                                          
-389-ds               1.4                                                   389 Directory Server (base)                                                                                                                                                                                                      
-ant                  1.10 [d]     common [d]                               Java build tool                                                                                                                                                                                                                  
+Name                 Stream       Profiles                                 Summary                                                                                                                                                                                                                                                                    
 container-tools      rhel8 [d][e] common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
-container-tools      1.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
-container-tools      2.0          common [d]                               Common tools and dependencies for container runtimes                                                                                                                                                                             
-freeradius           3.0 [d]      server [d]                               High-performance and highly configurable free RADIUS server                                                                                                                                                                      
-gimp                 2.8 [d]      common [d], devel                        gimp module                                                                                                                                                                                                                      
-go-toolset           rhel8 [d]    common [d]                               Go                                                                                                                                                                                                                               
 httpd                2.4 [d][e]   common [d] [i], devel, minimal           Apache HTTP Server       
 
 ...
@@ -103,36 +90,11 @@ Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
 
 [root@localhost ~]# yum module list | grep python
-libselinux-python    2.8          common                                   Python 2 bindings for libselinux                                                                                                                                                                                                 
-python27             2.7 [d]      common [d]                               Python programming language, version 2.7                                                                                                                                                                                         
+                                                                                                                                                              
 python36             3.6 [d][e]   build, common [d]                        Python programming language, version 3.6                                                                                                                                                                                         
-python38             3.8 [d]      build, common [d]                        Python programming language, version 3.8                                                                                                                                                                                         
-libselinux-python    2.8          common                                   Python 2 bindings for libselinux                                                                                                                                                                                                 
-python27             2.7 [d]      common [d]                               Python programming language, version 2.7                                                                                                                                                                                         
-python36             3.6 [d][e]   build, common [d]                        Python programming language, version 3.6                                                                                                                                                                                         
-python38             3.8 [d]      build, common [d]                        Python programming language, version 3.8                                                                                                                                                                                         
+python38             3.8 [d]      build, common [d]                        Python programming language, version 3.8                                                                                                                                             OR                                            
 [root@localhost ~]# yum module list python
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:00:13 ago on Sun 14 Feb 2021 10:31:29 AM MST.
-Error: No matching Modules to list
-[root@localhost ~]# yum module list python38
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:00:30 ago on Sun 14 Feb 2021 10:31:29 AM MST.
-AppStream-exercise
-Name                      Stream                   Profiles                           Summary                                                 
-python38                  3.8 [d]                  build, common [d]                  Python programming language, version 3.8                
-
-CentOS Linux 8 - AppStream
-Name                      Stream                   Profiles                           Summary                                                 
-python38                  3.8 [d]                  build, common [d]                  Python programming language, version 3.8                
+             
 
 Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
@@ -148,9 +110,6 @@ This system is not registered to Red Hat Subscription Management. You can use su
 Last metadata expiration check: 0:01:28 ago on Sun 14 Feb 2021 10:31:29 AM MST.
 Name             : python38
 Stream           : 3.8 [d][a]
-Version          : 8030020201104010331
-Context          : 4190259b
-Architecture     : x86_64
 Profiles         : build, common [d]
 Default profiles : common
 Repo             : appstream
@@ -159,77 +118,29 @@ Description      : This module gives users access to the internal Python 3.8 in 
                  : well as provides some additional Python packages the users might need.
                  : In addition to these you can install any python3-* package available
                  : in RHEL and use it with Python from this module.
-Requires         : platform:[el8]
-Artifacts        : Cython-0:0.29.14-4.module_el8.3.0+441+3b561464.src
-                 : python-PyMySQL-0:0.9.3-3.module_el8.3.0+441+3b561464.src
-                 : python-asn1crypto-0:1.2.0-3.module_el8.3.0+441+3b561464.src
-...
-Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive
 
 # info about one application stream
 [root@localhost ~]# yum module list perl
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:03:10 ago on Sun 14 Feb 2021 10:31:29 AM MST.
 AppStream-exercise
 Name                  Stream                      Profiles                            Summary                                                 
-perl                  5.24                        common [d], minimal                 Practical Extraction and Report Language                
-perl                  5.26 [d][e]                 common [d], minimal                 Practical Extraction and Report Language                
-perl                  5.30                        common [d], minimal                 Practical Extraction and Report Language                
-
-CentOS Linux 8 - AppStream
-Name                  Stream                      Profiles                            Summary                                                 
-perl                  5.24                        common [d], minimal                 Practical Extraction and Report Language                
-perl                  5.26 [d][e]                 common [d], minimal                 Practical Extraction and Report Language                
-perl                  5.30                        common [d], minimal                 Practical Extraction and Report Language                
-
+perl                  5.30                        common [d], minimal                 Practical Extraction and Report Language   ...             
 Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
 [root@localhost ~]# yum module info perl:5.30
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:05:06 ago on Sun 14 Feb 2021 10:31:29 AM MST.
 Name             : perl
 Stream           : 5.30
-Version          : 8030020200715145239
-Context          : 568f3a16
-Architecture     : x86_64
 Profiles         : common [d], minimal
 Default profiles : common
 Repo             : AppStream-exercise
 Summary          : Practical Extraction and Report Language
 Description      : Perl is a high-level programming language with roots in C, sed, awk and shell scripting. Perl is good at handling processes and files, and is especially good at handling text. Perl's hallmarks are practicality and efficiency. While it is used to do a lot of different things, Perl's most common applications are system administration utilities and web programming.
-Requires         : platform:[el8]
-Artifacts        : perl-4:5.30.1-451.module_el8.3.0+406+78614513.src
 
 
 [root@localhost ~]# yum module list php
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:13:20 ago on Sun 14 Feb 2021 10:31:29 AM MST.
-AppStream-exercise
 Name                     Stream                      Profiles                                       Summary                                   
 php                      7.2 [d]                     common [d], devel, minimal                     PHP scripting language                    
 php                      7.3                         common [d], devel, minimal                     PHP scripting language                    
 php                      7.4                         common [d], devel, minimal                     PHP scripting language                    
-
-CentOS Linux 8 - AppStream
-Name                     Stream                      Profiles                                       Summary                                   
-php                      7.2 [d]                     common [d], devel, minimal                     PHP scripting language                    
-php                      7.3                         common [d], devel, minimal                     PHP scripting language                    
-php                      7.4                         common [d], devel, minimal                     PHP scripting language                    
-
-Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
-
 # work with a specific stream and profile
 [root@localhost ~]# yum module install php:7.2/devel
 
@@ -238,27 +149,15 @@ Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 [root@localhost ~]# yum module install php:7.3
 
 [root@localhost ~]# yum module list  php
-Updating Subscription Management repositories.
-Unable to read consumer identity
-
-This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
-
-Last metadata expiration check: 0:40:55 ago on Sun 14 Feb 2021 10:31:29 AM MST.
-AppStream-exercise
 Name                    Stream                     Profiles                                          Summary                                  
 php                     7.2 [d]                    common [d], devel, minimal                        PHP scripting language                   
 php                     7.3 [e]                    common [d] [i], devel, minimal                    PHP scripting language                   
-php                     7.4                        common [d], devel, minimal                        PHP scripting language                   
-
-CentOS Linux 8 - AppStream
-Name                    Stream                     Profiles                                          Summary                                  
-php                     7.2 [d]                    common [d], devel, minimal                        PHP scripting language                   
-php                     7.3 [e]                    common [d] [i], devel, minimal                    PHP scripting language                   
-php                     7.4                        common [d], devel, minimal                        PHP scripting language                   
+php                     7.4                        common [d], devel, minimal                        PHP scripting language                             
 
 Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
 [root@localhost ~]# yum module enable php:7.2
+
 
    Distro-Sync command
        dnf distro-sync [<package-spec>...]
@@ -267,5 +166,5 @@ Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
 
               See also Configuration Files Replacement Policy.
 
-
+# ensure all dependent packages are sync with the version that was just installed
 yum distro-sync

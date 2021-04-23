@@ -22,6 +22,7 @@ SEE ALSO
 
        · YUM project homepage (http://yum.baseurl.org/)
 
+If you want to use non-default repo:
 In redhat, do not register using subscription-manager.
 In Centos, remove all files from /etc/yum.repos.d/ and define .repo in this directory.
 
