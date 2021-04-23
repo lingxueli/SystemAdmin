@@ -1,0 +1,82 @@
+Example
+[root@localhost ~]# which dnsmasq
+/usr/sbin/dnsmasq
+[root@localhost ~]# rpm -qf $(which dnsmasq)
+dnsmasq-2.79-13.el8_3.1.x86_64
+
+# query rpm db. A general package name is acceptable.
+[root@localhost ~]# rpm -qi dnsmasq
+Name        : dnsmasq
+Version     : 2.79
+Release     : 13.el8_3.1
+Architecture: x86_64
+Install Date: Sun 14 Feb 2021 10:59:16 AM MST
+Group       : Unspecified
+Size        : 662788
+License     : GPLv2 or GPLv3
+Signature   : RSA/SHA256, Tue 19 Jan 2021 01:17:33 PM MST, Key ID 05b555b38483c65d
+Source RPM  : dnsmasq-2.79-13.el8_3.1.src.rpm
+Build Date  : Tue 19 Jan 2021 08:14:58 AM MST
+Build Host  : x86-01.mbox.centos.org
+Relocations : (not relocatable)
+Packager    : CentOS Buildsys <bugs@centos.org>
+Vendor      : CentOS
+URL         : http://www.thekelleys.org.uk/dnsmasq/
+Summary     : A lightweight DHCP/caching DNS server
+Description :
+Dnsmasq is lightweight, easy to configure DNS forwarder and DHCP server.
+It is designed to provide DNS and, optionally, DHCP, to a small network.
+It can serve the names of local machines which are not in the global
+DNS. The DHCP server integrates with the DNS server and allows machines
+with DHCP-allocated addresses to appear in the DNS with names configured
+either in each host or in a central configuration file. Dnsmasq supports
+static and dynamic DHCP leases and BOOTP for network booting of diskless
+machines.
+
+# files in the package
+[root@localhost ~]# rpm -ql dnsmasq 
+/etc/dbus-1/system.d/dnsmasq.conf
+/etc/dnsmasq.conf
+/etc/dnsmasq.d
+/usr/lib/.build-id
+/usr/lib/.build-id/06
+/usr/lib/.build-id/06/ed8ceae61b1ed30a620c4e7459dcb3edf87de8
+/usr/lib/systemd/system/dnsmasq.service
+/usr/lib/sysusers.d/dnsmasq.conf
+/usr/sbin/dnsmasq
+/usr/share/dnsmasq
+/usr/share/dnsmasq/trust-anchors.conf
+/usr/share/doc/dnsmasq
+/usr/share/doc/dnsmasq/CHANGELOG
+/usr/share/doc/dnsmasq/DBus-interface
+/usr/share/doc/dnsmasq/FAQ
+/usr/share/doc/dnsmasq/doc.html
+/usr/share/doc/dnsmasq/setup.html
+/usr/share/licenses/dnsmasq
+/usr/share/licenses/dnsmasq/COPYING
+/usr/share/licenses/dnsmasq/COPYING-v3
+/usr/share/man/man8/dnsmasq.8.gz
+/var/lib/dnsmasq
+
+# doc
+[root@localhost ~]# rpm -qd dnsmasq
+/usr/share/doc/dnsmasq/CHANGELOG
+/usr/share/doc/dnsmasq/DBus-interface
+/usr/share/doc/dnsmasq/FAQ
+/usr/share/doc/dnsmasq/doc.html         => These html files re accessible in the browser
+/usr/share/doc/dnsmasq/setup.html
+/usr/share/man/man8/dnsmasq.8.gz        => there's a man page
+
+# config files
+[root@localhost ~]# rpm -qc dnsmasq
+/etc/dbus-1/system.d/dnsmasq.conf
+/etc/dnsmasq.conf
+
+
+# what scripts are executed when it's installed
+# -p option queries the source rmp package
+# the query is done before it's installed.
+# becauase of that, the exact rmp package name is required.
+
+# --scripts option query only the scripts inside the package
+[root@localhost ~]# rpm -qp --scripts dnsmasq-2.79-13.el8_3.1.x86_64
