@@ -1,0 +1,70 @@
+https://access.redhat.com/articles/3129891#:~:text=For%20anything%20with%20higher%20capability%2C%20XFS%20tends%20to%20be%20faster.&text=In%20general%2C%20Ext3%20or%20Ext4,write%20threads%20and%20bigger%20files.
+
+Ext4 File System
+Ext4 new features such as the following:
+
+Extent-based metadata.  
+Delayed allocation
+Journal checksumming
+Large storage support
+
+extent-based metadata:
+Extend is a contiguous area of storage. By storing data as an extend instead of separate blocks, it reduces the size needed for metadata.
+
+
+delayed allocation:
+the file system postpones selection of the permanent location for newly written user data until the data is flushed to disk. This allows for larger, more contiguous allocations, allowing the file system to make decisions with much better information.
+
+Journal checksumming
+
+Journal logging keep track of the file system data and metadata.
+
+Journal checksumming - If a controller or a disk with its own cache did writes out of order, it could break ext3's journaling transaction order, potentially corrupting files being written to during (or for some time preceding) a crash.  
+
+Journal checksum is done by the use of write barriers. write barriers is a mount option. when mounting the filesystem, you set barrier=1 in the mount options, and the device will then honor fsync() calls all the way down to the metal. This eliminates the risk of a file system crash caused by mounting an out-of-order disk.
+
+fsync(2) — Linux manual page
+
+       fsync, fdatasync - synchronize a file's in-core state with
+       storage device
+       
+       fsync will report an error if there's anything wrong with the disk.
+
+Checksumming the journal allows the filesystem to realize that some of its entries are invalid or out-of-order on the first mount after a crash. This thereby avoids the mistake of rolling back partial or out-of-order journal entries and further damaging the filesystem—even if the storage devices lie and don't honor barriers.
+
+
+File System Transactions
+A transaction is a sequence of operations that should be treated as a logical whole. 
+
+Transactions provide consistency to file systems operations: 
+• Treat each file system operation (e.g., the creation of a new file) as a transaction
+
+During failure recovery, ensure that:
+• Committed transactions are reflected in on-disk data structures
+• Uncommitted transactions (i.e., transactions that were unfinished at the time of
+the crash) are not reflected in the recovered disk state
+
+
+File system repair time (fsck) in Ext4 is much faster than in Ext2 and Ext3. Some file system repairs have demonstrated up to a six-fold increase in performance. Currently, Red Hat’s maximum supported size for Ext4 is 16TB in both Red Hat Enterprise Linux 5 and Red Hat Enterprise Linux 6, and 50TB in Red Hat Enterprise Linux 7.
+
+fsck - file system check
+The system utility fsck is a tool for checking the consistency of a file system in Unix and Unix-like operating systems, such as Linux, macOS, and FreeBSD. 
+
+You can shrink (reduce) Ext4 and Ext3 file systems, so they provide a bit more flexibility as far as storage allocation.
+
+
+The XFS File System
+
+
+XFS supports very large files and file systems on a single host. It is the default file system in Red Hat Enterprise Linux 7+.
+Journaling ensures file system integrity after system crashes (for example, due to power outages) by keeping a record of file system operations that can be replayed when the system is restarted and the file system remounted.
+
+
+While XFS scales to exabytes, Red Hat’s maximum supported XFS file system image is 100TB for Red Hat Enterprise Linux 5, 300TB for Red Hat Enterprise Linux 6, and 500TB for Red Hat Enterprise Linux 7. Given its long history in environments that require high performance and scalability, it is not surprising that XFS is routinely measured as one of the highest performing file systems on large systems with enterprise workloads. 
+
+
+XFS also performs well on smaller systems that have a multi-threaded, parallel I/O workload. 
+
+XFS has a relatively poor performance for single threaded, metadata-intensive workloads, for example, a workload that creates or deletes large numbers of small files in a single thread. 
+
+Finally, you cannot shrink (reduce) XFS file systems in size, so you should take extra care to not over-allocate storage to an existing file system.
