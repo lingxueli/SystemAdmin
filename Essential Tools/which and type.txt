@@ -1,0 +1,94 @@
+WHICH(1)                    General Commands Manual                   WHICH(1)
+
+NAME
+       which - shows the full path of (shell) commands.
+
+SYNOPSIS
+       which [options] [--] programname [...]
+
+
+
+[lisa@localhost ~]$ man type
+
+       type [-aftpP] name [name ...]
+              With no options, indicate how each name would be interpreted  if
+              used as a command name.  If the -t option is used, type prints a
+              string which is one of alias,  keyword,  function,  builtin,  or
+              file  if  name  is  an  alias,  shell  reserved  word, function,
+              builtin, or disk file, respectively.  If the name is not  found,
+              then  nothing  is  printed,  and  an  exit  status  of  false is
+              returned.  If the -p option is used,  type  either  returns  the
+              name of the disk file that would be executed if name were speci‐
+              fied as a command name, or nothing if ``type -t name'' would not
+              return  file.  The -P option forces a PATH search for each name,
+              even if ``type -t name'' would not return file.  If a command is
+              hashed, -p and -P print the hashed value, which is not necessar‐
+              ily the file that appears first in PATH.  If the  -a  option  is
+              used,  type  prints all of the places that contain an executable
+              named name.  This includes aliases and functions, if and only if
+              the -p option is not also used.  The table of hashed commands is
+              not consulted when using -a.  The  -f  option  suppresses  shell
+              function lookup, as with the command builtin.  type returns true
+              if all of the arguments are found, false if any are not found.
+
+
+
+[lisa@localhost ~]$ which ls
+alias ls='ls --color=auto'
+	/usr/bin/ls
+    
+[lisa@localhost ~]$ type ls
+ls is aliased to `ls --color=auto'
+
+
+# which command returns the time command from the PATH variable
+[lisa@localhost ~]$ which time
+/usr/bin/time   => /usr/bin is in $PATH
+
+[lisa@localhost ~]$ echo $PATH
+/home/lisa/.local/bin:/home/lisa/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+
+# type command returns the internal command - time
+[lisa@localhost ~]$ type time
+time is a shell keyword
+
+# command precedence is internal command > command from $PATH
+# so when you use the time command, the internal one is executed.
+
+              
+[lisa@localhost ~]$ time date
+Sat Apr 24 21:35:44 MDT 2021
+
+real	0m0.006s
+user	0m0.001s
+sys	0m0.004s
+
+# it also means type command has more visibility than which command
+
+# type command can see what which command cannot see
+# there're a few options of type command which shows this visibility
+
+[lisa@localhost ~]$ type -t time
+keyword
+[lisa@localhost ~]$ type -P time
+/usr/bin/time
+
+If the -p option is used,  type  either  returns  the
+              name of the disk file that would be executed if name were speci‐
+              fied as a command name, or nothing if ``type -t name'' would not
+              return  file.  The -P option forces a PATH search for each name,
+              even if ``type -t name'' would not return file.
+
+[lisa@localhost ~]$ type -a time
+time is a shell keyword
+time is /usr/bin/time
+
+If the  -a  option  is
+              used,  type  prints all of the places that contain an executable
+              named name.  This includes aliases and functions.
+
+# if you want to use the time command from $PATH variable, specify the path with the command
+[lisa@localhost ~]$ /usr/bin/time date
+Sat Apr 24 21:41:27 MDT 2021
+0.00user 0.00system 0:00.00elapsed 100%CPU (0avgtext+0avgdata 1912maxresident)k
+0inputs+0outputs (0major+85minor)pagefaults 0swaps

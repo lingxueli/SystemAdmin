@@ -1,5 +1,3 @@
-https://access.redhat.com/articles/3129891#:~:text=For%20anything%20with%20higher%20capability%2C%20XFS%20tends%20to%20be%20faster.&text=In%20general%2C%20Ext3%20or%20Ext4,write%20threads%20and%20bigger%20files.
-
 Ext4 File System
 Ext4 new features such as the following:
 
@@ -68,3 +66,6 @@ XFS also performs well on smaller systems that have a multi-threaded, parallel I
 XFS has a relatively poor performance for single threaded, metadata-intensive workloads, for example, a workload that creates or deletes large numbers of small files in a single thread. 
 
 Finally, you cannot shrink (reduce) XFS file systems in size, so you should take extra care to not over-allocate storage to an existing file system.
+
+
+https://access.redhat.com/articles/3129891#:~:text=For%20anything%20with%20higher%20capability%2C%20XFS%20tends%20to%20be%20faster.&text=In%20general%2C%20Ext3%20or%20Ext4,write%20threads%20and%20bigger%20files.
