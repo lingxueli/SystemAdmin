@@ -43,6 +43,7 @@ Here're the essentails:
     ^ go to the first position in the current line
     $ go to the last position in the current line
     
+    :3 go to line number 3
     
 5. search and replace
 
@@ -50,3 +51,130 @@ Here're the essentails:
     ?text search for text from the current cursor backward
     ! ls add the output of ls(or any other command) in the current file. It replaces the current line
     :%s/old/new/g  replace all occurrences of old with new
+    
+How to remember these commands?
+
+$ vimtutor
+
+Dependency
+$ yum install vim-enhanced
+
+[root@localhost lisa]# yum list --all | grep vim
+vim-common.x86_64                                      2:8.0.1763-15.el8                                 @AppStream        
+vim-enhanced.x86_64                                    2:8.0.1763-15.el8                                 @AppStream        
+vim-filesystem.noarch                                  2:8.0.1763-15.el8                                 @AppStream        
+vim-minimal.x86_64                                     2:8.0.1763-15.el8                                 @anaconda         
+vim-X11.x86_64                                         2:8.0.1763-15.el8                                 appstream         
+vim-X11.x86_64                                         2:8.0.1763-15.el8                                 AppStream-exercise
+
+[root@localhost lisa]# yum list vim-enhanced
+Installed Packages
+vim-enhanced.x86_64                                      2:8.0.1763-15.el8                                       @AppStream
+
+$ man yum
+   Info Command
+       dnf [options] info [<package-file-spec>...]
+              Lists description and summary information about installed and available packages.
+
+       The info command limits the displayed packages the same way as the list command.
+
+       This command by default does not force a sync of expired metadata. See also Metadata Synchronization.
+
+# what's inside the package?
+# what commands are made available by this package?
+[root@localhost lisa]# yum info vim-enhanced.x86_64
+Updating Subscription Management repositories.
+Installed Packages
+Name         : vim-enhanced
+Epoch        : 2
+Version      : 8.0.1763
+Release      : 15.el8
+Architecture : x86_64
+Size         : 2.9 M
+Source       : vim-8.0.1763-15.el8.src.rpm
+Repository   : @System
+From repo    : AppStream
+Summary      : A version of the VIM editor which includes recent enhancements
+URL          : http://www.vim.org/
+License      : Vim and MIT
+Description  : VIM (VIsual editor iMproved) is an updated and improved version of the
+             : vi editor.  Vi was the first real screen-based editor for UNIX, and is
+             : still very popular.  VIM improves on vi by adding new features:
+             : multiple windows, multi-level undo, block highlighting and more.  The
+             : vim-enhanced package contains a version of VIM with extra, recently
+             : introduced features like Python and Perl interpreters.
+             : 
+             : Install the vim-enhanced package if you'd like to use a version of the
+             : VIM editor which includes recently added enhancements like
+             : interpreters for the Python and Perl scripting languages.  You'll also
+             : need to install the vim-common package.
+
+
+[root@localhost lisa]# repoquery --installed --list vim-enhanced
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+/etc/profile.d/vim.csh
+/etc/profile.d/vim.sh
+/usr/bin/rvim
+/usr/bin/vim
+/usr/bin/vimdiff
+/usr/bin/vimtutor
+/usr/lib/.build-id
+/usr/lib/.build-id/30
+/usr/lib/.build-id/30/3e78dde064b7080f7529c5c564b48fc106f3f0
+
+[root@localhost lisa]# repoquery --list vim-enhanced
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 1:22:19 ago on Sat 24 Apr 2021 09:30:53 PM MDT.
+/etc/profile.d/vim.csh
+/etc/profile.d/vim.sh
+/usr/bin/rvim
+/usr/bin/vim
+/usr/bin/vimdiff
+/usr/bin/vimtutor
+/usr/lib/.build-id
+/usr/lib/.build-id/30
+/usr/lib/.build-id/30/3e78dde064b7080f7529c5c564b48fc106f3f0
+
+
+$ man repoquery
+YUM-UTILS(1)                                        dnf-plugins-core                                       YUM-UTILS(1)
+
+NAME
+       yum-utils - classic YUM utilities implemented as CLI shims on top of DNF
+
+       The main purpose of these shims is ensuring backward compatibility with yum-3.
+
+       repoquery
+              Searches  the  available  DNF  repositories  for selected packages and displays the requested information
+              about them.  Part of core DNF functionality.  Maps to dnf repoquery.  See Repoquery Command in dnf(8) for
+              details.
+              
+YUM(8)                                                    DNF                                                    YUM(8)
+
+NAME
+       yum - redirecting to DNF Command Reference
+
+SYNOPSIS
+       dnf [options] <command> [<args>...]
+
+
+
+   Repoquery Command
+       dnf [options] repoquery [<select-options>] [<query-options>] [<package-file-spec>]
+              Searches  available  DNF  repositories for selected packages and displays the requested information about
+              them. It is an equivalent of rpm -q for remote repositories.
+
+       dnf [options] repoquery --querytags
+              Provides the list of tags recognized by the --queryformat repoquery option.
+
+              There are also a few specific repoquery commands repoquery-n, repoquery-na and repoquery-nevra that allow
+              the  specification  of  an  exact argument in the NEVRA format (does not affect arguments of options like
+              --whatprovides <arg>, ...).

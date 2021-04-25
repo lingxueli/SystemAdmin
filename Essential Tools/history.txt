@@ -28,10 +28,12 @@ su
    12  cat .bash_history 
    13  history
 
-
+reserve search of the command history: ctrl-r
 Type Ctrl-r to open the prompt where you can do bakcward searches in the past commands. Bash looks for the command that containing that string
 (reverse-i-search)`l': vdo create --name=vdo_sdc --device=/dev/sdc --vdoLogicalSize=50G
 (reverse-i-search)`ls': lsblk
+
+type ctrl-r again to repeat the backward search
 
 Type !number to execute a command with a specific number in history
 [lisa@localhost ~]$ !10
@@ -47,6 +49,14 @@ Clear the history in case you've typed a password in clear text by accident
               -c     Clear the history list by deleting all the entries.
               -w     Write the current history list to the history file, over‐
                      writing the history file's contents.
+$ man history
+              -c     Clear the history list by deleting all the entries.
+
+              -r     Read  the contents of the history file and append them to
+                     the current history list.
+              -w     Write the current history list to the history file, over‐
+                     writing the history file's contents.
+
 
 [lisa@localhost ~]$ history -c
 [lisa@localhost ~]$ cat .bash_history 

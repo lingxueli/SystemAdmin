@@ -1,0 +1,24 @@
+>   1>  redirect stdout
+>>  1>>   redirect stdout, append
+
+2>   redirect stderr
+
+2>&1  redirect both stdout and stderr
+
+# man bash
+   Pipelines
+       A  pipeline  is  a sequence of one or more commands separated by one of
+       the control operators | or |&.  The format for a pipeline is:
+
+              [time [-p]] [ ! ] command [ [|⎪|&] command2 ... ]
+
+       The standard output of command is connected via a pipe to the  standard
+       input  of  command2.   This connection is performed before any redirec‐
+       tions specified by the command (see REDIRECTION below).  If |& is used,
+       command's  standard  error, in addition to its standard output, is con‐
+       nected to command2's standard input through the pipe; it  is  shorthand
+       for  2>&1  |.   This  implicit redirection of the standard error to the
+       standard output is performed after any redirections  specified  by  the
+       command.
+
+<  0<  redirect stdin
