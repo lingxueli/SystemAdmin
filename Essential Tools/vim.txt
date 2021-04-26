@@ -34,6 +34,32 @@ Here're the essentails:
     u undo the last command
     Ctrl-r redo the last command
 
+$ vimtutor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                        Lesson 6.4: COPY AND PASTE TEXT
+
+
+          ** Use the  y  operator to copy text and  p  to paste it **
+
+  1. Go to the line marked with ---> below and place the cursor after "a)".
+
+  2. Start Visual mode with  v  and move the cursor to just before "first".
+
+  3. Type  y  to yank (copy) the highlighted text.
+
+  4. Move the cursor to the end of the next line:  j$
+
+  5. Type  p  to put (paste) the text.  Then type:  a second <ESC> .
+
+  6. Use Visual mode to select " item.", yank it with  y , move to the end of
+     the next line with  j$  and put the text there with  p .
+
+--->  a) this is the first item.
+      b)
+
+  NOTE: you can also use  y  as an operator;  yw  yanks one word.
+
+
 
 4. navigation:
     
@@ -49,9 +75,58 @@ Here're the essentails:
 
     /text serach for text from the current cursor forward
     ?text search for text from the current cursor backward
-    ! ls add the output of ls(or any other command) in the current file. It replaces the current line
+    ! ls show the output of ls(or any other command) in the current file.
     :%s/old/new/g  replace all occurrences of old with new
-    
+
+
+$ vimtutor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                      Lesson 4.4: THE SUBSTITUTE COMMAND
+
+
+        ** Type  :s/old/new/g  to substitute 'new' for 'old'. **
+
+  1. Move the cursor to the line below marked --->.
+
+  2. Type  :s/thee/the <ENTER> .  Note that this command only changes the
+     first occurrence of "thee" in the line.
+
+  3. Now type  :s/thee/the/g .  Adding the  g  flag means to substitute
+     globally in the line, change all occurrences of "thee" in the line.
+
+---> the best time to see the flowers is in the spring.
+
+  4. To change every occurrence of a character string between two lines,
+     type   :#,#s/old/new/g    where #,# are the line numbers of the range
+                               of lines where the substitution is to be done.
+     Type   :%s/old/new/g      to change every occurrence in the whole file.
+     Type   :%s/old/new/gc     to find every occurrence in the whole file,
+                               with a prompt whether to substitute or not.
+                               
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                Lesson 5.1: HOW TO EXECUTE AN EXTERNAL COMMAND
+
+
+   ** Type  :!  followed by an external command to execute that command. **
+
+  1. Type the familiar command  :  to set the cursor at the bottom of the
+     screen.  This allows you to enter a command-line command.
+
+  2. Now type the  !  (exclamation point) character.  This allows you to
+     execute any external shell command.
+
+  3. As an example type   ls   following the ! and then hit <ENTER>.  This
+     will show you a listing of your directory, just as if you were at the
+     shell prompt.  Or use  :!dir  if ls doesn't work.
+
+NOTE:  It is possible to execute any external command this way, also with
+       arguments.
+
+NOTE:  All  :  commands must be finished by hitting <ENTER>
+       From here on we will not always mention it.
+
+
+
 How to remember these commands?
 
 $ vimtutor

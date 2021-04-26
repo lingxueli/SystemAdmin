@@ -49,6 +49,7 @@ Clear the history in case you've typed a password in clear text by accident
               -c     Clear the history list by deleting all the entries.
               -w     Write the current history list to the history file, over‐
                      writing the history file's contents.
+                     
 $ man history
               -c     Clear the history list by deleting all the entries.
 

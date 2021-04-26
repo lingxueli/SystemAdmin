@@ -9,6 +9,16 @@ It reads the mounts and also display the relationship between the mount. A clean
 
 
 $ df -hT
+DF(1)                                                User Commands                                                DF(1)
+
+NAME
+       df - report file system disk space usage
+
+       -h, --human-readable
+              print sizes in powers of 1024 (e.g., 1023M)
+       -T, --print-type
+              print file system type
+
 
 -T options display the file system type
 
@@ -67,8 +77,46 @@ gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime
 /dev/sr0 on /run/media/lisa/CentOS-8-3-2011-x86_64-dvd type iso9660 (ro,nosuid,nodev,relatime,nojoliet,check=s,map=n,blocksize=2048,uid=1000,gid=1000,dmode=500,fmode=400,uhelper=udisks2)
 
 
+[root@localhost /]# df -hT
+Filesystem                   Type      Size  Used Avail Use% Mounted on
+devtmpfs                     devtmpfs  866M     0  866M   0% /dev
+tmpfs                        tmpfs     896M     0  896M   0% /dev/shm
+tmpfs                        tmpfs     896M  9.8M  886M   2% /run
+tmpfs                        tmpfs     896M     0  896M   0% /sys/fs/cgroup
+/dev/mapper/cl-root          xfs        17G  4.7G   13G  28% /
+/dev/mapper/vg--test-myfiles ext4      976M  2.6M  907M   1% /myfiles
+/dev/sda1                    xfs      1014M  240M  775M  24% /boot
+tmpfs                        tmpfs     180M  1.2M  178M   1% /run/user/42
+tmpfs                        tmpfs     180M  4.6M  175M   3% /run/user/1000
+/dev/sr0                     iso9660   8.7G  8.7G     0 100% /run/media/lisa/CentOS-8-3-2011-x86_64-dvd
 
 
+
+FINDMNT(8)                                       System Administration                                       FINDMNT(8)
+
+NAME
+       findmnt - find a filesystem
+
+SYNOPSIS
+       findmnt [options]
+
+       findmnt [options] device|mountpoint
+
+       findmnt [options] [--source] device [--target|--mountpoint] mountpoint
+
+DESCRIPTION
+       findmnt  will list all mounted filesystems or search for a filesystem.  The findmnt command is able to search in
+       /etc/fstab, /etc/mtab or /proc/self/mountinfo.  If device or mountpoint is not given, all filesystems are shown.
+
+       The device may be specified by device name, major:minor numbers, filesystem label or UUID, or partition label or
+       UUID.   Note  that findmnt follows mount(8) behavior where a device name may be interpreted as a mountpoint (and
+       vice versa) if the --target, --mountpoint or --source options are not specified.
+
+       The command prints all mounted filesystems in the tree-like format by default.
+
+
+# show relationship between the different mounts
+# a better output format than the mount command
 [root@localhost /]# findmnt
 TARGET                                SOURCE     FSTYPE          OPTIONS
 /                                     /dev/mapper/cl-root
@@ -103,17 +151,3 @@ TARGET                                SOURCE     FSTYPE          OPTIONS
 │ ├─/dev/mqueue                       mqueue     mqueue          rw,relatime,seclabel
 │ └─/dev/hugepages                    hugetlbfs  hugetlbfs       rw,relatime,seclabel,pagesize=2M
 ├─/run                             
-
-
-[root@localhost /]# df -hT
-Filesystem                   Type      Size  Used Avail Use% Mounted on
-devtmpfs                     devtmpfs  866M     0  866M   0% /dev
-tmpfs                        tmpfs     896M     0  896M   0% /dev/shm
-tmpfs                        tmpfs     896M  9.8M  886M   2% /run
-tmpfs                        tmpfs     896M     0  896M   0% /sys/fs/cgroup
-/dev/mapper/cl-root          xfs        17G  4.7G   13G  28% /
-/dev/mapper/vg--test-myfiles ext4      976M  2.6M  907M   1% /myfiles
-/dev/sda1                    xfs      1014M  240M  775M  24% /boot
-tmpfs                        tmpfs     180M  1.2M  178M   1% /run/user/42
-tmpfs                        tmpfs     180M  4.6M  175M   3% /run/user/1000
-/dev/sr0                     iso9660   8.7G  8.7G     0 100% /run/media/lisa/CentOS-8-3-2011-x86_64-dvd

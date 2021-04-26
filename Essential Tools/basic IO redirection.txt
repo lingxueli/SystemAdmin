@@ -4,6 +4,7 @@
 2>   redirect stderr
 
 2>&1  redirect both stdout and stderr
+        > file 2>&1
 
 # man bash
    Pipelines

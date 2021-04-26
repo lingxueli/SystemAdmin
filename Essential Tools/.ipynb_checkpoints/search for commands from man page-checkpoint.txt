@@ -104,3 +104,19 @@ DESCRIPTION
        7   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7)
        8   System administration commands (usually only for root)
        9   Kernel routines [Non standard]
+       
+       
+# update the index database which contains man page keywords - mandb       
+MANDB(8)                                           Manual pager utils                                          MANDB(8)
+
+NAME
+       mandb - create or update the manual page index caches
+
+SYNOPSIS
+       mandb [-dqsucpt?V] [-C file] [manpath]
+       mandb [-dqsut] [-C file] -f filename ...
+
+DESCRIPTION
+       mandb  is  used  to initialise or manually update index database caches that are usually maintained by man.  The
+       caches contain information relevant to the current state of the manual page system and  the  information  stored
+       within them is used by the man-db utilities to enhance their speed and functionality.

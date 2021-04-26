@@ -35,3 +35,109 @@ Linux Filesystem Hierarchy Standard
 /usr/include: header files
 /usr/local: this is where the adminstrator installs their own software
 /usr/share: contains file that can work on other kinds of Unix machines
+
+
+
+
+[root@localhost lisa]# man -k hier
+file-hierarchy (7)   - File system hierarchy overview
+hier (7)             - description of the filesystem hierarchy
+...
+
+HIER(7)                                        Linux Programmer's Manual                                        HIER(7)
+
+NAME
+       hier - description of the filesystem hierarchy
+
+DESCRIPTION
+       A typical Linux system has, among others, the following directories:
+
+       /      This is the root directory.  This is where the whole tree starts.
+
+       /boot  Contains static files for the boot loader.  This directory holds only the files which are  needed  during
+              the  boot process.  The map installer and configuration files should go to /sbin and /etc.  The operating
+              system kernel (initrd for example) must be located in either / or /boot.
+
+       /dev   Special or device files, which refer to physical devices.  See mknod(1).
+
+       /etc   Contains configuration files which are local to the machine.  Some larger software  packages,  like  X11,
+              can  have  their  own  subdirectories below /etc.  Site-wide configuration files may be placed here or in
+              /usr/etc.  Nevertheless, programs should always look for these files in /etc and you may have  links  for
+              these files to /usr/etc.
+
+       /home  On machines with home directories for users, these are usually beneath this directory, directly  or  not.
+              The structure of this directory depends on local administration decisions (optional).
+
+       /media This directory contains mount points for removable media such as CD and DVD disks or USB sticks.  On sys‐
+              tems  where  more  than  one device exists for mounting a certain type of media, mount directories can be
+              created by appending a digit to the name of those available above starting with '0', but the  unqualified
+              name must also exist.
+
+       /media/floppy[1-9]
+              Floppy drive (optional).
+
+       /media/cdrom[1-9]
+              CD-ROM drive (optional).
+
+       /media/cdrecorder[1-9]
+              CD writer (optional).
+
+       /media/zip[1-9]
+              Zip drive (optional).
+
+       /media/usb[1-9]
+              USB drive (optional).
+
+       /mnt   This  directory  is a mount point for a temporarily mounted filesystem.  In some distributions, /mnt con‐
+              tains subdirectories intended to be used as mount points for several temporary filesystems.
+
+       /opt   This directory should contain add-on packages that contain static files. ## optional packages
+
+       /proc  This is a mount point for the proc filesystem, which provides information about running processes and the
+              kernel.  This pseudo-filesystem is described in more detail in proc(5).
+
+       /root  This directory is usually the home directory for the root user (optional).
+
+       /bin   This  directory contains executable programs which are needed in single user mode and to bring the system
+              up or repair it.
+
+       /sbin  Like /bin, this directory holds commands needed to boot the system, but which are usually not executed by
+              normal users.
+
+       /srv   This directory contains site-specific data that is served by this system.
+
+# FHS (Filesystem Hierarchy Standard): site-specific data
+As it states in documentation:
+
+/srv : Data for services provided by this system
+
+This main purpose of specifying this is so that users may find the location of the data files for particular service, and so that services which require a single tree for readonly data, writable data and scripts (such as cgi scripts) can be reasonably placed. Data that is only of interest to a specific user should go in that users' home directory.
+
+The methodology used to name subdirectories of /srv is unspecified as there is currently no consensus on how this should be done. One method for structuring data under /srv is by protocol, eg. ftp, rsync, www, and cvs. On large systems it can be useful to structure /srv by administrative context, such as /srv/physics/www, /srv/compsci/cvs, etc. This setup will differ from host to host. Therefore, no program should rely on a specific subdirectory structure of /srv existing or data necessarily being stored in /srv. However /srv should always exist on FHS compliant systems and should be used as the default location for such data.
+
+
+       /sys   This is a mount point for the sysfs filesystem, which provides information about the kernel  like  /proc,
+              but better structured, following the formalism of kobject infrastructure.
+
+    # sysfs is a pseudo file system provided by the Linux kernel that exports information about various kernel subsystems, hardware devices, and associated device drivers.
+        
+       /tmp   This  directory contains temporary files which may be deleted with no notice, such as by a regular job or
+              at system boot up.
+
+       /usr   This directory is usually mounted from a separate partition.  It should hold  only  shareable,  read-only
+              data, so that it can be mounted by various machines running Linux.  # it contains program files and doc about them
+              
+       /usr/doc
+              Replaced by /usr/share/doc.
+
+       /usr/share/doc
+              Documentation about installed programs (optional).
+
+       /usr/bin
+              This is the primary directory for executable programs.  Most programs executed by normal users which  are
+              not  needed  for booting or for repairing the system and which are not installed locally should be placed
+              in this directory.
+
+       /var   This directory contains files which may change in size, such as spool and log files.
+
+# /var/spool contains data which is awaiting some kind of later processing. Data in /var/spool represents work to be done in the future (by a program, user, or administrator); often data is deleted after it has been processed.

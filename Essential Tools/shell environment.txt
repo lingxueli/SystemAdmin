@@ -1,0 +1,159 @@
+# print the current enviroment
+[root@localhost ~]# env
+HOSTNAME=localhost.localdomain
+USERNAME=lisa
+USER=lisa
+DESKTOP_SESSION=gnome
+PATH=/home/lisa/.local/bin:/home/lisa/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin
+HISTSIZE=1000
+OLDPWD=/home/lisa
+...
+
+
+ENV(1)                                               User Commands                                               ENV(1)
+
+NAME
+       env - run a program in a modified environment
+
+SYNOPSIS
+       env [OPTION]... [-] [NAME=VALUE]... [COMMAND [ARG]...]
+
+DESCRIPTION
+       Set each NAME to VALUE in the environment and run COMMAND.
+SEE ALSO
+       Full documentation at: <https://www.gnu.org/software/coreutils/env>
+       or available locally via: info '(coreutils) env invocation'
+
+
+$ info '(coreutils) env invocation'
+   If no command name is specified following the environment
+specifications, the resulting environment is printed.  This is like
+specifying the ‘printenv’ program.
+
+
+
+Enviroment configuration files
+
+/etc/profile
+/etc/bashrc
+~/.bash_profile
+~/.bashrc
+
+
+$ man bash
+
+INVOCATION
+       A login shell is one whose first character of argument zero is a -, or one started with the --login option.
+
+       An interactive shell is one started without non-option arguments (unless -s is specified)  and  without  the  -c
+       option  whose  standard  input  and  error  are both connected to terminals (as determined by isatty(3)), or one
+       started with the -i option.  PS1 is set and $- includes i if bash is interactive, allowing a shell script  or  a
+       startup file to test this state.
+
+       The  following paragraphs describe how bash executes its startup files.
+
+       When  bash  is  invoked as an interactive login shell, or as a non-interactive shell with the --login option, it
+       first reads and executes commands from the file /etc/profile, if that file exists.  After reading that file,  it
+       looks  for  ~/.bash_profile,  ~/.bash_login, and ~/.profile, in that order, and reads and executes commands from
+       the first one that exists and is readable.  The --noprofile option may be used when  the  shell  is  started  to
+       inhibit this behavior.
+
+       # login shell startup files:  /etc/profile and ~/.bash_profile
+       
+       When  an interactive login shell exits, or a non-interactive login shell executes the exit builtin command, bash
+       reads and executes commands from the files ~/.bash_logout and /etc/bash.bash_logout, if the files exists.
+
+       When an interactive shell that is not a login shell is started, bash reads and executes commands from ~/.bashrc,
+       if  that  file  exists.   This may be inhibited by using the --norc option.  The --rcfile file option will force
+       bash to read and execute commands from file instead of ~/.bashrc.
+
+       # interactive non-login shell startup files: ~/.bashrc
+       # another file not mentioned in the man page: /etc/bashrc - systewide version of ~/.bashrc
+       
+FILES
+       /bin/bash
+              The bash executable
+       /etc/profile
+              The systemwide initialization file, executed for login shells
+       /etc/bash.bash_logout
+              The systemwide login shell cleanup file, executed when a login shell exits
+       ~/.bash_profile
+              The personal initialization file, executed for login shells
+       ~/.bashrc
+              The individual per-interactive-shell startup file
+       ~/.bash_logout
+              The individual login shell cleanup file, executed when a login shell exits
+       ~/.inputrc
+              Individual readline initialization file
+
+       # another file not mentioned in the man page: /etc/bashrc - systewide version of ~/.bashrc
+
+
+
+
+[root@localhost ~]# cat /etc/profile
+# /etc/profile
+
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+...
+
+[root@localhost ~]# cat /etc/bashrc
+# /etc/bashrc
+
+# System wide functions and aliases
+# Environment stuff goes in /etc/profile
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+...
+
+
+How to send a message to all users - message of the day
+
+1. /etc/motd
+
+MOTD(5)                                        Linux Programmer's Manual                                        MOTD(5)
+
+NAME
+       motd - message of the day
+
+DESCRIPTION
+       The  contents  of  /etc/motd  are displayed by login(1) after a successful login but just before it executes the
+       login shell.
+
+       The abbreviation "motd" stands for "message of the day", and this file has been traditionally used  for  exactly
+       that (it requires much less disk space than mail to all users).
+
+FILES
+       /etc/motd
+
+SEE ALSO
+       login(1), issue(5)
+OR
+2. /etc/issue
+
+ISSUE(5)                                       Linux Programmer's Manual                                       ISSUE(5)
+
+NAME
+       issue - prelogin message and identification file
+
+DESCRIPTION
+       /etc/issue  is  a  text  file  which  contains a message or system identification to be printed before the login
+       prompt.  It may contain various @char and \char sequences, if supported by the getty-type  program  employed  on
+       the system.
+
+FILES
+       /etc/issue
+
+SEE ALSO
+       motd(5), agetty(8), mingetty(8)
