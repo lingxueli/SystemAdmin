@@ -1,14 +1,26 @@
-Hard link
+ln (1)               - make links between files
+ln (1p)              - link files
+
+
+inodes contains administrative data of a file, except the file name. 
+
+The hard link is the filename which links to inode. And inode contains information about how to further access the file content.
 
 File names are hard links. A file could have multiple hard links. It enables user to access the same file from multiple locations.
 
-inodes contains administrative data of a file, except the file name. The hard link is the link from the filename to inode. And inode contains information about how to further access the file content.
+Symbolic link doesn't link to the inode but to the file name. It s more flexible. They can link to files on other devices. The major disadvantage is when the original file is removed, the symbolic link doesn't work any longer.
+
+Limitations:
+1. hard link can be created for files only
+Symbolic link can be created for files and directories.
 
 You cannot create hard link to directories.
 
-Symbolic link
+2. to create a hard link, you need to be the owner of the file.
 
-Symbolic link doesn't link to the inode but to the file name. It s more flexible. They can link to files on other devices. The major disadvantage is when the original file is removed, the symbolic link doesn't work any longer.
+3. hard link must exist on the same device, partition, logical volumn
+soft link can link to files on other devices.
+
 
 
 Creating links
@@ -18,7 +30,6 @@ $ man ln
        ln [OPTION]... TARGET... DIRECTORY
        ln [OPTION]... -t DIRECTORY TARGET...
 
-The second argument could be the destination of the link, or the link name
 
 Create a hard link to /etc/hosts in the current directroy
 
@@ -52,7 +63,6 @@ To create the hard link, you need to be the file owner
 ln: failed to create hard link './hosts' => '/etc/hosts': Operation not permitted
 
 
-
 Create a symbolic link to /etc/hosts in the current directory
 
 [root@localhost lisa]# ln -s /etc/hosts .
@@ -61,7 +71,7 @@ total 164
 drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Desktop
 drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Documents
 drwxr-xr-x. 2 lisa lisa     6 Jan 23 00:10 Downloads
-lrwxrwxrwx. 1 root root    10 Jan 31 22:47 hosts -> /etc/hosts    ---> symbolic link, the first char is an l if it's a symbolic link
+lrwxrwxrwx. 1 root root    10 Jan 31 22:47 hosts -> /etc/hosts    ---> symbolic link, the first char is an l
                                                                     it shows the name of the item it links to after the filename
 
 
@@ -80,29 +90,41 @@ Remove link example
 # switch to home directory
 [lisa@localhost ~]$ cd
 
-# create symbolic link to test, with link name - link
+# create symbolic link: link -> test
 [lisa@localhost ~]$ ln -s test link
 
-[lisa@localhost ~]$ ls -al | grep link
-lrwxrwxrwx.  1 lisa lisa     4 Jan 31 23:02 link -> test
+[lisa@localhost ~]$ ls -al | grep test
+lrwxrwxrwx.  1 lisa lisa      4 Jan 31 23:08 link -> test
+drwxrwxr-x.  2 lisa lisa   4096 Apr 28 07:56 test
 
-# remove the symbolic link
+# remove the symbolic link without option -r or -f, even it links to a directory
 [lisa@localhost ~]$ rm link
-[lisa@localhost ~]$ ls -al | grep link
+[lisa@localhost ~]$ ls -al | grep linkd
 
-# link is removed
+# link is removed as expected
 
+[lisa@localhost ~]$ ls -l | grep test
+drwxrwxr-x. 2 lisa lisa   4096 Apr 28 07:56 test
+-rw-rw-r--. 1 lisa lisa   1038 Jan 30 19:13 testvim
+
+# create the link again
 [lisa@localhost ~]$ ln -s test link
 
 
-# remove the symbolic link again
+# remove the symbolic link, with option -r and -f
 # using the bash command link completion this time
+# / in the end will cause trouble
 [lisa@localhost ~]$ rm -rf link/
 
-[lisa@localhost ~]$ ls -l | grep link
-lrwxrwxrwx. 1 lisa lisa     4 Jan 31 23:08 link -> test
+# the link is not removed as expected
+# it clears the data in original directory as well
 
-[lisa@localhost ~]$ ls test/
+[lisa@localhost ~]$ ls -l | grep test
+lrwxrwxrwx. 1 lisa lisa      4 Apr 28 08:00 link -> test
+drwxrwxr-x. 2 lisa lisa      6 Apr 28 08:00 test
+-rw-rw-r--. 1 lisa lisa   1038 Jan 30 19:13 testvim
+[lisa@localhost ~]$ ls -l test/
+total 0
 
-# link is not removed
-# but the directory is now empty
+
+# so do not use -r -f option when remove a symbolic link

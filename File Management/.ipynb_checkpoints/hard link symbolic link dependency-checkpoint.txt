@@ -1,0 +1,46 @@
+# create links to file and directory
+[lisa@localhost ~]$ ln /etc/passwd .
+ln: failed to create hard link './passwd' => '/etc/passwd': Operation not permitted
+[lisa@localhost ~]$ ln -s /etc/passwd .
+[lisa@localhost ~]$ ln -s /etc/hosts
+
+
+# test dependencies
+[lisa@localhost ~]$ touch newfile
+[lisa@localhost ~]$ ln newfile linkedfile
+[lisa@localhost ~]$ ls -l | grep file
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 linkedfile
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 newfile
+
+[lisa@localhost ~]$ ln -s newfile symlinkfile
+[lisa@localhost ~]$ ls -l | grep file
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 linkedfile
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 newfile
+lrwxrwxrwx. 1 lisa lisa      7 Apr 28 08:09 symlinkfile -> newfile
+
+# symbolic link dependency:
+# symbolic link links to a specific filename
+
+# if that specific filename is gone, it invalidates the symbolic link
+# even thought there're other filenames associated with it
+[lisa@localhost ~]$ rm newfile
+[lisa@localhost ~]$ cat symlinkfile
+cat: symlinkfile: No such file or directory
+
+
+# hard link dependency
+# hard link is valid if there're 1+ hard links left
+[lisa@localhost ~]$ cat linkedfile
+[lisa@localhost ~]$ ls -l | grep file
+-rw-rw-r--. 1 lisa lisa      0 Apr 28 08:07 linkedfile
+lrwxrwxrwx. 1 lisa lisa      7 Apr 28 08:09 symlinkfile -> newfile
+
+
+# restore the symbolic link
+
+[lisa@localhost ~]$ ln linkedfile newfile
+[lisa@localhost ~]$ cat symlinkfile
+[lisa@localhost ~]$ ls -l | grep file
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 linkedfile
+-rw-rw-r--. 2 lisa lisa      0 Apr 28 08:07 newfile
+lrwxrwxrwx. 1 lisa lisa      7 Apr 28 08:09 symlinkfile -> newfile
