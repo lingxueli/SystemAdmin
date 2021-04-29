@@ -1,0 +1,136 @@
+# sort file contents - sort command
+# it sorts in byte order by default, capital letters are shown before lowercases. 
+[lisa@localhost ~]$ sort /etc/passwd | head
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+alex:x:1003:1005::/home/alex:/bin/bash
+apache:x:48:48:Apache:/usr/share/httpd:/sbin/nologin
+avahi:x:70:70:Avahi mDNS/DNS-SD Stack:/var/run/avahi-daemon:/sbin/nologin
+bin:x:1:1:bin:/bin:/sbin/nologin
+chrony:x:992:986::/var/lib/chrony:/sbin/nologin
+clevis:x:977:976:Clevis Decryption Framework unprivileged user:/var/cache/clevis:/sbin/nologin
+cockpit-wsinstance:x:980:979:User for cockpit-ws instances:/nonexisting:/sbin/nologin
+cockpit-ws:x:981:980:User for cockpit web service:/nonexisting:/sbin/nologin
+colord:x:978:977:User for colord:/var/lib/colord:/sbin/nologin
+
+[lisa@localhost ~]$ cut -d : -f 1 /etc/passwd | sort | head
+adm
+alex
+apache
+avahi
+bin
+chrony
+clevis
+cockpit-ws
+cockpit-wsinstance
+colord
+
+# sort in numeric order
+[lisa@localhost ~]$ cut -f 3 -d : /etc/passwd | sort -n | head
+0
+1
+2
+3
+4
+5
+6
+7
+8
+11
+
+
+# sort in reverse order
+[lisa@localhost ~]$ cut -f 3 -d : /etc/passwd | sort -nr | head
+65534
+1005
+1004
+1003
+1002
+1001
+1000
+999
+998
+997
+
+
+# specify which column you want to sort
+[lisa@localhost ~]$ sort -k 3 -t : /etc/passwd  | head
+root:x:0:0:root:/root:/bin/bash
+lisa:x:1000:1000:lisa:/home/lisa:/bin/bash
+edwin:x:1001:1003::/home/edwin:/bin/bash
+santos:x:1002:1004::/home/santos:/bin/bash
+alex:x:1003:1005::/home/alex:/bin/bash
+serene:x:1004:1006::/home/serene:/bin/bash
+conuser1:x:1005:1008::/home/conuser1:/bin/bash
+qemu:x:107:107:qemu user:/:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+usbmuxd:x:113:113:usbmuxd user:/:/sbin/nologin
+
+
+[lisa@localhost ~]$ sort -k 3 -t : -n /etc/passwd  | head
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+sync:x:5:0:sync:/sbin:/bin/sync
+shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+halt:x:7:0:halt:/sbin:/sbin/halt
+mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
+operator:x:11:0:operator:/root:/sbin/nologin
+
+# specify which column you want to sort from the output of a command
+[lisa@localhost ~]$ ps aux | head
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.3 245796  6192 ?        Ss   Apr28   0:25 /usr/lib/systemd/systemd --switched-root --system --deserialize 18
+root           2  0.0  0.0      0     0 ?        S    Apr28   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        I<   Apr28   0:00 [rcu_gp]
+root           4  0.0  0.0      0     0 ?        I<   Apr28   0:00 [rcu_par_gp]
+root           6  0.0  0.0      0     0 ?        I<   Apr28   0:00 [kworker/0:0H-kblockd]
+root           9  0.0  0.0      0     0 ?        I<   Apr28   0:00 [mm_percpu_wq]
+root          10  0.0  0.0      0     0 ?        S    Apr28   0:09 [ksoftirqd/0]
+root          11  0.0  0.0      0     0 ?        I    Apr28   0:24 [rcu_sched]
+root          12  0.0  0.0      0     0 ?        S    Apr28   0:00 [migration/0]
+
+
+[lisa@localhost ~]$ ps aux | sort -k 3 -nr | head
+lisa        2724  2.3 13.7 3442420 252792 tty2   Sl+  Apr28  20:49 /usr/bin/gnome-shell
+root        1006  0.7  0.2 369472  4888 ?        Ssl  Apr28   6:52 /usr/bin/vmtoolsd
+lisa        3181  0.6  0.6 534828 11352 tty2     Sl+  Apr28   5:55 /usr/bin/vmtoolsd -n vmusr --uinputFd 3
+root       20738  0.4  1.7 205212 31768 ?        Ss   06:50   0:05 /usr/libexec/sssd/sssd_kcm --uid 0 --gid 0 --logger=files
+lisa        3299  0.2  1.7 540644 32596 ?        Ssl  Apr28   1:51 /usr/libexec/gnome-terminal-server
+apache      1433  0.2  0.0 1812068 1704 ?        Sl   Apr28   2:00 /usr/sbin/httpd -DFOREGROUND
+apache      1424  0.2  0.0 1812068 1676 ?        Sl   Apr28   2:00 /usr/sbin/httpd -DFOREGROUND
+apache      1419  0.2  0.0 1943204 1740 ?        Sl   Apr28   2:33 /usr/sbin/httpd -DFOREGROUND
+root        2455  0.1 24.3 1103092 446956 ?      Ssl  Apr28   1:26 /usr/libexec/packagekitd
+root       21150  0.1  0.0      0     0 ?        I    07:09   0:00 [kworker/u256:0-events_unbound]
+
+
+SORT(1)                                              User Commands                                              SORT(1)
+
+NAME
+       sort - sort lines of text files
+
+SYNOPSIS
+       sort [OPTION]... [FILE]...
+       sort [OPTION]... --files0-from=F
+       
+       Mandatory arguments to long options are mandatory for short options too.  Ordering options:
+
+
+       -f, --ignore-case
+              fold lower case to upper case characters
+
+       -n, --numeric-sort
+              compare according to string numerical value
+
+       -r, --reverse
+              reverse the result of comparisons
+
+
+       Other options:
+
+       -k, --key=KEYDEF
+              sort via a key; KEYDEF gives location and type
+
+       -t, --field-separator=SEP
+              use SEP instead of non-blank to blank transition

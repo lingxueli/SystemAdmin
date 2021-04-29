@@ -16,7 +16,7 @@ gzip (1)             - compress or expand files
 # create an archive
 [root@localhost ~]# tar -cvf etc.tar /etc
 
-# read archive file type
+# read type of the file
 [root@localhost ~]# file etc.tar
 etc.tar: POSIX tar archive (GNU)
 
