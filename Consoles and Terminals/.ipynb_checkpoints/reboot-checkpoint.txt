@@ -8,3 +8,90 @@ $ poweroff
 
 if none of the above works, use this:
 $ echo b > /proc/sysrq-trigger
+
+
+PROC(5)                                        Linux Programmer's Manual                                        PROC(5)
+
+NAME
+       proc - process information pseudo-filesystem
+
+DESCRIPTION
+       The  proc  filesystem  is a pseudo-filesystem which provides an interface to kernel data structures.  It is com‐
+       monly mounted at /proc.  Typically, it is mounted automatically by the system, but it can also be mounted  manu‐
+       ally using a command such as:
+
+           mount -t proc proc /proc
+
+       Most  of  the files in the proc filesystem are read-only, but some files are writable, allowing kernel variables
+       to be changed.
+
+
+       /proc/sys/kernel/sysrq
+              This file controls the functions allowed to be invoked by the SysRq key.  By default, the file contains 1
+              meaning that every possible SysRq request is allowed (in older kernel versions,  SysRq  was  disabled  by
+              default, and you were required to specifically enable it at run-time, but this is not the case any more).
+              Possible values in this file are:
+
+              0    Disable sysrq completely
+
+              1    Enable all functions of sysrq
+
+              > 1  Bit mask of allowed sysrq functions, as follows:
+                     2  Enable control of console logging level
+                     4  Enable control of keyboard (SAK, unraw)
+                     8  Enable debugging dumps of processes etc.
+                    16  Enable sync command
+                    32  Enable remount read-only
+                    64  Enable signaling of processes (term, kill, oom-kill)
+                   128  Allow reboot/poweroff
+                   256  Allow nicing of all real-time tasks
+
+              This file is present only if the CONFIG_MAGIC_SYSRQ kernel configuration option is enabled.  For  further
+              details  see the Linux kernel source file Documentation/admin-guide/sysrq.rst (or Documentation/sysrq.txt
+              before Linux 4.10).
+
+=> control the access level of sysrq key
+
+       /proc/sysrq-trigger (since Linux 2.4.21)
+              Writing  a  character  to this file triggers the same SysRq function as typing ALT-SysRq-<character> (see
+              the description of /proc/sys/kernel/sysrq).  This file is normally writable only by  root.   For  further
+              details  see the Linux kernel source file Documentation/admin-guide/sysrq.rst (or Documentation/sysrq.txt
+              before Linux 4.10).
+
+=> invoke the sysrq key
+
+
+Sysrq - system request
+
+System request (SysRq or Sys Req) is a key on personal computer keyboards that has no standard use. Introduced by IBM with the PC/AT, it was intended to be available as a special key to directly invoke low-level operating system functions with no possibility of conflicting with any existing software.
+
+
+The magic SysRq key is a key combination understood by the Linux kernel, which allows the user to perform various low-level commands regardless of the system's state. It is often used to recover from freezes, or to reboot a computer without corrupting the filesystem.[1] Its effect is similar to the computer's hardware reset button (or power switch) but with many more options and much more control.
+
+
+
+execute the following command to find out all of the options available to you from sysrq.
+
+[root@localhost lisa]# echo h > /proc/sysrq-trigger
+
+If you don't see output from that, either sysrq isn't enabled, or you aren't executing from within a tty.
+
+To check if it is enabled, ensure that the following command yields a 1.
+
+[root@localhost lisa]# cat /proc/sys/kernel/sysrq
+16
+
+You can set the value in the file by the following command:
+
+echo "number" >/proc/sys/kernel/sysrq
+
+[root@localhost lisa]# echo 1 > /proc/sys/kernel/sysrq
+[root@localhost lisa]# cat /proc/sys/kernel/sysrq
+1
+
+
+To shutdown or reboot, execute one of the following.
+
+echo o > /proc/sysrq-trigger: (pOweroff) Powers off the system
+
+echo b > /proc/sysrq-trigger: (reBoot) Reboots the system
