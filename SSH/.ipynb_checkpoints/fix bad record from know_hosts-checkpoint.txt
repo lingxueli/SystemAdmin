@@ -1,0 +1,109 @@
+sed -i -e '25d' ~/.ssh/known_hosts
+Remove line 25 from the file
+
+Or sed -i '25d' ~/.ssh/known_hosts
+It does the same thing
+
+
+Or sed '25d' ~/.ssh/known_hosts
+It dumps the result to the STDOUT, original file  ~/.ssh/known_hostst will not be changed
+
+
+SED(1)                           User Commands                          SED(1)
+
+NAME
+       sed - stream editor for filtering and transforming text
+
+SYNOPSIS
+       sed [OPTION]... {script-only-if-no-other-script} [input-file]...
+
+DESCRIPTION
+       Sed  is a stream editor.  A stream editor is used to perform basic text
+       transformations on an input stream (a file or input from  a  pipeline).
+       While  in  some  ways similar to an editor which permits scripted edits
+       (such as ed), sed works by making only one pass over the input(s),  and
+       is consequently more efficient.  But it is sed's ability to filter text
+       in a pipeline which particularly distinguishes it from other  types  of
+       editors.
+
+       -e script, --expression=script
+
+              add the script to the commands to be executed
+
+       -i[SUFFIX], --in-place[=SUFFIX]
+
+              edit files in place (makes backup if SUFFIX supplied)
+
+COMMAND SYNOPSIS
+       This is just a brief synopsis of sed commands to serve as a reminder to
+       those who already know sed; other documentation (such  as  the  texinfo
+       document) must be consulted for fuller descriptions.
+
+       d      Delete pattern space.  Start next cycle.
+       
+SEE ALSO
+       awk(1), ed(1), grep(1), tr(1),  perlre(1),  sed.info,  any  of  various
+       books on sed, the sed FAQ (http://sed.sf.net/grabbag/tutorials/sed‐
+       faq.txt), http://sed.sf.net/grabbag/.
+
+       The full documentation for sed is maintained as a Texinfo manual.  If
+       the info and sed programs are properly installed at your site, the com‐
+       mand
+
+              info sed
+
+       should give you access to the complete manual.
+       
+       
+$ info sed  
+2.1 Overview
+============
+
+Normally 'sed' is invoked like this:
+
+     sed SCRIPT INPUTFILE...
+
+   For example, to replace all occurrences of 'hello' to 'world' in the
+file 'input.txt':
+
+     sed 's/hello/world/' input.txt > output.txt
+
+   By default 'sed' prints all processed input (except input that has
+been modified/deleted by commands such as 'd').  Use '-n' to suppress
+output, and the 'p' command to print specific lines.  The following
+command prints only line 45 of the input file:
+
+     sed -n '45p' file.txt
+
+
+   Without '-e' or '-f' options, 'sed' uses the first non-option
+parameter as the SCRIPT, and the following non-option parameters as
+input files.  If '-e' or '-f' options are used to specify a SCRIPT, all
+non-option parameters are taken as input files.  Options '-e' and '-f'
+can be combined, and can appear multiple times (in which case the final
+effective SCRIPT will be concatenation of all the individual SCRIPTs).
+
+2.2 Command-Line Options
+========================
+
+The full format for invoking 'sed' is:
+
+     sed OPTIONS... [SCRIPT] [INPUTFILE...]
+
+   'sed' may be invoked with the following command-line options:
+
+'-e SCRIPT'
+'--expression=SCRIPT'
+     Add the commands in SCRIPT to the set of commands to be run while
+     processing the input.
+
+'-i[SUFFIX]'
+'--in-place[=SUFFIX]'
+     This option specifies that files are to be edited in-place.  GNU
+     'sed' does this by creating a temporary file and sending output to
+     this file rather than to the standard output.(1).
+
+     This option implies '-s'.
+
+     When the end of the file is reached, the temporary file is renamed
+     to the output file's original name.
