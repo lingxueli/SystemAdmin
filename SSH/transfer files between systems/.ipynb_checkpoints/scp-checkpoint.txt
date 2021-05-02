@@ -23,6 +23,10 @@ DESCRIPTION
      -r      Recursively copy entire directories.  Note that scp follows sym‐
              bolic links encountered in the tree traversal.
 
+     -P port
+             Specifies the port to connect to on the remote host.  Note that
+             this option is written with a capital ‘P’, because -p is already
+             reserved for preserving the times and modes of the file.
 
 
 scp /etc/hosts server2:/tmp

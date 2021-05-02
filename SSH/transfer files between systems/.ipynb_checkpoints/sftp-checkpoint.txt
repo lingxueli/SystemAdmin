@@ -1,0 +1,59 @@
+SFTP(1)                   BSD General Commands Manual                  SFTP(1)
+
+NAME
+     sftp — secure file transfer program
+
+SYNOPSIS
+     sftp [-46aCfpqrv] [-B buffer_size] [-b batchfile] [-c cipher]
+          [-D sftp_server_path] [-F ssh_config] [-i identity_file]
+          [-J destination] [-l limit] [-o ssh_option] [-P port]
+          [-R num_requests] [-S program] [-s subsystem | sftp_server]
+          destination
+
+DESCRIPTION
+     sftp is a file transfer program, similar to ftp(1), which performs all
+     operations over an encrypted ssh(1) transport.  It may also use many fea‐
+     tures of ssh, such as public key authentication and compression.
+
+
+     The destination may be specified either as [user@]host[:path] or as a URI
+     in the form sftp://[user@]host[:port][/path].
+
+     If the destination includes a path and it is not a directory, sftp will
+     retrieve files automatically if a non-interactive authentication method
+     is used; otherwise it will do so after successful interactive authentica‐
+     tion.
+
+     If no path is specified, or if the path is a directory, sftp will log in
+     to the specified host and enter interactive command mode, changing to the
+     remote directory if one was specified.  An optional trailing slash can be
+     used to force the path to be interpreted as a directory.
+INTERACTIVE COMMANDS
+     Once in interactive mode, sftp understands a set of commands similar to
+     those of ftp(1).  Commands are case insensitive.  Pathnames that contain
+     spaces must be enclosed in quotes.  Any special characters contained
+     within pathnames that are recognized by glob(3) must be escaped with
+     backslashes (‘\’).
+
+     bye     Quit sftp.
+
+     cd [path]
+             Change remote directory to path.  If path is not specified, then
+             change directory to the one the session started in.
+
+
+
+     get [-afPpr] remote-path [local-path]
+             Retrieve the remote-path and store it on the local machine.  If
+             the local path name is not specified, it is given the same name
+             it has on the remote machine.  remote-path may contain glob(7)
+             characters and may match multiple files.  If it does and
+             local-path is specified, then local-path must specify a direc‐
+             tory.
+
+     put [-afPpr] local-path [remote-path]
+             Upload local-path and store it on the remote machine.  If the
+             remote path name is not specified, it is given the same name it
+             has on the local machine.  local-path may contain glob(7) charac‐
+             ters and may match multiple files.  If it does and remote-path is
+             specified, then remote-path must specify a directory.
