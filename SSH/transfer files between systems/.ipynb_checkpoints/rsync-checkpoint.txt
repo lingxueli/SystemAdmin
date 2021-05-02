@@ -1,0 +1,105 @@
+Delta sync: if you sync a 100mb file in which only a few blocks have changed since the previous sync, only the changed blocks will be synchronized.
+
+rsync(1)                                                              rsync(1)
+
+NAME
+       rsync - a fast, versatile, remote (and local) file-copying tool
+
+SYNOPSIS
+       Local:  rsync [OPTION...] SRC... [DEST]
+
+       Access via remote shell:
+         Pull: rsync [OPTION...] [USER@]HOST:SRC... [DEST]
+         Push: rsync [OPTION...] SRC... [USER@]HOST:DEST
+
+       Access via rsync daemon:
+         Pull: rsync [OPTION...] [USER@]HOST::SRC... [DEST]
+               rsync [OPTION...] rsync://[USER@]HOST[:PORT]/SRC... [DEST]
+         Push: rsync [OPTION...] SRC... [USER@]HOST::DEST
+               rsync [OPTION...] SRC... rsync://[USER@]HOST[:PORT]/DEST
+
+       Usages with just one SRC arg and no DEST arg will list the source files
+       instead of copying.
+
+DESCRIPTION
+       Rsync is a fast and extraordinarily versatile file  copying  tool.   It
+       can  copy  locally,  to/from  another  host  over  any remote shell, or
+       to/from a remote rsync daemon.  It offers a  large  number  of  options
+       that  control  every  aspect  of  its behavior and permit very flexible
+       specification of the set of files to be copied.  It is famous  for  its
+       delta-transfer  algorithm,  which  reduces the amount of data sent over
+       the network by sending only the differences between  the  source  files
+       and  the  existing  files in the destination.  Rsync is widely used for
+       backups and mirroring and as an improved copy command for everyday use.
+
+       Rsync finds files that need to be transferred  using  a  "quick  check"
+       algorithm  (by  default) that looks for files that have changed in size
+       or  in  last-modified  time.   Any  changes  in  the  other   preserved
+       attributes  (as  requested by options) are made on the destination file
+       directly when the quick check indicates that the file’s data  does  not
+       need to be updated.
+
+GENERAL
+       Rsync copies files either to or from a remote host, or locally  on  the
+       current  host  (it  does  not  support copying files between two remote
+       hosts).
+
+
+USAGE
+       You use rsync in the same way you use rcp. You must  specify  a  source
+       and a destination, one of which may be remote.
+
+       Perhaps the best way to explain the syntax is with some examples:
+
+              rsync -t *.c foo:src/
+
+       This would transfer all files matching the pattern *.c from the current
+       directory to the directory src on the machine foo. If any of the  files
+       already  exist on the remote system then the rsync remote-update proto‐
+       col is used to update the file by sending only the differences  in  the
+       data.   Note  that  the expansion of wildcards on the commandline (*.c)
+       into a list of files is handled by the shell before it runs  rsync  and
+       not  by  rsync  itself  (exactly the same as all other posix-style pro‐
+       grams).
+
+              rsync -avz foo:src/bar /data/tmp
+
+       This would recursively transfer all files from the directory src/bar on
+       the  machine foo into the /data/tmp/bar directory on the local machine.
+       The files are transferred in "archive" mode, which  ensures  that  sym‐
+       bolic  links,  devices,  attributes,  permissions, ownerships, etc. are
+       preserved in the transfer.  Additionally, compression will be  used  to
+       reduce the size of data portions of the transfer.
+
+              rsync -avz foo:src/bar/ /data/tmp
+
+       A  trailing slash on the source changes this behavior to avoid creating
+       an additional directory level at the destination.  You can think  of  a
+       trailing / on a source as meaning "copy the contents of this directory"
+       as opposed to "copy the directory by  name",  but  in  both  cases  the
+       attributes  of the containing directory are transferred to the contain‐
+       ing directory on the destination.  In other words, each of the  follow‐
+       ing  commands copies the files in the same way, including their setting
+       of the attributes of /dest/foo:
+
+              rsync -av /src/foo /dest
+              rsync -av /src/foo/ /dest/foo
+              
+       You can also use rsync in local-only mode, where both  the  source  and
+       destination  don’t have a ’:’ in the name. In this case it behaves like
+       an improved copy command.
+OPTIONS SUMMARY
+       Here is a short summary of the options available in rsync. Please refer
+       to the detailed description below for a complete description.
+
+        -a, --archive               archive mode; equals -rlptgoD (no -H,-A,-X)
+            --no-OPTION             turn off an implied OPTION (e.g. --no-D)
+        -r, --recursive             recurse into directories
+        -l, --links                 copy symlinks as symlinks
+        -p, --perms                 preserve permissions
+        -A, --acls                  preserve ACLs (implies -p)
+        -n, --dry-run               perform a trial run with no changes made
+        -X, --xattrs                preserve extended attributes   => SELinux
+        
+extended attributes:        
+ Extended file attributes are file system features that enable users to associate computer files with metadata not interpreted by the filesystem, whereas regular attributes have a purpose strictly defined by the filesystem.

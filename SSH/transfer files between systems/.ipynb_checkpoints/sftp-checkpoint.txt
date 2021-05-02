@@ -41,6 +41,9 @@ INTERACTIVE COMMANDS
              Change remote directory to path.  If path is not specified, then
              change directory to the one the session started in.
 
+     lcd [path]
+             Change local directory to path.  If path is not specified, then
+             change directory to the local user's home directory.
 
 
      get [-afPpr] remote-path [local-path]
