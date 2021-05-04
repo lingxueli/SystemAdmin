@@ -1,3 +1,30 @@
+$ man useradd
+USERADD(8)                System Management Commands                USERADD(8)
+
+NAME
+       useradd - create a new user or update default new user information
+
+SYNOPSIS
+       useradd [options] LOGIN
+
+       useradd -D
+
+       useradd -D [options]
+
+DESCRIPTION
+       When invoked without the -D option, the useradd command creates a new
+       user account using the values specified on the command line plus the
+       default values from the system. Depending on command line options, the
+       useradd command will update system files and may also create the new
+       user's home directory and copy initial files.
+
+       By default, a group will also be created for the new user (see -g, -N,
+       -U, and USERGROUPS_ENAB).
+
+
+OPTIONS
+       The options which apply to the useradd command are:
+
        -b, --base-dir BASE_DIR
            The default base directory for the system if -d HOME_DIR is not specified.  BASE_DIR is
            concatenated with the account name to define the home directory. If the -m option is
@@ -9,6 +36,30 @@
        -D, --defaults
            See below, the subsection "Changing the default values".
 
+   Changing the default values
+       When invoked with only the -D option, useradd will display the current
+       default values. When invoked with -D plus other options, useradd will
+       update the default values for the specified options. Valid
+       default-changing options are:
+
+       -b, --base-dir BASE_DIR
+           The path prefix for a new user's home directory. The user's name
+           will be affixed to the end of BASE_DIR to form the new user's home
+           directory name, if the -d option is not used when creating a new
+           account.
+
+           This option sets the HOME variable in /etc/default/useradd.
+
+       -e, --expiredate EXPIRE_DATE
+           The date on which the user account is disabled.
+
+           This option sets the EXPIRE variable in /etc/default/useradd.
+
+       -f, --inactive INACTIVE
+           The number of days after a password has expired before the account
+           will be disabled.
+
+...
 
 CONFIGURATION
        The following configuration variables in /etc/login.defs change the behavior of this tool:
@@ -69,3 +120,180 @@ SEE ALSO
            Indicate if a home directory should be created by default for new users.
 
            This setting does not apply to system users, and can be overridden on the command line.
+           
+Config files for user account           
+/etc/passwd
+/etc/shadow
+
+Add/remove user
+$ useradd -m -u 1201 -G sales,ops linda
+$ userdel -r
+
+$ man useradd
+
+       -g, --gid GROUP
+           The group name or number of the user's initial login group. The
+           group name must exist. A group number must refer to an already
+           existing group.
+
+           If not specified, the behavior of useradd will depend on the
+           USERGROUPS_ENAB variable in /etc/login.defs. If this variable is
+           set to yes (or -U/--user-group is specified on the command line), a
+           group will be created for the user, with the same name as her
+           loginname. If the variable is set to no (or -N/--no-user-group is
+           specified on the command line), useradd will set the primary group
+           of the new user to the value specified by the GROUP variable in
+           /etc/default/useradd, or 100 by default.
+
+       -G, --groups GROUP1[,GROUP2,...[,GROUPN]]]
+           A list of supplementary groups which the user is also a member of.
+           Each group is separated from the next by a comma, with no
+           intervening whitespace. The groups are subject to the same
+           restrictions as the group given with the -g option. The default is
+           for the user to belong only to the initial group.
+
+       -m, --create-home
+           Create the user's home directory if it does not exist. The files
+           and directories contained in the skeleton directory (which can be
+           defined with the -k option) will be copied to the home directory.
+
+           By default, if this option is not specified and CREATE_HOME is not
+           enabled, no home directories are created.
+
+           The directory where the user's home directory is created must exist
+           and have proper SELinux context and permissions. Otherwise the
+           user's home directory cannot be created or accessed.
+
+       -u, --uid UID
+           The numerical value of the user's ID. This value must be unique,
+           unless the -o option is used. The value must be non-negative. The
+           default is to use the smallest ID value greater than or equal to
+           UID_MIN and greater than every other user.
+
+           See also the -r option and the UID_MAX description.
+
+
+[root@localhost ~]# man -k user | grep delet
+userdel (8)          - delete a user account and related files
+
+$ man userdel
+       -r, --remove
+           Files in the user's home directory will be removed along with the
+           home directory itself and the user's mail spool. Files located in
+           other file systems will have to be searched for and deleted
+           manually.
+
+           The mail spool is defined by the MAIL_DIR variable in the
+           login.defs file.
+
+
+
+Modify user
+$ usermod -aG
+
+[root@localhost ~]# man -k user | grep modify
+usermod (8)          - modify a user account
+
+       -a, --append
+           Add the user to the supplementary group(s). Use only with the -G
+           option.
+
+       -G, --groups GROUP1[,GROUP2,...[,GROUPN]]]
+           A list of supplementary groups which the user is also a member of.
+           Each group is separated from the next by a comma, with no
+           intervening whitespace. The groups are subject to the same
+           restrictions as the group given with the -g option.
+
+Skeleton directory /etc/skel
+It's the template for new user's home directory
+
+$ man useradd
+       /etc/default/useradd
+           Default values for account creation.
+
+       /etc/skel/
+           Directory containing default files.
+
+       /etc/login.defs
+           Shadow password suite configuration.
+           
+
+
+Default values assumed when doing $useradd come from:
+/etc/login.defs
+/etc/default/useradd
+
+$ man useradd
+       /etc/default/useradd
+           Default values for account creation.
+
+       /etc/skel/
+           Directory containing default files.
+
+       /etc/login.defs
+           Shadow password suite configuration.
+           
+
+[root@localhost ~]# cat /etc/login.defs
+#
+# Please note that the parameters in this configuration file control the
+# behavior of the tools from the shadow-utils component. None of these
+# tools uses the PAM mechanism, and the utilities that use PAM (such as the
+# passwd command) should therefore be configured elsewhere. Refer to
+# /etc/pam.d/system-auth for more information.
+#
+
+# Password aging controls:
+#
+#	PASS_MAX_DAYS	Maximum number of days a password may be used.
+#	PASS_MIN_DAYS	Minimum number of days allowed between password changes.
+#	PASS_MIN_LEN	Minimum acceptable password length.
+#	PASS_WARN_AGE	Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS	99999
+PASS_MIN_DAYS	0
+PASS_MIN_LEN	5
+PASS_WARN_AGE	7
+
+#
+# Min/max values for automatic uid selection in useradd
+#
+UID_MIN                  1000
+UID_MAX                 60000
+# System accounts
+SYS_UID_MIN               201
+SYS_UID_MAX               999
+
+#
+# Min/max values for automatic gid selection in groupadd
+#
+GID_MIN                  1000
+GID_MAX                 60000
+# System accounts
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+
+#
+# If useradd should create home directories for users by default
+# On RH systems, we do. This option is overridden with the -m flag on
+# useradd command line.
+#
+CREATE_HOME	yes
+
+# This enables userdel to remove user groups if no members exist.
+#
+USERGROUPS_ENAB yes
+
+# Use SHA512 to encrypt password.
+ENCRYPT_METHOD SHA512
+
+
+[root@localhost ~]# cat /etc/default/useradd
+# useradd defaults file
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel
+CREATE_MAIL_SPOOL=yes

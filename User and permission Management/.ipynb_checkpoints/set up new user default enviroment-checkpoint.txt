@@ -28,3 +28,52 @@ Where's the variable EDITOR coming from?
 
 
 The printenv and env commands print only the environment variables. If you want to get a list of all variables, including environment, shell and variables, and shell functions you can use the set command.
+
+$ man bash
+FILES
+       /bin/bash
+              The bash executable
+       /etc/profile
+              The systemwide initialization file, executed for login shells
+       /etc/bash.bash_logout
+              The systemwide login shell cleanup file, executed when  a  login
+              shell exits
+       ~/.bash_profile
+              The personal initialization file, executed for login shells
+       ~/.bashrc
+              The individual per-interactive-shell startup file
+       ~/.bash_logout
+              The  individual  login shell cleanup file, executed when a login
+              shell exits
+       ~/.inputrc
+              Individual readline initialization file
+
+And
+/etc/bashrc
+
+
+
+[root@localhost lisa]# cat .bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+
+export EDITOR=...
+
+[root@localhost lisa]# which vim
+/usr/bin/vim

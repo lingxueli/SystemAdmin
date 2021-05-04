@@ -1,0 +1,108 @@
+/etc/passwd: shows primary group of users
+/etc/group: group info; it only shows members who're in it as a secondary group
+
+
+$ groupadd
+
+$ groupmod
+
+# to add group members, do no use groupmod
+$ usermod -aG
+
+# list group members (including user who's in it as a primary or secondary group)
+$ groupmems
+
+GROUPADD(8)               System Management Commands               GROUPADD(8)
+
+NAME
+       groupadd - create a new group
+
+SYNOPSIS
+       groupadd [options] group
+
+DESCRIPTION
+       The groupadd command creates a new group account using the values
+       specified on the command line plus the default values from the system.
+       The new group will be entered into the system files as needed.
+
+       -g, --gid GID
+           The numerical value of the group's ID. This value must be unique,
+           unless the -o option is used. The value must be non-negative. The
+           default is to use the smallest ID value greater than or equal to
+           GID_MIN and greater than every other group.
+
+           See also the -r option and the GID_MAX description.
+
+FILES
+       /etc/group
+           Group account information.
+
+       /etc/gshadow
+           Secure group account information.
+
+       /etc/login.defs
+           Shadow password suite configuration.
+
+
+SEE ALSO
+       chfn(1), chsh(1), passwd(1), gpasswd(8), groupdel(8), groupmod(8),
+       login.defs(5), useradd(8), userdel(8), usermod(8).
+
+
+
+GROUPMOD(8)               System Management Commands               GROUPMOD(8)
+
+NAME
+       groupmod - modify a group definition on the system
+
+SYNOPSIS
+       groupmod [options] GROUP
+
+DESCRIPTION
+       The groupmod command modifies the definition of the specified GROUP by
+       modifying the appropriate entry in the group database.
+
+OPTIONS
+       The options which apply to the groupmod command are:
+
+       -g, --gid GID
+           The group ID of the given GROUP will be changed to GID.
+
+           The value of GID must be a non-negative decimal integer. This value
+           must be unique, unless the -o option is used.
+
+           Users who use the group as primary group will be updated to keep
+           the group as their primary group.
+
+
+GROUPMEMS(8)              System Management Commands              GROUPMEMS(8)
+
+NAME
+       groupmems - administer members of a user's primary group
+
+SYNOPSIS
+       groupmems -a user_name | -d user_name | [-g group_name] | -l | -p
+
+DESCRIPTION
+       The groupmems command allows a user to administer their own group
+       membership list without the requirement of superuser privileges. The
+       groupmems utility is for systems that configure its users to be in
+       their own name sake primary group (i.e., guest / guest).
+
+       Only the superuser, as administrator, can use groupmems to alter the
+       memberships of other groups.
+
+OPTIONS
+       The options which apply to the groupmems command are:
+
+       -a, --add user_name
+           Add a user to the group membership list.
+
+       -g, --group group_name
+           The superuser can specify which group membership list to modify.
+
+       -h, --help
+           Display help message and exit.
+
+       -l, --list
+           List the group membership list.

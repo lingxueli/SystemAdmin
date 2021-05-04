@@ -81,6 +81,23 @@ santos:x:1002:1004::/home/santos:/bin/bash
 To find the members that a group has:
 [root@localhost ~]# man groupmems
 
+GROUPMEMS(8)              System Management Commands              GROUPMEMS(8)
+
+NAME
+       groupmems - administer members of a user's primary group
+
+SYNOPSIS
+       groupmems -a user_name | -d user_name | [-g group_name] | -l | -p
+
+DESCRIPTION
+       The groupmems command allows a user to administer their own group
+       membership list without the requirement of superuser privileges. The
+       groupmems utility is for systems that configure its users to be in
+       their own name sake primary group (i.e., guest / guest).
+
+       Only the superuser, as administrator, can use groupmems to alter the
+       memberships of other groups.
+
        -g, --group group_name
            The superuser can specify which group membership list to modify.
 

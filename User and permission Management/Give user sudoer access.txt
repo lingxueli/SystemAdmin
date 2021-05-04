@@ -1,0 +1,108 @@
+This gives user all the admin priviledges
+
+$ usermod -aG wheel user
+$ visudo
+%wheel ALL=(ALL) ALL
+
+This allows user to have specific admin priviledges
+$ visudo
+linda ALL=/usr/bin/useradd, /usr/bin/passed
+
+
+
+USERMOD(8)                System Management Commands                USERMOD(8)
+
+NAME
+       usermod - modify a user account
+
+SYNOPSIS
+       usermod [options] LOGIN
+
+DESCRIPTION
+       The usermod command modifies the system account files to reflect the
+       changes that are specified on the command line.
+       
+OPTIONS
+       The options which apply to the usermod command are:
+
+       -a, --append
+           Add the user to the supplementary group(s). Use only with the -G
+           option.
+
+       -G, --groups GROUP1[,GROUP2,...[,GROUPN]]]
+           A list of supplementary groups which the user is also a member of.
+           Each group is separated from the next by a comma, with no
+           intervening whitespace. The groups are subject to the same
+           restrictions as the group given with the -g option.
+
+           If the user is currently a member of a group which is not listed,
+           the user will be removed from the group. This behaviour can be
+           changed via the -a option, which appends the user to the current
+           supplementary group list.
+           
+           
+VISUDO(8)                 BSD System Manager's Manual                VISUDO(8)
+
+NAME
+     visudo — edit the sudoers file
+
+SYNOPSIS
+     visudo [-chqsV] [[-f] sudoers]
+
+DESCRIPTION
+     visudo edits the sudoers file in a safe fashion, analogous to vipw(8).
+     visudo locks the sudoers file against multiple simultaneous edits, pro‐
+     vides basic sanity checks, and checks for parse errors before installing
+     the edited file.  If the sudoers file is currently being edited you will
+     receive a message to try again later.
+
+
+FILES
+     /etc/sudo.conf            Sudo front end configuration
+
+     /etc/sudoers              List of who can run what
+
+     /etc/sudoers.tmp          Default temporary file used by visudo
+
+$ visudo
+## Sudoers allows particular users to run various commands as
+## the root user, without needing the root password.
+##
+## Examples are provided at the bottom of the file for collections
+## of related commands, which can then be delegated out to particular
+## users or groups.
+##
+## This file must be edited with the 'visudo' command.
+
+
+## Next comes the main part: which users can run what software on
+## which machines (the sudoers file can be shared between multiple
+## systems).
+## Syntax:
+##
+##      user    MACHINE=COMMANDS
+##
+## The COMMANDS section may have other options added to it.
+##
+## Allow root to run any commands anywhere
+root    ALL=(ALL)       ALL
+
+## Allows members of the 'sys' group to run networking, software,
+## service management apps and more.
+# %sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
+
+## Allows people in group wheel to run all commands
+%wheel  ALL=(ALL)       ALL
+
+## Same thing without a password
+# %wheel        ALL=(ALL)       NOPASSWD: ALL
+
+## Allows members of the users group to mount and unmount the
+## cdrom as root
+# %users  ALL=/sbin/mount /mnt/cdrom, /sbin/umount /mnt/cdrom
+
+## Allows members of the users group to shutdown this system
+# %users  localhost=/sbin/shutdown -h now
+
+## Read drop-in files from /etc/sudoers.d (the # here does not mean a comment)
+#includedir /etc/sudoers.d
