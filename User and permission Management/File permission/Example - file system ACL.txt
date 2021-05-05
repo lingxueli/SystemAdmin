@@ -1,0 +1,310 @@
+A good example using the ACL: https://www.redhat.com/sysadmin/linux-access-control-lists
+
+to add acl support, use mount option in /etc/fstab file.
+
+$ man mount
+       user_xattr
+              Enable Extended User Attributes.  See the attr(5) manual page.
+
+       acl    Enable POSIX Access Control Lists.  See the acl(5) manual page.
+       
+Give people in the sales department the access to the accounting owner’s files. But you don’t want them to see the other reports that accounting generates. 
+
+Fred is in the accountint team. 
+
+
+view the current ACL using the getfacl command:
+
+[root@lab1 accounting]# getfacl /accounting
+getfacl: Removing leading '/' from absolute path names
+# file: accounting  => filename
+# owner: accounting  => owner
+# group: accounting  => group owner
+user::rwx
+group::rwx
+other::---  => user, group and other fields of the
+       file mode permission bits
+
+
+
+[root@localhost ~]# man -k acl
+acl (5)              - Access Control Lists
+getfacl (1)          - get file access control lists
+setfacl (1)          - set file access control lists
+
+
+GETFACL(1)                   Access Control Lists                   GETFACL(1)
+
+NAME
+       getfacl - get file access control lists
+
+SYNOPSIS
+       getfacl [-aceEsRLPtpndvh] file ...
+
+       getfacl [-aceEsRLPtpndvh] -
+
+DESCRIPTION
+       For  each  file,  getfacl displays the file name, owner, the group, and
+       the Access Control List (ACL). If a directory has a default  ACL,  get‐
+       facl also displays the default ACL. Non-directories cannot have default
+       ACLs.
+
+
+       If getfacl is used on a file system that does not support ACLs, getfacl
+       displays  the  access  permissions defined by the traditional file mode
+       permission bits.
+
+       The output format of getfacl is as follows:
+               1:  # file: somedir/
+               2:  # owner: lisa
+               3:  # group: staff
+               4:  # flags: -s-
+               5:  user::rwx
+               6:  user:joe:rwx               #effective:r-x
+               7:  group::rwx                 #effective:r-x
+               8:  group:cool:r-x
+               9:  mask::r-x
+              10:  other::r-x
+              11:  default:user::rwx
+              12:  default:user:joe:rwx       #effective:r-x
+              13:  default:group::r-x
+              14:  default:mask::r-x
+              15:  default:other::---
+
+       Lines 1--3 indicate the file name, owner, and owning group.
+
+       Line 4 indicates the setuid (s),  setgid  (s),  and  sticky  (t)  bits:
+       either  the  letter representing the bit, or else a dash (-). This line
+       is included if any of those bits is set and left out otherwise,  so  it
+       will  not  be  shown  for most files. (See CONFORMANCE TO POSIX 1003.1e
+       DRAFT STANDARD 17 below.)
+
+       Lines 5, 7 and 10 correspond to the user, group and other fields of the
+       file mode permission bits. These three are called the base ACL entries.
+
+       Lines 6 and 8 are named user and named group entries.  Line  9  is  the
+       effective  rights  mask. This entry limits the effective rights granted
+       to all groups and to named users. (The file owner  and  others  permis‐
+       sions  are not affected by the effective rights mask; all other entries
+       are.)  Lines 11--15 display the default ACL associated with this direc‐
+       tory.  Directories  may  have a default ACL. Regular files never have a
+       default ACL.
+
+
+
+
+Setting an ACL
+
+
+The syntax for setting an ACL looks like this:
+
+setfacl [option] [action/specification] file
+
+The 'action' would be -m (modify) or -x (remove), and the specification would be the user or group followed by the permissions we want to set. In this case, we would use the option -d (defaults) to set the default ACL for this directory.
+
+
+
+SETFACL(1)                                   Access Control Lists                                  SETFACL(1)
+
+NAME
+       setfacl - set file access control lists
+
+SYNOPSIS
+       setfacl [-bkndRLPvh] [{-m|-x} acl_spec] [{-M|-X} acl_file] file ...
+
+       setfacl --restore=file
+
+DESCRIPTION
+       This  utility  sets  Access  Control  Lists  (ACLs)  of files and directories.  On the command line, a
+       sequence of commands is followed by a sequence of files (which in turn  can  be  followed  by  another
+       sequence of commands, ...).
+
+       The  -m  and -x options expect an ACL on the command line. Multiple ACL entries are separated by comma
+       characters (`,'). The -M and -X options read an ACL from a file or from standard input. The ACL  entry
+       format is described in Section ACL ENTRIES.
+
+       The -m (--modify) and -M (--modify-file) options modify the ACL of a file or directory.   ACL  entries
+       for this operation must include permissions.
+
+       The  -x  (--remove) and -X (--remove-file) options remove ACL entries. It is not an error to remove an
+       entry which does not exist.  Only ACL entries without the perms  field  are  accepted  as  parameters,
+       unless POSIXLY_CORRECT is defined.
+
+
+OPTIONS
+
+       -d, --default
+           All operations apply to the Default ACL. Regular ACL entries in the  input  set  are  promoted  to
+           Default  ACL  entries. Default ACL entries in the input set are discarded. (A warning is issued if
+           that happens).
+
+       -R, --recursive
+           Apply operations to all files and directories  recursively.  This  option  cannot  be  mixed  with
+           `--restore'.
+
+   ACL ENTRIES
+       The setfacl utility recognizes the following ACL entry formats (blanks inserted for clarity):
+
+       [d[efault]:] [u[ser]:]uid [:perms]
+              Permissions of a named user. Permissions of the file owner if uid is empty.
+
+       [d[efault]:] g[roup]:gid [:perms]
+              Permissions of a named group. Permissions of the owning group if gid is empty.
+
+       [d[efault]:] m[ask][:] [:perms]
+              Effective rights mask
+
+       [d[efault]:] o[ther][:] [:perms]
+              Permissions of others.
+
+EXAMPLES
+       Granting an additional user read access
+              setfacl -m u:lisa:r file
+
+       Revoking write access from all groups and all named users (using the effective rights mask)
+              setfacl -m m::rx file
+
+       Removing a named group entry from a file's ACL
+              setfacl -x g:staff file
+
+       Copying the ACL of one file to another
+              getfacl file1 | setfacl --set-file=- file2
+
+       Copying the access ACL into the Default ACL
+              getfacl --access dir | setfacl -d -M- dir
+
+
+1. set the default ACL for this directory
+
+[root@lab1 accounting]# setfacl -d -m accounting:rwx /accounting
+
+[root@lab1 accounting]# getfacl /accounting
+getfacl: Removing leading '/' from absolute path names
+# file: accounting
+# owner: accounting
+# group: accounting
+user::rwx
+group::rwx
+other::---
+default:user::rwx
+default:user:accounting:rwx   -> named user and named group entries
+default:group::rwx
+default:mask::rwx
+default:other::---   => default ACL associated with this direc‐
+       tory   
+       
+give kenny the ability to see what files are in the accounting directory, and we want him to be able to create new files:
+
+[root@lab1 accounting]setfacl -m kenny:rwx /accounting
+[root@lab1 accounting]getfacl ./
+# file: .
+# owner: accounting
+# group: accounting
+user::rwx
+user:kenny:rwx
+
+
+we don’t want this user to create files in the accounting directory? Instead, we only want to let him read the files there, and he can create new files in his own folder
+
+
+[root@lab1 accounting]# setfacl -m kenny:r-x /accounting   ->do r-w instead
+[root@lab1 accounting]# getfacl ./
+# file: .
+# owner: accounting
+# group: accounting
+user::rwx
+User:kenny:r-x
+
+
+we make Kenny his own folder, give him ownership, and then make the accounting group the group owner so that other people in the accounting group can see what’s in there
+
+
+[root@lab1 accounting]# mkdir ./kenny
+[root@lab1 accounting]# chown kenny:accounting ./kenny
+[root@lab1 accounting]# getfacl ./kenny
+# file: kenny
+# owner: kenny
+# group: accounting
+user::rwx
+user:accounting:rwx
+group::rwx
+
+we’ve created a folder within the accounting group that is owned by user kenny. He should now be able to see the accounting folder, but only create files in his own fold
+
+[root@lab1 accounting]# su kenny
+[kenny@lab1 accounting]$ touch test
+touch: cannot touch ‘test’: Permission denied
+[kenny@lab1 accounting]$ cd ./kenny
+[kenny@lab1 kenny]$ touch test
+[kenny@lab1 kenny]$ ls
+test
+
+
+we give Kenny a promotion to chief auditor and want to keep his work a secret from Fred
+
+[root@lab1 accounting]# setfacl -m fred:- ./kenny
+[root@lab1 accounting]# getfacl ./kenny
+# file: kenny
+# owner: kenny
+# group: accounting
+user::rwx
+user:accounting:---
+user:fred:---
+
+
+What if we didn’t want anyone to see what Kenny is working on?
+
+[root@lab1 accounting]# setfacl -m g:accounting:- ./kenny
+Note: When we want to set a group ACL, we need to specify this by putting g: in front of the group’s name. For users, just change the g to a u, but setfacl will assume we are talking about a user if you don’t put anything in that spot.
+
+We still have to remove the base permissions for the group owner so that the rest of the accounting team can’t snoop into Kenny’s reports:
+
+[root@lab1 accounting]# chmod g-rwx ./kenny
+[root@lab1 accounting]# ls -al
+total 0
+drwxrwx-wx+  3 accounting accounting  44 Jan  9 16:38 .
+dr-xr-xr-x. 18 root       root       262 Jan  8 15:13 ..
+drwx------+  2 kenny      accounting  18 Jan  9 17:07 kenny
+-rw-rw----+  1 root       root         0 Jan  9 16:33 test
+-rw-rw----+  1 kenny      accounting   0 Jan  9 16:27 test2
+[root@lab1 accounting]# getfacl ./kenny
+# file: kenny
+# owner: kenny
+# group: accounting
+user::rwx
+user:accounting:---
+user:fred:---
+group::rwx  #effective:---
+[root@lab1 accounting]# su jan
+[jan@lab1 accounting]$ touch ./kenny/test
+touch: cannot touch ‘./kenny/test’: Permission denied
+
+
+Let’s give the CEO (Lisa, who is not a member of the accounting team, and won’t have access to the rest of the folder) access to Kenny’s stuff
+
+[root@lab1 accounting]# useradd lisa
+[root@lab1 accounting]# setfacl -m u:lisa:rwx ./kenny
+[root@lab1 accounting]# su lisa
+[lisa@lab1 accounting]$ touch ./kenny/lisa
+[lisa@lab1 accounting]$ ls ./kenny
+lisa  test
+[lisa@lab1 accounting]$ touch test
+touch: cannot touch ‘test’: Permission denied
+[root@lab1 accounting]# getfacl ./kenny
+# file: kenny
+# owner: kenny
+# group: accounting
+user::rwx
+user:accounting:---
+user:fred:---
+user:lisa:rwx
+group::rwx
+group:accounting:---
+
+
+Note again that the group owner permissions remain wide open, but the accounting group (which is still the owner), no longer has access to that folder. So, who owns it?
+
+
+drwxrwx---+  2 kenny  accounting  30 Jan  9 17:16 kenny
+This part is tricky. It’s useful to know that we can take away the owner’s permissions without changing ownership, but you might want to consider whether this is the result you want.
+

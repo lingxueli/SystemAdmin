@@ -1,11 +1,27 @@
-max - umask = permission
+max - umask = default permission
 
 maximum permission of a file: 666
 maximum permission of a directory: 777
 
+
+
+To change umask values temporary, following command is used.
+
+$ umask [new values]
+For example to change default umask values to 777, following command is used.
+
+$ umask 777
+
+
+Changing umask values permanently
+
 To change umask for all users:
 /etc/profile.d -> umask.sh
 It applys to all users after loggin in to the server.
+
+$ cd /etc/profile.d
+$ vim umask.sh
+umask 777
 
 [root@localhost ~]# cat /etc/profile
 # /etc/profile
@@ -21,3 +37,6 @@ It applys to all users after loggin in to the server.
 
 To change umask for individual user:
 $HOME/.profile
+
+
+

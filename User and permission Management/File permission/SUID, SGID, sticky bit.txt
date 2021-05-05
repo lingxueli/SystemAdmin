@@ -37,7 +37,7 @@ Sticky bit:
 
 Sticky bit is only used on directory.
 
-Sticky bit is used on shared group directory. It prevents users from deleting files from other users.1
+Sticky bit is used on shared group directory. It prevents users from deleting files from other users.
 
 A user can only delete the file if either of the following is true:
 
@@ -45,14 +45,14 @@ A user can only delete the file if either of the following is true:
 2. user is the owner of the directory where the file exists
 
 
-For the command line tools to make these changes, pls check other document in the directory:
-Create shared group directory.txt
+For the command line tools used to make these changes, pls check other txt file in the directory - Create shared group directory.txt
 
 How to apply these permissions?
 
 absolute mode:
 SUID = 4, SGID = 2, Sticky bit = 1
-extra digits in front of normal permission bits
+
+Add these as an extra digit in front of normal permission bits
 
 # add SGID to directory
 chmod 2755 /domedir
@@ -67,3 +67,37 @@ chmod g+s /somedirectory
 
 # set sticky bit
 chmod +t /somedirectory
+
+
+[root@localhost lisa]# man chmod
+
+NAME
+       chmod - change file mode bits
+
+SYNOPSIS
+       chmod [OPTION]... MODE[,MODE]... FILE...
+       chmod [OPTION]... OCTAL-MODE FILE...
+       chmod [OPTION]... --reference=RFILE FILE...
+
+DESCRIPTION
+       This manual page documents the GNU version of chmod.  chmod changes the
+       file mode bits of each given file  according  to  mode,  which  can  be
+       either a symbolic representation of changes to make, or an octal number
+       representing the bit pattern for the new mode bits.
+
+       The format of a symbolic mode is  [ugoa...][[-+=][perms...]...],  where
+       perms  is  either zero or more letters from the set rwxXst, or a single
+       letter from the set ugo.  Multiple symbolic modes can be  given,  sepa‐
+       rated by commas.
+
+
+       Each MODE is of the form '[ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+'.
+
+       -R, --recursive
+              change files and directories recursively
+
+SEE ALSO
+       chmod(2)
+
+       Full documentation at: <https://www.gnu.org/software/coreutils/chmod>
+       or available locally via: info '(coreutils) chmod invocation'

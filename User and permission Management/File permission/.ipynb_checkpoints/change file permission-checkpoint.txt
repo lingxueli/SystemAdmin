@@ -8,6 +8,16 @@ SYNOPSIS
        chmod [OPTION]... OCTAL-MODE FILE...
        chmod [OPTION]... --reference=RFILE FILE...
 
+DESCRIPTION
+       This manual page documents the GNU version of chmod.  chmod changes the
+       file mode bits of each given file  according  to  mode,  which  can  be
+       either a symbolic representation of changes to make, or an octal number
+       representing the bit pattern for the new mode bits.
+
+       The format of a symbolic mode is  [ugoa...][[-+=][perms...]...],  where
+       perms  is  either zero or more letters from the set rwxXst, or a single
+       letter from the set ugo.  Multiple symbolic modes can be  given,  sepa‐
+       rated by commas.
 
 
        Each MODE is of the form '[ugoa]*([-+=]([rwxXst]*|[ugo]))+|[-+=][0-7]+'.

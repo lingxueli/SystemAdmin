@@ -1,5 +1,24 @@
+What's file system ACL?
+Linux Access Control Lists are used to getting a finer-grained control of your Linux filesystem permissions.
+
+
+Viewing the current ACL
+What if you have an intern (Kenny) who needs to be able to read certain files (or even just the files owned by Fred)? Or maybe people in the sales department also need access to the accounting owner’s files to create invoices for that Fred’s team in order to bill customers, but you don’t want them to see the other reports that his team generates. This situation can be tricky because, with regular permissions, each file and directory can have only one user and group owner at a time. This type of situation is what Linux Access Control Lists (ACLs) were intended to resolve.
+
+ACLs allow us to apply a more specific set of permissions to a file or directory without (necessarily) changing the base ownership and permissions. They let us "tack on" access for other users or groups.
+
+A good example using the ACL: https://www.redhat.com/sysadmin/linux-access-control-lists
+
+
+
 To use the ACL, file system needs to be extended for extra metadata. To extend, please add mount options to the file system. To be exact, add acl mount option to /etc/fstab file.
 
+
+$ man mount
+       user_xattr
+              Enable Extended User Attributes.  See the attr(5) manual page.
+
+       acl    Enable POSIX Access Control Lists.  See the acl(5) manual page.
 [root@localhost ~]# man -k acl
 acl (5)              - Access Control Lists
 getfacl (1)          - get file access control lists
@@ -22,6 +41,12 @@ group::r-x
 other::r-x
 
 set ACL in the smart place - top-level directory. the ACL will also apply to the subdirectories and files under it.
+
+How to make sure the ACL settings is used in all files under the directories and those created in the future.
+1. use -R option 
+This updates current files
+2. use -d option - default ACL
+This updates files added in the future
 
 [root@localhost ~]# man setfacl
 

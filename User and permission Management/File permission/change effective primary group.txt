@@ -19,11 +19,46 @@ vgsplit (8)          - Move physical volumes into a new or existing volume group
 NAME
        newgrp - log in to a new group
 
+SYNOPSIS
+       newgrp [-] [group]
+
+DESCRIPTION
+       The newgrp command is used to change the current group ID during a
+       login session. If the optional - flag is given, the user's environment
+       will be reinitialized as though the user had logged in, otherwise the
+       current environment, including current working directory, remains
+       unchanged.
+
 [lisa@localhost ~]$ man 1p newgrp
 
 NAME
        newgrp — change to a new group
 
+SYNOPSIS
+
+       newgrp [−l] [group]
+
+DESCRIPTION
+       The newgrp utility shall create a new shell execution environment  with
+       a new real and effective group identification. Of the attributes listed
+       in Section 2.12, Shell Execution Environment, the new  shell  execution
+       environment shall retain the working directory, file creation mask, and
+       exported variables from the previous environment (that is, open  files,
+       traps,  unexported  variables,  alias definitions, shell functions, and
+       set options may be lost). All other aspects of the process  environment
+       that  are preserved by the exec family of functions defined in the Sys‐
+       tem Interfaces volume of POSIX.1‐2008 shall also be preserved  by  new‐
+       grp; whether other aspects are preserved is unspecified.
+
+OPERANDS
+       The following operand shall be supported:
+
+       group     A group name  from  the  group  database  or  a  non-negative
+                 numeric  group  ID.  Specifies the group ID to which the real
+                 and effective group IDs shall be set. If group is a non-nega‐
+                 tive  numeric  string  and  exists in the group database as a
+                 group name (see getgrnam()), the numeric group ID  associated
+                 with that group name shall be used as the group ID.
 
 # change primary group to wheel
 [lisa@localhost ~]$ newgrp wheel

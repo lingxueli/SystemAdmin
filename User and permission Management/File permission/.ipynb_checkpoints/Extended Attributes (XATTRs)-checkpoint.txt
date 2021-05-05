@@ -1,0 +1,66 @@
+https://access.redhat.com/documentation/en-us/red_hat_ceph_storage/1.2.3/html/ceph_configuration_guide/extended_attributes
+
+
+
+Add support for XATTRs, use mount option: user_xattr in /etc/fstab
+
+
+$ man mount
+       user_xattr
+              Enable Extended User Attributes.  See the attr(5) manual page.
+
+       acl    Enable POSIX Access Control Lists.  See the acl(5) manual page.
+
+
+
+$ man -k attr
+attr (1)             - extended attributes on XFS filesystem objects
+attr (5)             - Extended attributes
+chattr (1)           - change file attributes on a Linux file system
+lsattr (1)           - list file attributes on a Linux second extended file system
+
+
+XATTR(7)                                  Linux Programmer's Manual                                  XATTR(7)
+
+NAME
+       xattr - Extended attributes
+
+DESCRIPTION
+       Extended attributes are name:value pairs associated permanently with files and directories, similar to
+       the environment strings associated with a process.  An attribute may be defined or undefined.   If  it
+       is defined, its value may be empty or non-empty.
+
+       Extended  attributes  are  extensions to the normal attributes which are associated with all inodes in
+       the system (i.e., the stat(2) data).  They are often used to provide  additional  functionality  to  a
+       filesystem—for example, additional security features such as Access Control Lists (ACLs) may be imple‐
+       mented using extended attributes.
+
+       Users with search access to a file or directory may use listxattr(2) to retrieve a list  of  attribute
+       names defined for that file or directory.
+
+SEE ALSO
+       getfattr(1), setfattr(1), getxattr(2),  ioctl_iflags(2),  listxattr(2),  removexattr(2),  setxattr(2),
+       acl(5), capabilities(7)
+
+
+CHATTR(1)                                  General Commands Manual                                  CHATTR(1)
+
+NAME
+       chattr - change file attributes on a Linux file system
+
+SYNOPSIS
+       chattr [ -RVf ] [ -v version ] [ -p project ] [ mode ] files...
+
+DESCRIPTION
+       chattr changes the file attributes on a Linux file system.
+
+       The format of a symbolic mode is +-=[aAcCdDeFijPsStTu].
+
+       The  operator  '+' causes the selected attributes to be added to the existing attributes of the files;
+       '-' causes them to be removed; and '=' causes them to be the only attributes that the files have.
+
+ATTRIBUTES
+       a      A file with the 'a' attribute set can only be opened in append  mode  for  writing.   Only  the
+              superuser  or  a  process  possessing  the CAP_LINUX_IMMUTABLE capability can set or clear this
+              attribute.
+...
