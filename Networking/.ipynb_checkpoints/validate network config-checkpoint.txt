@@ -1,3 +1,10 @@
+1. check ip address
+$ ip addr
+2. check routing
+$ ip route
+3. check netowkr link
+$ ip link
+
 IP(8)                                          Linux                                         IP(8)
 
 NAME
@@ -27,7 +34,11 @@ SYNOPSIS
 
        If no command is given, some default command is assumed.  Usually it is list or, if the
        objects of this class cannot be listed, help.
-       
+
+
+[root@localhost ~]# ip address 
+add      change   del      flush    help     replace  show     
+
 [root@localhost ~]# ip address help
 Usage: ip address {add|change|replace} IFADDR dev IFNAME [ LIFETIME ]
                                                       [ CONFFLAG-LIST ]
@@ -38,6 +49,7 @@ Usage: ip address {add|change|replace} IFADDR dev IFNAME [ LIFETIME ]
                          [ type TYPE ] [ to PREFIX ] [ FLAG-LIST ]
                          [ label LABEL ] [up] [ vrf NAME ] ]
        ip address {showdump|restore}
+       
 IFADDR := PREFIX | ADDR peer PREFIX
           [ broadcast ADDR ] [ anycast ADDR ]
           [ label IFNAME ] [ scope SCOPE-ID ] [ metric METRIC ]
@@ -55,52 +67,16 @@ TYPE := { vlan | veth | vcan | vxcan | dummy | ifb | macvlan | macvtap |
           gre | gretap | erspan | ip6gre | ip6gretap | ip6erspan | vti |
           nlmon | can | bond_slave | ipvlan | geneve | bridge_slave |
           hsr | macsec | netdevsim }
-
-# config interface
-# not persistent
-ip address add 10.0.0.10/24 dev INTERFACE_NAME
-
-# check link
-# the most important are link status and MAC address
-[root@localhost ~]# ip -s link
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    RX: bytes  packets  errors  dropped overrun mcast   
-    10844      132      0       0       0       0       
-    TX: bytes  packets  errors  dropped carrier collsns 
-    10844      132      0       0       0       0       
-2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped overrun mcast   
-    70162549   70066    0       0       0       0       
-    TX: bytes  packets  errors  dropped carrier collsns 
-    773424     11242    0       0       0       0       
-3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped overrun mcast   
-    0          0        0       0       0       0       
-    TX: bytes  packets  errors  dropped carrier collsns 
-    0          0        0       0       0       0       
-4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
-    RX: bytes  packets  errors  dropped overrun mcast   
-    0          0        0       0       0       0       
-    TX: bytes  packets  errors  dropped carrier collsns 
-    0          0        0       0       0       0       
-
-[root@localhost ~]# ip link show
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
-3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
-4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN mode DEFAULT group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+          
+[root@localhost ~]# ip address show 
+cni-podman0   dev           label         primary       temporary     up            virbr0-nic
+dadfailed     dynamic       lo            scope         tentative     vethae469269  
+deprecated    ens33         permanent     secondary     to            virbr0        
 
 # check interface
 # the most important are interface name, IP, boardcast address and status
-[root@localhost ~]# ip address show
+
+[root@localhost ~]# ip address show 
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -110,25 +86,94 @@ ip address add 10.0.0.10/24 dev INTERFACE_NAME
 2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
     inet 192.168.219.130/24 brd 192.168.219.255 scope global dynamic noprefixroute ens33
-       valid_lft 1057sec preferred_lft 1057sec
+       valid_lft 970sec preferred_lft 970sec
     inet6 fe80::86b1:edf6:3cbb:3e1f/64 scope link noprefixroute 
        valid_lft forever preferred_lft forever
-3: virbr0: <BROADCAST,MULTICAST> mtu 1500 qdisc noqueue state DOWN group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
-4: virbr0-nic: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel master virbr0 state DOWN group default qlen 1000
-    link/ether 52:54:00:f2:1c:d7 brd ff:ff:ff:ff:ff:ff
+
+
+# config interface
+# not persistent
+$ ip address add 10.0.0.10/24 dev INTERFACE_NAME
+
+
+[root@localhost ~]# ip addr 
+add      change   del      flush    help     replace  show     
+[root@localhost ~]# ip addr add 
+[root@localhost ~]# ip addr help
+Usage: ip address {add|change|replace} IFADDR dev IFNAME [ LIFETIME ]
+                                                      [ CONFFLAG-LIST ]
+
+
+
+
+[root@localhost ~]# ip link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+
+# check link
+# the most important are link status and MAC address
+ 
+[root@localhost ~]# ip -s link show
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    RX: bytes  packets  errors  dropped overrun mcast   
+    204        2        0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    204        2        0       0       0       0       
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 00:0c:29:8f:90:80 brd ff:ff:ff:ff:ff:ff
+    RX: bytes  packets  errors  dropped overrun mcast   
+    13852727   32082    0       0       0       0       
+    TX: bytes  packets  errors  dropped carrier collsns 
+    212867     2660     0       0       0       0       
+RX: receive
+TX: transmit
+
+
+In case the link is down, you can bring it up:
+$ ip link set ens33 up
+
+[root@localhost ~]# ip link 
+add     delete  help    set     show    
+
+[root@localhost ~]# ip link set 
+cni-podman0   ens33         lo            vethae469269  virbr0        virbr0-nic    
+
+[root@localhost ~]# ip link set ens33 
+address       arp           dynamic       name          trailers      
+alias         broadcast     mtu           netns         txqueuelen    
+allmulticast  down          multicast     promisc       up            
 
 # check routing
 # the most important are default gateway router: 192.168.219.2 which can be reached from ens33
 [root@localhost ~]# ip route show
-default via 192.168.219.2 dev ens33 proto dhcp metric 100 
-192.168.219.0/24 dev ens33 proto kernel scope link src 192.168.219.130 metric 100 
+default via 192.168.219.2 dev ens33 proto dhcp metric 100  => it's assigned by dhcp, use metric to pick the best route
+192.168.219.0/24 dev ens33 proto kernel scope link src 192.168.219.130 metric 100  => auto assigned to local network (interface)
 
 # check ports and services
-# listing port and address
-# 127.0.0.01 and ::1 are listening to local process only
-#        -l, --listening
+$ ss -lt
+
+SS(8)                                      System Manager's Manual                                      SS(8)
+
+NAME
+       ss - another utility to investigate sockets
+
+SYNOPSIS
+       ss [options] [ FILTER ]
+
+DESCRIPTION
+       ss  is  used to dump socket statistics. It allows showing information similar to netstat.  It can dis‐
+       play more TCP and state information than other tools.
+
+
+
+       -l, --listening
               Display only listening sockets (these are omitted by default).
+       -t, --tcp
+              Display TCP sockets.
+
 
 [root@localhost ~]# ss -lt
 State        Recv-Q       Send-Q             Local Address:Port               Peer Address:Port      
@@ -140,6 +185,12 @@ LISTEN       0            128                            *:http                 
 LISTEN       0            128                         [::]:ssh                        [::]:*         
 LISTEN       0            5                          [::1]:ipp                        [::]:*         
 LISTEN       0            128                            *:https                         *:*         
+
+
+# listing port and address
+# 127.0.0.01 and ::1 are listening to local process only
+
+
 
 
 [root@localhost ~]# ss -tul
@@ -173,3 +224,21 @@ tcp6       0      0 [::]:http               [::]:*                  LISTEN      
 tcp6       0      0 [::]:ssh                [::]:*                  LISTEN      1156/sshd           
 tcp6       0      0 localhost:ipp           [::]:*                  LISTEN      1155/cupsd          
 tcp6       0      0 [::]:https              [::]:*                  LISTEN      1263/httpd          
+
+
+NETSTAT(8)                           Linux System Administrator's Manual                           NETSTAT(8)
+
+NAME
+       netstat - Print network connections, routing tables, interface statistics, masquerade connections, and
+       multicast memberships
+SYNOPSIS
+       netstat  [address_family_options]  [--tcp|-t]   [--udp|-u]   [--udplite|-U]   [--sctp|-S]   [--raw|-w]
+       [--l2cap|-2]    [--rfcomm|-f]    [--listening|-l]    [--all|-a]    [--numeric|-n]    [--numeric-hosts]
+       [--numeric-ports] [--numeric-users] [--symbolic|-N] [--extend|-e[--extend|-e]]  [--timers|-o]  [--pro‐
+       gram|-p] [--verbose|-v] [--continuous|-c] [--wide|-W] [delay]
+
+       
+NOTES
+       This  program  is  mostly  obsolete.  Replacement for netstat is ss.  Replacement for netstat -r is ip
+       route.  Replacement for netstat -i is ip -s link.  Replacement for netstat -g is ip maddr.
+
