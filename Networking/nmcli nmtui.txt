@@ -25,7 +25,7 @@ DEVICE=ens33
 ONBOOT=yes
 
 
-# a network card can have multiple connections
+# a network card can have multiple connections (configs)
 # e.g. mobile device switch from corporate network to home network
 
 [root@localhost ~]# man -k Network | less
@@ -61,6 +61,19 @@ org.freedesktop.NetworkManager.wifi.share.open                    yes
 org.freedesktop.NetworkManager.wifi.share.protected               yes   
 
 
+[root@localhost ~]# nmcli 
+agent       connection  device      general     help        monitor     networking  radio       
+[root@localhost ~]# nmcli general 
+help         hostname     logging      permissions  reload       status       
+[root@localhost ~]# nmcli general permissions 
+PERMISSION                                                        VALUE 
+org.freedesktop.NetworkManager.checkpoint-rollback                yes   
+org.freedesktop.NetworkManager.enable-disable-connectivity-check  yes   
+org.freedesktop.NetworkManager.enable-disable-network             yes   
+org.freedesktop.NetworkManager.enable-disable-statistics          yes   
+org.freedesktop.NetworkManager.enable-disable-wifi                yes   
+...
+
 
 NMCLI(1)                              General Commands Manual                             NMCLI(1)
 
@@ -84,6 +97,7 @@ SEE ALSO
        nmcli-examples(7), nm-settings-nmcli(5), nm-online(1), NetworkManager(8),
        NetworkManager.conf(5), nm-applet(1), nm-connection-editor(1), terminal-colors.d(5).
 
+
 [root@localhost ~]# nmcli connection show
 NAME   UUID                                  TYPE      DEVICE 
 ens33  446e3bb4-a594-45ec-a0cc-cfba301dc4fe  ethernet  ens33  
@@ -101,6 +115,14 @@ connection.multi-connect:               0 (default)
 connection.auth-retries:                -1
 ...
 
+What're these connection properties about?
+
+
+$ man nmcli
+SEE ALSO
+       nmcli-examples(7), nm-settings-nmcli(5), nm-online(1), NetworkManager(8), NetworkManager.conf(5), nm-
+       applet(1), nm-connection-editor(1), terminal-colors.d(5).
+
 
 [root@localhost ~]# man -k network | grep settings
 nm-settings (5)      - Description of settings and properties of NetworkManager connection profile...
@@ -108,6 +130,18 @@ nm-settings (5)      - Description of settings and properties of NetworkManager 
 
 
 [root@localhost ~]# man 5 nm-settings
+NM-SETTINGS-NMCLI(5)                            Configuration                            NM-SETTINGS-NMCLI(5)
+
+NAME
+       nm-settings-nmcli - Description of settings and properties of NetworkManager connection profiles for
+       nmcli
+
+DESCRIPTION
+       NetworkManager is based on a concept of connection profiles, sometimes referred to as connections
+       only. These connection profiles contain a network configuration. When NetworkManager activates a
+       connection profile on a network device the configuration will be applied and an active network
+       connection will be established. Users are free to create as many connection profiles as they see fit.
+       Thus they are flexible in having various network configurations for different networking needs.
 
    connection setting
        General Connection Profile Settings.
@@ -180,3 +214,12 @@ IP6.ADDRESS[1]:                         fe80::86b1:edf6:3cbb:3e1f/64
 IP6.GATEWAY:                            --
 IP6.ROUTE[1]:                           dst = fe80::/64, nh = ::, mt = 100
 IP6.ROUTE[2]:                           dst = ff00::/8, nh = ::, mt = 256, table=255
+
+
+Every change made by nmcli/nmtui are permanent, thus affects the config file of the interfaces
+/etc/sysconfig/networ-scripts
+
+You can directly edit these config files as well.
+
+After configuration changes, activate the connection by 
+$ nmcli con up

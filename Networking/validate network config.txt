@@ -5,6 +5,9 @@ $ ip route
 3. check netowkr link
 $ ip link
 
+
+# everything set up from ip command are temporary.
+# to make permanent change, use nmcli/nmtui
 IP(8)                                          Linux                                         IP(8)
 
 NAME

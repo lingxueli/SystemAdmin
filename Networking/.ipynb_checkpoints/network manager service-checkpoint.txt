@@ -1,0 +1,118 @@
+NETWORKMANAGER(8)                         Network management daemons                        NETWORKMANAGER(8)
+
+NAME
+       NetworkManager - network management daemon
+
+SYNOPSIS
+       NetworkManager [OPTIONS...]
+
+DESCRIPTION
+       The NetworkManager daemon attempts to make networking configuration and operation as painless and
+       automatic as possible by managing the primary network connection and other network interfaces, like
+       Ethernet, Wi-Fi, and Mobile Broadband devices. NetworkManager will connect any network device when a
+       connection for that device becomes available, unless that behavior is disabled. Information about
+       networking is exported via a D-Bus interface to any interested application, providing a rich API with
+       which to inspect and control network settings and operation.
+
+DISPATCHER SCRIPTS
+       NetworkManager will execute scripts in the /etc/NetworkManager/dispatcher.d directory or
+       subdirectories in alphabetical order in response to network events. Each script should be a regular
+       executable file owned by root. Furthermore, it must not be writable by group or other, and not setuid.
+
+       Each script receives two arguments, the first being the interface name of the device an operation just
+       happened on, and second the action. For device actions, the interface is the name of the kernel
+       interface suitable for IP configuration. Thus it is either VPN_IP_IFACE, DEVICE_IP_IFACE, or
+       DEVICE_IFACE, as applicable. For the hostname action the device name is always "none" and for
+       connectivity-change it is empty.
+
+       The actions are:
+
+       pre-up
+           The interface is connected to the network but is not yet fully activated. Scripts acting on this
+           event must be placed or symlinked into the /etc/NetworkManager/dispatcher.d/pre-up.d directory,
+           and NetworkManager will wait for script execution to complete before indicating to applications
+           that the interface is fully activated.
+
+       up
+           The interface has been activated.
+
+       pre-down
+           The interface will be deactivated but has not yet been disconnected from the network. Scripts
+           acting on this event must be placed or symlinked into the
+           /etc/NetworkManager/dispatcher.d/pre-down.d directory, and NetworkManager will wait for script
+           execution to complete before disconnecting the interface from its network. Note that this event is
+           not emitted for forced disconnections, like when carrier is lost or a wireless signal fades. It is
+           only emitted when there is an opportunity to cleanly handle a network disconnection event.
+
+       down
+           The interface has been deactivated.
+       hostname
+           The system hostname has been updated. Use gethostname(2) to retrieve it. The interface name (first
+           argument) is empty and no environment variable is set for this action.
+
+       dhcp4-change
+           The DHCPv4 lease has changed (renewed, rebound, etc).
+
+       dhcp6-change
+           The DHCPv6 lease has changed (renewed, rebound, etc).
+
+       connectivity-change
+           The network connectivity state has changed (no connectivity, went online, etc).
+
+
+
+SEE ALSO
+       NetworkManager home page[2], NetworkManager.conf(5), nmcli(1), nmcli-examples(7), nm-online(1), nm-
+       settings(5), nm-applet(1), nm-connection-editor(1), udev(7)
+
+
+NetworkManager (8)   - network management daemon
+NetworkManager.conf (5) - NetworkManager configuration file
+NetworkManager_selinux (8) - Security Enhanced Linux Policy for the NetworkManager processes
+NetworkManager_ssh_selinux (8) - Security Enhanced Linux Policy for the NetworkManager_ssh processes
+networks (5)         - network name information
+nm-connection-editor (1) - network connection editor for NetworkManager
+nm-initrd-generator (8) - early boot NetworkManager configuration generator
+nm-online (1)        - ask NetworkManager whether the network is connected
+nm-settings (5)      - Description of settings and properties of NetworkManager connection profiles for nmcli
+nm-settings-dbus (5) - Description of settings and properties of NetworkManager connection profiles on the D-...
+nm-settings-nmcli (5) - Description of settings and properties of NetworkManager connection profiles for nmcli
+nm-system-settings.conf (5) - NetworkManager configuration file
+
+
+
+[root@localhost ~]# man nm-settings-
+nm-settings-dbus      nm-settings-ifcfg-rh  nm-settings-keyfile   nm-settings-nmcli     
+
+NM-SETTINGS-IFCFG-RH(5)                         Configuration                         NM-SETTINGS-IFCFG-RH(5)
+
+NAME
+       nm-settings-ifcfg-rh - Description of ifcfg-rh settings plugin
+
+DESCRIPTION
+       NetworkManager is based on the concept of connection profiles that contain network configuration (see
+       nm-settings(5) for details). The profiles can be stored in various formats. NetworkManager uses
+       plugins for reading and writing the data. The plugins can be configured in NetworkManager.conf(5).
+
+       The ifcfg-rh plugin is used on the Fedora and Red Hat Enterprise Linux distributions to read/write
+       configuration from/to the traditional /etc/sysconfig/network-scripts/ifcfg-* files. Each
+       NetworkManager connection maps to one ifcfg-* file, with possible usage of keys-* for passwords,
+       route-* for static IPv4 routes and route6-* for static IPv6 routes. The plugin currently supports
+       reading and writing Ethernet, Wi-Fi, InfiniBand, VLAN, Bond, Bridge, and Team connections. Unsupported
+       connection types (such as WWAN, PPPoE, VPN, or ADSL) are handled by keyfile plugin (nm-settings-
+       keyfile(5)). The main reason for using ifcfg-rh plugin is the compatibility with legacy configurations
+       for ifup and ifdown (initscripts).
+
+NetworkManager is based on the concept of connection profiles that contain network configuration (see
+       nm-settings(5) for details). The profiles can be stored in various formats. NetworkManager uses
+       plugins for reading and writing the data. these pugins configuration are /etc/sysconfig/network-scripts/ifcfg-* files. 
+       
+          
+[root@localhost ~]# cd /etc/sysconfig/network-scripts/
+[root@localhost network-scripts]# ls -al
+total 16
+drwxr-xr-x. 2 root root   63 Jan  5 08:45 .
+drwxr-xr-x. 6 root root 4096 Mar 15 00:32 ..
+-rw-r--r--. 1 root root  279 Feb 10 00:14 ifcfg-dhcp
+-rw-r--r--. 1 root root  280 Jan 23 00:04 ifcfg-ens33
+-rw-r--r--. 1 root root  400 Feb 10 00:36 ifcfg-static

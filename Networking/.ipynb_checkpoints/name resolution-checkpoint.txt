@@ -1,0 +1,229 @@
+Set up name resolution in order to be recognizable by the internet.
+
+Name resolution = hostname  + DNS = fqdn
+
+
+how to set up dns?
+
+Use at least 2 DNS name servers for failover
+
+1. nmtui -> set DNS name servers
+
+2. /etc/sysconfig/network-scripts
+
+DNS1
+DNS2
+
+
+[root@localhost ~]# cd /etc/sysconfig/network-scripts
+[root@localhost network-scripts]# ls -al
+total 16
+drwxr-xr-x. 2 root root   63 Jan  5 08:45 .
+drwxr-xr-x. 6 root root 4096 Mar 15 00:32 ..
+-rw-r--r--. 1 root root  279 Feb 10 00:14 ifcfg-dhcp
+-rw-r--r--. 1 root root  280 Jan 23 00:04 ifcfg-ens33
+-rw-r--r--. 1 root root  400 Feb 10 00:36 ifcfg-static
+
+
+Reference
+nm-settings (5)      - Description of settings and properties of NetworkManager connection profiles for nmcli
+
+[root@localhost ~]# man -k nm-settings
+nm-settings (5)      - Description of settings and properties of NetworkManager connection profiles for nmcli
+nm-settings-dbus (5) - Description of settings and properties of NetworkManager connection profiles on the D-...
+nm-settings-ifcfg-rh (5) - Description of ifcfg-rh settings plugin
+nm-settings-keyfile (5) - Description of keyfile settings plugin
+nm-settings-nmcli (5) - Description of settings and properties of NetworkManager connection profiles for nmcli
+
+
+NM-SETTINGS-IFCFG-RH(5)                         Configuration                         NM-SETTINGS-IFCFG-RH(5)
+
+NAME
+       nm-settings-ifcfg-rh - Description of ifcfg-rh settings plugin
+
+DESCRIPTION
+       NetworkManager is based on the concept of connection profiles that contain network configuration (see
+       nm-settings(5) for details). The profiles can be stored in various formats. NetworkManager uses
+       plugins for reading and writing the data. The plugins can be configured in NetworkManager.conf(5).
+
+       The ifcfg-rh plugin is used on the Fedora and Red Hat Enterprise Linux distributions to read/write
+       configuration from/to the traditional /etc/sysconfig/network-scripts/ifcfg-* files. .
+
+
+
+FILE FORMAT
+       The ifcfg-rh config format is a simple text file containing VARIABLE="value" lines. The format is
+       described in sysconfig.txt of initscripts package. Note that the configuration files may be sourced by
+       initscripts, so they must be valid shell scripts. That means, for instance, that # character can be
+       used for comments, strings with spaces must be quoted, special characters must be escaped, etc.
+
+       Users can create or modify the ifcfg-rh connection files manually, even if that is not the recommended
+       way of managing the profiles. However, if they choose to do that, they must inform NetworkManager
+       about their changes (for example via nmcli con (re)load).
+
+       Some ifcfg-rh configuration examples:.
+           Simple DHCP ethernet configuration:
+           NAME=ethernet
+           UUID=1c4ddf70-01bf-46d6-b04f-47e842bd98da
+           TYPE=Ethernet
+           BOOTPROTO=dhcp
+           DEFROUTE=yes
+           PEERDNS=yes
+           PEERROUTES=yes
+           IPV4_FAILURE_FATAL=no
+           ONBOOT=yes
+
+
+           ·   PEERDNS - initscripts interpret PEERDNS=no to mean "never touch resolv.conf".
+               NetworkManager interprets it to say "never add automatic (DHCP, PPP, VPN,
+               etc.) nameservers to resolv.conf".
+
+
+
+DETAILS
+       ifcfg-rh plugin variables marked with (+) are NetworkManager specific extensions not understood by
+       traditional initscripts.
+
+...       Table 2. 802-1x setting
+
+       │Property           │ Ifcfg-rh Variable        │ Default               │ Description                                       
+
+       │dns                │ DNS1, DNS2, ...         │                        │ List of DNS servers.                │
+       │                   │                         │                        │ Even if NetworkManager              │
+       │                   │                         │                        │ supports many DNS                   │
+       │                   │                         │                        │ servers, initscripts                │
+       │                   │                         │                        │ and resolver only care              │
+       │                   │                         │                        │ about the first three,              │
+       │                   │                         │                        │ usually.                            │
+       │                   │                         │                        │                                     │
+       │                   │                         │                        │ Example: DNS1=1.2.3.4               │
+       │                   │                         │                        │ DNS2=10.0.0.254                     │
+       │ignore-auto-dns    │ PEERDNS                 │ yes                    │ PEERDNS has the                     │
+       │                   │                         │                        │ opposite meaning as                 │
+       │                   │                         │                        │ 'ignore-auto-dns'                   │
+       │                   │                         │                        │ property.                           │
+
+
+[root@localhost ~]# cd /etc/sysconfig/network-scripts
+[root@localhost network-scripts]# ls -al
+total 16
+drwxr-xr-x. 2 root root   63 Jan  5 08:45 .
+drwxr-xr-x. 6 root root 4096 Mar 15 00:32 ..
+-rw-r--r--. 1 root root  279 Feb 10 00:14 ifcfg-dhcp
+-rw-r--r--. 1 root root  280 Jan 23 00:04 ifcfg-ens33
+[root@localhost network-scripts]# cat ifcfg-static
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+IPADDR=10.0.0.100
+PREFIX=24
+GATEWAY=10.0.0.1
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=static
+UUID=ac6271ee-bcfc-487a-a76e-b963d5e27f21
+DEVICE=ens33
+ONBOOT=no
+DNS1=10.0.0.10
+DNS2=8.8.8.8
+IPADDR1=10.20.30.40
+PREFIX1=16
+IPV6_PRIVACY=no
+
+
+3. $ nmcli con mod connection-id +ipv4.dns <ip-of-dns>
+
+
+
+How does the dns config work?
+
+the config in /etc/sysconfi/network-scripts will be pushed to /etc/resolv.conf
+
+/etc/sysconfi/network-scripts - network interface + configs
+
+/etc/resolv.conf - DNS name server resolving
+
+
+If you change /etc/resolv.conf only, the dns config will be overwritten next time Network Manager service restarts.
+
+
+Reference
+resolved.conf (5)    - Network Name Resolution configuration files
+resolved.conf.d (5)  - Network Name Resolution configuration files
+
+
+[root@localhost network-scripts]# cat /etc/resolv.conf 
+# Generated by NetworkManager
+search localdomain
+nameserver 192.168.219.2
+
+
+RESOLV.CONF(5)                    Linux Programmer's Manual                   RESOLV.CONF(5)
+
+NAME
+       resolv.conf - resolver configuration file
+
+SYNOPSIS
+       /etc/resolv.conf
+
+DESCRIPTION
+       The  resolver is a set of routines in the C library that provide access to the Inter‐
+       net Domain Name System (DNS).  The resolver configuration file  contains  information
+       that  is  read by the resolver routines the first time they are invoked by a process.
+       The file is designed to be human readable and contains a list of keywords with values
+       that  provide  various types of resolver information.  The configuration file is con‐
+       sidered a trusted source of DNS information (e.g., DNSSEC AD-bit information will  be
+       returned unmodified from this source).
+
+
+       If  this  file  does  not  exist,  only  the name server on the local machine will be
+       queried; the domain name is determined from the hostname and the domain  search  path
+       is constructed from the domain name.
+       
+       nameserver Name server IP address
+              Internet  address  of  a name server that the resolver should query, either an
+              IPv4 address (in dot notation), or an IPv6 address in colon (and possibly dot)
+              notation  as  per  RFC  2373.   Up to MAXNS (currently 3, see <resolv.h>) name
+              servers may be listed, one per keyword.  If there are  multiple  servers,  the
+              resolver  library  queries them in the order listed.  If no nameserver entries
+              are present, the default is to use the name server on the local machine.  (The
+              algorithm  used  is  to try a name server, and if the query times out, try the
+              next, until out of name servers, then repeat trying all the name servers until
+              a maximum number of retries are made.)
+
+       
+       
+       search Search list for host-name lookup.
+              The search list is normally determined from the local domain name; by default,
+              it  contains  only  the local domain name.  This may be changed by listing the
+              desired domain search path following the search keyword with  spaces  or  tabs
+              separating  the names.  Resolver queries having fewer than ndots dots (default
+              is 1) in them will be attempted using each component of  the  search  path  in
+              turn until a match is found.  For environments with multiple subdomains please
+              read options ndots:n below to avoid man-in-the-middle attacks and  unnecessary
+              traffic for the root-dns-servers.  Note that this process may be slow and will
+              generate a lot of network traffic if the servers for the  listed  domains  are
+              not local, and that queries will time out if no server is available for one of
+              the domains.
+
+              The search list is currently limited to six domains with a total of 256  char‐
+              acters.
+
+
+
+If the conneciton gets IP from a DHCP server, DNS server is assigned by DHCP server as well.
+
+If you do not want DHCP to control the DNS server, you can:
+
+1. edit /etc/sysconfi/network-scripts/ifcfg... file:
+
+PEERDNS=no
+
+
+2. nmcli con mod con-name ipv4.ignore-auto-dns yes
