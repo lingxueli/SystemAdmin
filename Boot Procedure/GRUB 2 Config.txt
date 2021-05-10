@@ -13,6 +13,27 @@ SEE ALSO
     
 $ info grub
 -> menu
+
+Kernel
+* grub2-dev: (grub2-dev).       The GRand Unified Bootloader Dev
+* grub2-install: (grub2)Invoking grub2-install.
+                                Install GRUB on your drive
+* grub2-mkconfig: (grub2)Invoking grub2-mkconfig.
+                                Generate GRUB configuration
+* grub2-mkpasswd-pbkdf2: (grub2)Invoking grub2-mkpasswd-pbkdf2.
+* grub2-mkrelpath: (grub2)Invoking grub2-mkrelpath.
+* grub2-mkrescue: (grub2)Invoking grub2-mkrescue.
+                                Make a GRUB rescue image
+* grub2-mount: (grub2)Invoking grub2-mount.
+                                Mount a file system using GRUB
+* grub2-probe: (grub2)Invoking grub2-probe.
+                                Probe device information
+* grub2-script-check: (grub2)Invoking grub2-script-check.
+* GRUB2: (grub2).               The GRand Unified Bootloader
+-> GRUB2: (grub2).               The GRand Unified Bootloader
+-> COnfiguration
+-> * Simple configuration::            Recommended for most users
+
 6.1 Simple configuration handling
 =================================
 

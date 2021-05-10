@@ -4,7 +4,7 @@ ln (1p)              - link files
 
 inodes contains administrative data of a file, except the file name. 
 
-The hard link is the filename which links to inode. And inode contains information about how to further access the file content.
+The hard link is the filename which links to inode. The inode (index node) is a data structure in a Unix-style file system that describes a file-system object such as a file or a directory. Each inode stores the attributes and disk block locations of the object's data. And inode contains information about how to further access the file content.
 
 File names are hard links. A file could have multiple hard links. It enables user to access the same file from multiple locations.
 
@@ -29,7 +29,11 @@ $ man ln
        ln [OPTION]... TARGET
        ln [OPTION]... TARGET... DIRECTORY
        ln [OPTION]... -t DIRECTORY TARGET...
-
+DESCRIPTION
+       In  the  1st form, create a link to TARGET with the name LINK_NAME.  In the 2nd form, create a link to TARGET in
+       the current directory.  In the 3rd and 4th forms, create links to each TARGET in DIRECTORY.  Create  hard  links
+       by  default, symbolic links with --symbolic.  By default, each destination (name of new link) should not already
+       exist.  When creating hard links, each TARGET must exist. 
 
 Create a hard link to /etc/hosts in the current directroy
 
@@ -84,28 +88,24 @@ Remove link example
 
 [lisa@localhost ~]$ mkdir ~/test
 
-# copy files under /etc starting with a-e under ~/test
 [lisa@localhost ~]$ cp /etc/[a-e]* ~/test
 
-# switch to home directory
 [lisa@localhost ~]$ cd
 
-# create symbolic link: link -> test
 [lisa@localhost ~]$ ln -s test link
 
 [lisa@localhost ~]$ ls -al | grep test
 lrwxrwxrwx.  1 lisa lisa      4 Jan 31 23:08 link -> test
 drwxrwxr-x.  2 lisa lisa   4096 Apr 28 07:56 test
 
-# remove the symbolic link without option -r or -f, even it links to a directory
+# remove the symbolic link without option -r or -f
 [lisa@localhost ~]$ rm link
-[lisa@localhost ~]$ ls -al | grep linkd
+[lisa@localhost ~]$ ls -al | grep link
 
 # link is removed as expected
 
 [lisa@localhost ~]$ ls -l | grep test
 drwxrwxr-x. 2 lisa lisa   4096 Apr 28 07:56 test
--rw-rw-r--. 1 lisa lisa   1038 Jan 30 19:13 testvim
 
 # create the link again
 [lisa@localhost ~]$ ln -s test link
@@ -113,7 +113,7 @@ drwxrwxr-x. 2 lisa lisa   4096 Apr 28 07:56 test
 
 # remove the symbolic link, with option -r and -f
 # using the bash command link completion this time
-# / in the end will cause trouble
+# it adds / in the end which will cause trouble
 [lisa@localhost ~]$ rm -rf link/
 
 # the link is not removed as expected
@@ -122,7 +122,6 @@ drwxrwxr-x. 2 lisa lisa   4096 Apr 28 07:56 test
 [lisa@localhost ~]$ ls -l | grep test
 lrwxrwxrwx. 1 lisa lisa      4 Apr 28 08:00 link -> test
 drwxrwxr-x. 2 lisa lisa      6 Apr 28 08:00 test
--rw-rw-r--. 1 lisa lisa   1038 Jan 30 19:13 testvim
 [lisa@localhost ~]$ ls -l test/
 total 0
 

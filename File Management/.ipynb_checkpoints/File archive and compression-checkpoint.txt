@@ -1,9 +1,12 @@
+Archive, compress, unpack, and uncompress files using tar, gzip, and bzip2
+
+Archive: tar
+Compression: gzip bzip2
+Decompression: gunzip bunzip2
+
 # archive command and options
 [root@localhost ~]# man -k archive
 tar (5)              - format of tape archive files
-
-[root@localhost ~]# man tar
-
 
 # compression command
 [root@localhost ~]# man -k zip
@@ -71,3 +74,281 @@ homes.tar: bzip2 compressed data, block size = 900k
 
 # clean up all the files from this exercise
 [root@localhost ~]# rm -f *gz *tar
+
+TAR(1)                          GNU TAR Manual                          TAR(1)
+
+NAME
+       tar - an archiving utility
+
+SYNOPSIS
+   Traditional usage
+       tar {A|c|d|r|t|u|x}[GnSkUWOmpsMBiajJzZhPlRvwo] [ARG...]
+
+   UNIX-style usage
+       tar -A [OPTIONS] ARCHIVE ARCHIVE
+
+       tar -c [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar -d [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar -t [-f ARCHIVE] [OPTIONS] [MEMBER...]
+
+       tar -r [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar -u [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar -x [-f ARCHIVE] [OPTIONS] [MEMBER...]
+
+   GNU-style usage
+       tar {--catenate|--concatenate} [OPTIONS] ARCHIVE ARCHIVE
+
+       tar --create [--file ARCHIVE] [OPTIONS] [FILE...]
+
+       tar {--diff|--compare} [--file ARCHIVE] [OPTIONS] [FILE...]
+
+       tar --delete [--file ARCHIVE] [OPTIONS] [MEMBER...]
+
+       tar --append [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar --list [-f ARCHIVE] [OPTIONS] [MEMBER...]
+
+       tar --test-label [--file ARCHIVE] [OPTIONS] [LABEL...]
+
+       tar --update [--file ARCHIVE] [OPTIONS] [FILE...]
+
+       tar --update [-f ARCHIVE] [OPTIONS] [FILE...]
+
+       tar {--extract|--get} [-f ARCHIVE] [OPTIONS] [MEMBER...]
+
+
+NOTE
+       This manpage is a short description of GNU tar.  For a detailed discus‐
+       sion, including examples and usage recommendations, refer  to  the  GNU
+       Tar Manual available in texinfo format.  If the info reader and the tar
+       documentation are properly installed on your system, the command
+
+           info tar
+
+       should give you access to the complete manual.
+
+   Option styles
+       Options to GNU tar can be given in three different styles.   In  tradi‐
+       tional style, ...
+       For  example,  the c option requires creating the archive, the v option
+       requests the verbose operation, and the f option takes an argument that
+       sets  the  name of the archive to operate upon.  The following command,
+       written in the traditional style, instructs tar to store all files from
+       the  directory /etc into the archive file etc.tar verbosely listing the
+       files being archived:
+
+       tar cfv a.tar /etc
+
+       In UNIX or short-option style, ...
+
+       The example command above written in the short-option style could  look
+       like:
+
+
+       tar -cvf a.tar /etc
+       or
+       tar -c -v -f a.tar /etc
+
+
+   Operation mode
+       The options listed in the table below tell GNU tar what operation it is
+       to perform.  Exactly one of  them  must  be  given.   Meaning  of  non-
+       optional arguments depends on the operation mode requested.
+
+       -A, --catenate, --concatenate
+              Append archive to the end of another archive.  The arguments are
+              treated as the names of archives to append.  All  archives  must
+              be  of the same format as the archive they are appended to, oth‐
+              erwise the resulting archive  might  be  unusable  with  non-GNU
+              implementations of tar.  Notice also that when more than one ar‐
+              chive is given, the members from archives other than  the  first
+              one  will  be  accessible in the resulting archive only if using
+              the -i (--ignore-zeros) option.
+
+              Compressed archives cannot be concatenated.
+
+       -c, --create
+              Create a new archive.  Arguments supply the names of  the  files
+              to  be  archived.   Directories are archived recursively, unless
+              the --no-recursion option is given.
+
+
+       -d, --diff, --compare
+              Find differences between archive and file system.  The arguments
+              are  optional  and  specify  archive members to compare.  If not
+              given, the current working directory is assumed.
+
+       --delete
+              Delete from the archive.  The arguments supply names of the  ar‐
+              chive  members  to  be  removed.   At least one argument must be
+              given.
+
+              This option does not operate on compressed archives.   There  is
+              no short option equivalent.
+
+       -r, --append
+              Append  files to the end of an archive.  Arguments have the same
+              meaning as for -c (--create).
+
+       -t, --list
+              List the contents of an archive.  Arguments are optional.   When
+              given, they specify the names of the members to list.
+
+       --test-label
+              Test the archive volume label and exit.  When used without argu‐
+              ments, it prints the volume label (if any) and exits with status
+              0.  When one or more command line arguments are given.  tar com‐
+              pares the volume label with each argument.  It exits with code 0
+              if  a  match  is found, and with code 1 otherwise.  No output is
+              displayed, unless used together with the -v (--verbose) option.
+
+              There is no short option equivalent for this option.
+
+       -u, --update
+              Append files which are newer than the corresponding copy in  the
+              archive.   Arguments  have  the  same  meaning as with -c and -r
+              options.  Notice, that newer files don't replace their  old  ar‐
+              chive  copies,  but  instead are appended to the end of archive.
+              The resulting archive can thus contain several  members  of  the
+              same name, corresponding to various versions of the same file.
+
+       -x, --extract, --get
+              Extract  files  from  an archive.  Arguments are optional.  When
+              given,  they  specify  names  of  the  archive  members  to   be
+              extracted.
+
+       --show-defaults
+              Show  built-in  defaults  for  various tar options and exit.  No
+              arguments are allowed.
+
+       -?, --help
+              Display a short option summary and exit.  No arguments allowed.
+
+       --usage
+              Display a list of available  options  and  exit.   No  arguments
+              allowed.
+
+       --version
+              Print program version and copyright information and exit.
+
+   Compression options
+       -a, --auto-compress
+              Use archive suffix to determine the compression program.
+
+       -I, --use-compress-program=COMMAND
+              Filter data through COMMAND.  It must accept the -d option, for decompression.  The argument can  contain
+              command line options.
+
+       -j, --bzip2
+              Filter the archive through bzip2(1).
+
+       -J, --xz
+              Filter the archive through xz(1).
+
+       -z, --gzip, --gunzip, --ungzip
+              Filter the archive through gzip(1).
+
+       -Z, --compress, --uncompress
+              Filter the archive through compress(1).
+
+
+SEE ALSO
+       bzip2(1),  compress(1),  gzip(1), lzma(1), lzop(1), rmt(8), symlink(7),
+       tar(5), xz(1).
+
+       Complete tar manual: run info tar or use emacs(1) info mode to read it.
+
+       Online copies of GNU tar documentation in various formats can be  found
+       at:
+
+           http://www.gnu.org/software/tar/manual
+
+
+$ tar -?
+
+Usage: tar [OPTION...] [FILE]...
+GNU 'tar' saves many files together into a single tape or disk archive, and can
+restore individual files from the archive.
+
+Examples:
+  tar -cf archive.tar foo bar  # Create archive.tar from files foo and bar.
+  tar -tvf archive.tar         # List all files in archive.tar verbosely.
+  tar -xf archive.tar          # Extract all files from archive.tar.
+
+
+GZIP(1)                                         General Commands Manual                                         GZIP(1)
+
+NAME
+       gzip, gunzip, zcat - compress or expand files
+
+SYNOPSIS
+       gzip [ -acdfhklLnNrtvV19 ] [-S suffix] [ name ...  ]
+       gunzip [ -acfhklLnNrtvV ] [-S suffix] [ name ...  ]
+       zcat [ -fhLV ] [ name ...  ]
+
+DESCRIPTION
+       Gzip  reduces  the  size  of  the  named  files using Lempel-Ziv coding (LZ77).  Whenever possible, each file is
+       replaced by one with the extension .gz, while keeping the same ownership modes, access and  modification  times.
+       (The  default extension is z for MSDOS, OS/2 FAT, Windows NT FAT and Atari.)  If no files are specified, or if a
+       file name is "-", the standard input is compressed to the standard output.  Gzip will only attempt  to  compress
+       regular files.  In particular, it will ignore symbolic links.
+
+       If  the compressed file name is too long for its file system, gzip truncates it.  Gzip attempts to truncate only
+       the parts of the file name longer than 3 characters.  (A part is delimited by dots.) If  the  name  consists  of
+       small  parts  only,  the  longest  parts are truncated. For example, if file names are limited to 14 characters,
+       gzip.msdos.exe is compressed to gzi.msd.exe.gz.  Names are not truncated on systems which do not have a limit on
+       file name length.
+
+       By  default,  gzip keeps the original file name and timestamp in the compressed file. These are used when decom‐
+       pressing the file with the -N option. This is useful when the compressed file name was  truncated  or  when  the
+       timestamp was not preserved after a file transfer.
+
+SEE ALSO
+       znew(1), zcmp(1), zmore(1), zforce(1), gzexe(1), zip(1), unzip(1), compress(1)
+
+       The  gzip  file  format  is  specified  in  P.  Deutsch,   GZIP   file   format   specification   version   4.3,
+       <https://www.ietf.org/rfc/rfc1952.txt>,  Internet RFC 1952 (May 1996).  The zip deflation format is specified in
+       P. Deutsch, DEFLATE Compressed Data Format Specification  version  1.3,  <https://www.ietf.org/rfc/rfc1951.txt>,
+       Internet RFC 1951 (May 1996).
+
+
+
+UNZIP(1L)                                                                                                     UNZIP(1L)
+
+NAME
+       unzip - list, test and extract compressed files in a ZIP archive
+
+SYNOPSIS
+       unzip [-Z] [-cflptTuvz[abjnoqsCDKLMUVWX$/:^]] file[.zip] [file(s) ...]  [-x xfile(s) ...] [-d exdir]
+
+DESCRIPTION
+       unzip  will  list,  test,  or  extract  files from a ZIP archive, commonly found on MS-DOS systems.  The default
+       behavior (with no options) is to extract into the current directory (and subdirectories below it) all files from
+       the  specified  ZIP  archive.   A companion program, zip(1L), creates ZIP archives; both programs are compatible
+       with archives created by PKWARE's PKZIP and PKUNZIP for MS-DOS, but in many cases the program options or default
+       behaviors differ.
+
+
+UNZIP(1L)                                                                                                     UNZIP(1L)
+
+NAME
+       unzip - list, test and extract compressed files in a ZIP archive
+
+SYNOPSIS
+       unzip [-Z] [-cflptTuvz[abjnoqsCDKLMUVWX$/:^]] file[.zip] [file(s) ...]  [-x xfile(s) ...] [-d exdir]
+
+DESCRIPTION
+       unzip  will  list,  test,  or  extract  files from a ZIP archive, commonly found on MS-DOS systems.  The default
+       behavior (with no options) is to extract into the current directory (and subdirectories below it) all files from
+       the  specified  ZIP  archive.   A companion program, zip(1L), creates ZIP archives; both programs are compatible
+       with archives created by PKWARE's PKZIP and PKUNZIP for MS-DOS, but in many cases the program options or default
+       behaviors differ.
+
+
+ARGUMENTS
+       file[.zip]
+              Path  of the ZIP archive(s).  .

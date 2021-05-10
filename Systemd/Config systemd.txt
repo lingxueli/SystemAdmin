@@ -31,7 +31,7 @@ ENVIRONMENT VARIABLES
 
 
 How to configure the default editor that systemctl uses?
-Define SYSTEMD_EDITOR=/bin/bin in /etc/profile
+Define SYSTEMD_EDITOR=/usr/bin/vim in /etc/profile
 
 
 [root@localhost ~]# which vim

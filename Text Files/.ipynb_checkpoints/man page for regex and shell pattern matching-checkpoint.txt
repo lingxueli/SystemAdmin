@@ -96,14 +96,14 @@ See the man page for the tool itself as well, because there might be some except
        ter,  for example, if the collating sequence includes a "ch" collating element, then the RE "[[.ch.]]*c" matches
        the first five characters of "chchcc".
 
-       => [.ch.]  
+       => [[.ch.]]  
        Within a bracket expression, a collating element enclosed in "[=" and "=]" is an equivalence class, standing for
        the  sequences  of characters of all collating elements equivalent to that one, including itself.  (If there are
        no other equivalent collating elements, the treatment is as if the enclosing delimiters  were  "[."  and  ".]".)
        For  example,  if o and ^ are the members of an equivalence class, then "[[=o=]]", "[[=^=]]", and "[o^]" are all
        synonymous.  An equivalence class may not(!) be an endpoint of a range.
        
-       => [=^=]
+       => [[=^=]]
 
        Within a bracket expression, the name of a character class enclosed in "[:" and ":]" stands for the list of  all
        characters belonging to that class.  Standard character class names are:
@@ -116,7 +116,7 @@ See the man page for the tool itself as well, because there might be some except
        These stand for the character classes defined in wctype(3).  A locale may provide others.  A character class may
        not be used as an endpoint of a range.
 
-        => [:digit:]
+        => [[:digit:]]
 ...
 
 

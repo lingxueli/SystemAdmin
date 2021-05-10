@@ -104,14 +104,18 @@ COMMANDS AND OPTIONS
 Manage subscription - example:
 
 # if you are using CentOs, you get access to the repository and no registeration is required.
+
+1. register the system with your redhat account
 $ subscription-manager register
 
+2. choose a subscription from your redhat account
 $ subscription-manager list --available
 
 $ subscription-manager attach --auto
 
 $ subscription-manager list --consumed
 
+3. unregister if the machine is no longer needed
 $ subscription-manager unregister
 
 
@@ -134,3 +138,15 @@ drwxr-xr-x.   2 root root    6 Jan 23 00:11 product-default
 drwxr-xr-x.   2 root root   73 Jan 22 23:32 rpm-gpg
 drwx------.   2 root root    6 Jul 20  2020 rsyslog
 drwxr-xr-x.   5 root root  104 Jan 22 23:37 tls
+
+PKI:
+Public Key Infrastructure (PKI) is a technology for authenticating users and devices in the digital world. The basic idea is to have one or more trusted parties digitally sign documents certifying that a particular cryptographic key belongs to a particular user or device.
+
+No man page for /etc/pki directory
+
+[root@localhost network-scripts]# man -k pki
+pki_ra_selinux (8)   - Security Enhanced Linux Policy for the pki_ra processes
+pki_tomcat_script_selinux (8) - Security Enhanced Linux Policy for the pki_tomcat_script processes
+pki_tomcat_selinux (8) - Security Enhanced Linux Policy for the pki_tomcat processes
+pki_tps_selinux (8)  - Security Enhanced Linux Policy for the pki_tps processes
+pkill (1)            - look up or signal processes based on name and other attributes

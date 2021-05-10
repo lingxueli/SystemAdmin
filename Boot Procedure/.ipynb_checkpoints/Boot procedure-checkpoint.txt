@@ -57,4 +57,4 @@ Systemd looks for the default target to execute and runs all of its units. All u
 
 A login screen is presented, user can authenticate. 
 
-Login prompt can be prompted before all systemd unit files have been loaded succesfully. Login prompt != fully operational
+Login prompt can be prompted before all systemd unit files have been loaded succesfully. They're loaded, but not necessarily started. Login prompt != fully operational

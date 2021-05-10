@@ -1,0 +1,26 @@
+$ man systemctl
+       list-dependencies [UNIT]
+           Shows units required and wanted by the specified unit. This recursively lists units following the Requires=,
+           Requisite=, ConsistsOf=, Wants=, BindsTo= dependencies. If no unit is specified, default.target is implied.
+
+           By default, only target units are recursively expanded. When --all is passed, all other units are
+           recursively expanded as well.
+
+           Options --reverse, --after, --before may be used to change what types of dependencies are shown.
+
+
+
+Requires=, Requisite=, ConsistsOf=, Wants=, BindsTo= 
+After Before
+
+
+       Before=, After=           ### it determines the order to start up/shut down the units
+       Requires=               ### it determins the dependencies with no requirement of the ordering of the start-ups
+                               ### /.requires directory is created
+       Wants=                 ### it determines desired dependencies - if missing, there's no impact on its integrity. 
+                              ### it doesn't specify the ordering.
+                              ### /.wants directory is created
+       Requisite=          # a stronger version of Requires
+                           # similar to After=
+                           #   However, if the units listed here are not started already, they will not be started
+           and the starting of this unit will fail immediately.  

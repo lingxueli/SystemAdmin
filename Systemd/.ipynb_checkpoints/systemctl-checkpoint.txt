@@ -19,6 +19,10 @@ COMMANDS
 
            As a special case, if one of the arguments is help, a list of allowed values will be printed and the program will exit.
 
+# show a list of allowed values of unit types
+$systemctl -t help 
+
+
        --state=
            The argument should be a comma-separated list of unit LOAD, SUB, or ACTIVE states. When listing units, show only those in the
            specified states. Use --state=failed to show only failed units.
@@ -306,10 +310,7 @@ ExecReload=/usr/sbin/httpd $OPTIONS -k graceful
 
 
        cat PATTERN...
-           Show backing files of one or more units. Prints the "fragment" and "drop-ins" (source files) of units. Each file is preceded by
-           a comment which includes the file name. Note that this shows the contents of the backing files on disk, which may not match the
-           system manager's understanding of these units if any unit files were updated on disk and the daemon-reload command wasn't
-           issued since.
+           Show backing files of one or more units. Prints the "fragment" and "drop-ins" (source files) of units. Each file is preceded by a comment which includes the file name. Note that this shows the contents of the backing files on disk, which may not match the system manager's understanding of these units if any unit files were updated on disk and the daemon-reload command wasn't issued since.
 
 $ systemctl cat httpd.service
 

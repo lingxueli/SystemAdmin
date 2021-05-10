@@ -1,0 +1,40 @@
+Before a boot loader is located, there's a start-up screen passes quickly, showing the system is loading.
+
+Press F2 to enter SETUP
+F12 for network boot
+ESC for boot menu
+
+
+On the boot loader menu, a few boot loaders are available:
+
+Press 'e' to edit the boot loader
+
+-> this offers an interface with a default C script related to boot loader settings. You can edit the boot argument on top of that.
+
+Press 'c' for a command prompt
+
+-> This offers an interface similar to a "terminal" to edit the boot loader
+
+
+linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet rhgb  -> linux command - Load a Linux kernel
+
+
+initrd (loop)/isolinux/initrd0.img   -> initrd commadn Load a Linux initrd
+
+Reference: GRUB 2 command https://www.gnu.org/software/grub/manual/grub/html_node/Commands.html#Commands
+
+Boot arguments is here:
+
+Linux ($root)/vmlinuz root=....
+
+
+You can edit the boot argument in the end of this line, such as:
+
+1. Remove 'rhgb' and 'quiet' in the end for debug messages
+
+2. Add rd.break. This stops the boot procedure while still in the initramfs stage. It's used to recover root password.
+
+3. systemd.unit=emergency.target to boot into a minimum operational mode
+Or rescue.target into a more complete operational mode
+
+Any change made from here are temporary to GRUB 2 boot loader. Persistent change is made through here: /etc/default/grub and use grub2-mkconfig -o /boot/grup2/grub.cfg to push the config to the main config file.

@@ -1,0 +1,191 @@
+What targets does linux have?
+
+[root@localhost ~]# systemctl list-units -a --type=target
+  UNIT                      LOAD      ACTIVE   SUB    DESCRIPTION                  
+  basic.target              loaded    active   active Basic System                 
+  bluetooth.target          loaded    active   active Bluetooth                    
+  cryptsetup.target         loaded    active   active Local Encrypted Volumes      
+  emergency.target          loaded    inactive dead   Emergency Mode               
+  getty-pre.target          loaded    inactive dead   Login Prompts (Pre)          
+  getty.target              loaded    active   active Login Prompts                
+  graphical.target          loaded    active   active Graphical Interface          
+  initrd-fs.target          loaded    inactive dead   Initrd File Systems          
+  initrd-root-device.target loaded    inactive dead   Initrd Root Device           
+  initrd-root-fs.target     loaded    inactive dead   Initrd Root File System      
+  initrd-switch-root.target loaded    inactive dead   Switch Root                  
+  initrd.target             loaded    inactive dead   Initrd Default Target        
+  local-fs-pre.target       loaded    active   active Local File Systems (Pre)     
+  local-fs.target           loaded    active   active Local File Systems           
+  multi-user.target         loaded    active   active Multi-User System            
+  network-online.target     loaded    active   active Network is Online            
+  network-pre.target        loaded    active   active Network (Pre)                
+  network.target            loaded    active   active Network                      
+  nfs-client.target         loaded    active   active NFS client services          
+  nss-lookup.target         loaded    inactive dead   Host and Network Name Lookups
+  nss-user-lookup.target    loaded    active   active User and Group Name Lookups  
+  paths.target              loaded    active   active Paths                        
+  remote-fs-pre.target      loaded    active   active Remote File Systems (Pre)    
+  remote-fs.target          loaded    active   active Remote File Systems          
+  rescue.target             loaded    inactive dead   Rescue Mode                  
+  rpc_pipefs.target         loaded    active   active rpc_pipefs.target            
+  rpcbind.target            loaded    active   active RPC Port Mapper              
+  shutdown.target           loaded    inactive dead   Shutdown                     
+  slices.target             loaded    active   active Slices                       
+  sockets.target            loaded    active   active Sockets                      
+  sound.target              loaded    active   active Sound Card                   
+  sshd-keygen.target        loaded    active   active sshd-keygen.target           
+  swap.target               loaded    active   active Swap                         
+  sysinit.target            loaded    active   active System Initialization        
+● syslog.target             not-found inactive dead   syslog.target                
+  time-sync.target          loaded    inactive dead   System Time Synchronized     
+  timers.target             loaded    active   active Timers                       
+  umount.target             loaded    inactive dead   Unmount All Filesystems      
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+38 loaded units listed.
+To show all installed unit files use 'systemctl list-unit-files'.
+
+
+Which target is system boot target?
+They are called isolated targets.
+
+They have the property: AllowIsolate=yes
+
+These are the isolatable targets
+[root@localhost ~]# cd  /usr/lib/systemd/system/
+[root@localhost system]# grep isolate *.target
+[root@localhost system]# grep Isolate *.target
+anaconda.target:AllowIsolate=yes
+ctrl-alt-del.target:AllowIsolate=yes
+default.target:AllowIsolate=yes
+emergency.target:AllowIsolate=yes
+exit.target:AllowIsolate=yes
+graphical.target:AllowIsolate=yes
+halt.target:AllowIsolate=yes
+initrd-switch-root.target:AllowIsolate=yes
+initrd.target:AllowIsolate=yes
+kexec.target:AllowIsolate=yes
+multi-user.target:AllowIsolate=yes
+poweroff.target:AllowIsolate=yes
+reboot.target:AllowIsolate=yes
+rescue.target:AllowIsolate=yes
+runlevel0.target:AllowIsolate=yes
+runlevel1.target:AllowIsolate=yes
+runlevel2.target:AllowIsolate=yes
+runlevel3.target:AllowIsolate=yes
+runlevel4.target:AllowIsolate=yes
+runlevel5.target:AllowIsolate=yes
+runlevel6.target:AllowIsolate=yes
+system-update.target:AllowIsolate=yes
+
+
+
+#  A few isolated target determines the state the server starts in.
+# mapping between runlevel and systemd target
+
+RUNLEVEL(8)                                  runlevel                                  RUNLEVEL(8)
+
+NAME
+       runlevel - Print previous and current SysV runlevel
+
+SYNOPSIS
+       runlevel [options...]
+
+OVERVIEW
+       "Runlevels" are an obsolete way to start and stop groups of services used in SysV init.
+
+       Table 1. Mapping between runlevels and systemd targets
+       ┌─────────┬───────────────────┐
+       │Runlevel │ Target            │
+       ├─────────┼───────────────────┤
+       │0        │ poweroff.target   │
+       ├─────────┼───────────────────┤
+       │1        │ rescue.target     │
+       ├─────────┼───────────────────┤
+       │2, 3, 4  │ multi-user.target │
+       ├─────────┼───────────────────┤
+       │5        │ graphical.target  │
+       ├─────────┼───────────────────┤
+       │6        │ reboot.target     │
+       └─────────┴───────────────────┘
+
+https://www.geeksforgeeks.org/run-levels-linux/
+run-levels:
+0 – System halt i.e the system can be safely powered off with no activity.
+1 – Single user mode.
+2 – Multiple user mode with no NFS(network file system).
+3 – Multiple user mode under the command line interface and not under the graphical user interface.
+4 – User-definable.
+5 – Multiple user mode under GUI (graphical user interface) and this is the standard runlevel for most of the LINUX based systems.
+6 – Reboot which is used to restart the system.
+
+
+
+To switch to another isolatable target
+$ systemctl isolate rescue.target
+$ systemctl isolate reboot.target
+
+
+To shut down the machine
+$ systemctl isolate poweroff.target
+To restart
+$ systemctl isolate reboot.target
+
+
+
+If you want to use graphical.target, you need to install the dependencies
+$ yum group list
+Available Environment Groups:
+   Server
+   Minimal Install
+   Workstation
+   Virtualization Host
+   Custom Operating System
+Installed Environment Groups:
+   Server with GUI
+Installed Groups:
+   Container Management
+   Headless Management
+Available Groups:
+   .NET Core Development
+   RPM Development Tools
+   Development Tools
+   Graphical Administration Tools
+   Legacy UNIX Compatibility
+   Network Servers
+   Scientific Support
+   Security Tools
+   Smart Card Support
+   System Tools
+
+$ yum group install "server with gui"
+
+
+$ man yum
+   Group Command
+       Groups are virtual collections of packages. DNF  keeps  track  of  groups  that  the  user  selected  ("marked")
+       installed and can manipulate the comprising packages with simple commands.
+
+       dnf [options] group [summary] <group-spec>
+              Display  overview  of  how  many groups are installed and available. With a spec, limit the output to the
+              matching groups. summary is the default groups subcommand.
+
+       dnf [options] group info <group-spec>
+              Display package lists of a group. Shows which packages are installed or available from a repository  when
+              -v is used.
+
+       dnf [options] group install [--with-optional] <group-spec>...
+              Mark  the  specified  group installed and install packages it contains. Also include optional packages of
+              the group if --with-optional is specified. All mandatory and Default packages will be installed  whenever
+              possible.   Conditional  packages  are installed if they meet their requirement.  If the group is already
+              (partially) installed, the command installs the missing packages from the group.  Depending on the  value
+              of obsoletes configuration option group installation takes obsoletes into account.
+
+       dnf [options] group list <group-spec>...
+              List  all  matching groups, either among installed or available groups. If nothing is specified, list all
+              known groups. --installed and --available options narrow down the requested list.  Records are ordered by
+              the  display_order  tag  defined in comps.xml file.  Provides a list of all hidden groups by using option
+...

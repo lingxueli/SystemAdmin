@@ -19,6 +19,10 @@ COMMANDS
 
            As a special case, if one of the arguments is help, a list of allowed values will be printed and the program will exit.
 
+# show a list of allowed values of unit types
+$systemctl -t help 
+
+
        --state=
            The argument should be a comma-separated list of unit LOAD, SUB, or ACTIVE states. When listing units, show only those in the
            specified states. Use --state=failed to show only failed units.
