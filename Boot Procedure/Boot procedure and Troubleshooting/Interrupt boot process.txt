@@ -1,0 +1,119 @@
+Before a boot loader is located, there's a start-up screen passes quickly, showing the system is loading.
+
+Press F2 to enter SETUP
+F12 for network boot
+ESC for boot menu  -> To use the rescue disk, Press ESC for boot menu
+
+in boot menu you can choose from 
+1. removable device
+2.hard drive
+3.CD-ROM drive  -> To use the rescue disk, Use CD-ROM drive because rescue disk is on the installion disk.
+4.network boot from Intel E1000.
+
+If you boot from CD-ROM drive, you can choose from 
+1.install Centos linux 8
+2.test this media and install
+3.troubleshooting.  -> To use the rescue disk, select troubleshooting.
+
+
+In troubleshooting menu, you can 
+1. install Centos linux 8 in basic graphics mode-> try this option if you have issue install linux
+
+2. rescue a Centos linux 8 system -> use this option for the rescue disk. If the system cannot boot, this let you access and edit the config file to try to get it boot again
+
+3. run a memory test  -> use this option to see if the memory is working correctly
+
+4. boot from local drive -> use this option if the boot loader on hard disk does not work. This offers a boot loader on the installation disk
+
+5. return to main menu
+
+From the rescue disk, accept the default read-write mount of Linux installation on /mnt/sysimage
+And change the root file system to be /mnt/sysimage. 
+
+$ chroot /mnt/sysimage
+
+Anything not in this file system are read-only. Thus, no configuration change could be made. So you need to change root.
+
+
+Then you get access to the root file system and you can access all tools that you need to repair the system.
+
+
+From the rescue disk's root shell, you can
+
+1. reinstall boot loader
+2. re-create initramfs
+
+
+1. reinstall boot loader
+
+$ grub2-install 
+
+
+
+Reference:
+$ grub2 tab
+$ grub2-install help
+$ info grub
+
+grub2-install INSTALL_DEVICE
+
+on KVM(Kernel-based Virtual Machine): 
+$ grub2-install /dev/vda
+
+on a phsycial server/VMWare/Virutal Box
+$ grub2-install /dev/sda
+
+/dev/sdX - SCSI device; Small Computer System Interface is a set of standards for physically connecting and transferring data between computers and peripheral devices. Some examples of SCSI devices are hard drives, CD-ROM drives, tape drives, and scanners.
+
+/dev/sdX is peripheral on your hard disk.
+
+2. re-create initramfs
+
+dracut - If used without arguments, it creates a new initramfs for the kernel currently loaded
+
+Use this command to re-create this:
+
+$ dracut --force
+OR 
+$ dracut -f
+# without force option, it will not overwrite the existing one
+
+# no man page is available in the rescue disk and you're not able to install man-pages
+
+If you boot from hard drive, which is the default:
+
+On the boot loader menu, a few boot loaders are available:
+
+Press 'e' to edit the boot loader
+
+-> this offers an interface with a default GRUB 2 script related to boot loader settings. You can edit the boot argument on top of that.
+
+Press 'c' for a command prompt
+
+-> This offers an interface similar to a "terminal" to edit the boot loader
+
+
+linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet rhgb  
+-> linux command - Load a Linux kernel
+
+
+initrd (loop)/isolinux/initrd0.img  
+-> initrd commadn Load a Linux initrd
+
+Reference: GRUB 2 command https://www.gnu.org/software/grub/manual/grub/html_node/Commands.html#Commands
+
+Boot arguments is here:
+
+Linux ($root)/vmlinuz root=....
+
+
+You can edit the boot argument in the end of this line, such as:
+
+1. Remove 'rhgb' and 'quiet' in the end for debug messages
+
+2. Add rd.break. This stops the boot procedure while still in the initramfs stage. It's used to recover root password.
+
+3. systemd.unit=emergency.target to boot into a minimum operational mode
+Or rescue.target into a more complete operational mode
+
+Any change made from here are temporary to GRUB 2 boot loader. Persistent change is made through here: /etc/default/grub and use grub2-mkconfig -o /boot/grup2/grub.cfg to push the config to the main config file.
