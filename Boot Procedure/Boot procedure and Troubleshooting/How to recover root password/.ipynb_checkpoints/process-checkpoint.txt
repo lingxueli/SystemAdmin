@@ -1,5 +1,7 @@
 How to enter root shell without root password/How to reset root password
 
+You'll boot into the minimal mode(Emergency mode) which allows you to log in without entering a password.
+
 1. Enter into edit mode of the boot mene: Press e from GRUB 2 boot menu
 
 2. It returns these commands and variables:
@@ -62,9 +64,17 @@ it brings you to the end of the boot stage where initramfs is loaded, just befor
 5. Now it brings you to the shell of the emergency mode 
 Emergency mode, on the other hand, does mount the regular root filesystem, but it only mounts it in a read-only mode
 
-6. In emergency mode, remount the root filesystem with read/write access, so that later you can change the password:
+6. In emergency mode, remount the temporary root filesystem /sysroot with read/write access, so that later you can change the password:
+
+$ mount
+...
+/dev/mapper/cl-root on /sysroot type xfs (ro,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 
 $ mount -o remount,rw /sysroot
+
+$ mount
+...
+/dev/mapper/cl-root on /sysroot type xfs (rw,relatime,attr2,inode64,logbufs=8,logbsize=32k,noquota)
 
 7. make /sysroot the new root directory:
 
@@ -87,7 +97,8 @@ At this stage, SELinux has not been activated yet, if you reboot now, no one wil
 
 Loading the SELinux policy will make it possible to change the context type of /etc/shadow
 
-load_policy -i
+$ load[TAB][TAB]
+$ load_policy -i
 # load the SELinux policy
 
 
@@ -110,8 +121,14 @@ DESCRIPTION
 
 6. set the correct context type to /etc/shadow, so that other users could log in as before
 
-chcon -t shadow_t /etc/shadow
+$ ls -Z /etc/shadow
+system_u:object_r:unlabled_t:s0 /etc/shadow
 
+$ ch[TAB][TAB]
+$ chcon -t shadow_t /etc/shadow
+
+$ ls -Z /etc/shadow
+system_u:object_r:shadow_t:s0 /etc/shadow
 
 CHCON(1)                                   User Commands                                  CHCON(1)
 
@@ -129,3 +146,5 @@ SYNOPSIS
 
 
 7. reboot
+$ exit
+$ reboot won't work because systemd is not started yet

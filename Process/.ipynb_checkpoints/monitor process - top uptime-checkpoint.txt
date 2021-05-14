@@ -73,7 +73,7 @@ PROCESS STATE CODES         top
 R: running
 S: sleeping, waiting for an event to complete
 D: uninterruptible sleep， waiting for i/o
-T: Stopped, after using Ctrl-Z
+T: Stopped, after using Ctrl-Z (Ctrl-Z: pause the job, the job is still in memory)
 Z: Zombie
 
 

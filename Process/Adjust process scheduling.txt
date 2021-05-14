@@ -1,0 +1,130 @@
+Adjust process scheduling
+
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/reference_guide/chap-setting_the_scheduler
+
+
+CHRT(1)                          User Commands                         CHRT(1)
+
+NAME
+       chrt - manipulate the real-time attributes of a process
+
+SYNOPSIS
+       chrt [options] priority command [argument...]
+       chrt [options] -p [priority] pid
+
+DESCRIPTION
+       chrt sets or retrieves the real-time scheduling attributes of an exist‐
+       ing pid, or runs command with the given attributes.
+
+
+       -p, --pid
+              Operate on an existing PID and do not launch a new task.
+
+POLICIES
+       -o, --other
+              Set scheduling policy to SCHED_OTHER.  This is the default Linux
+              scheduling policy.
+
+       -f, --fifo
+              Set scheduling policy to SCHED_FIFO.
+
+       -r, --rr
+              Set  scheduling  policy to SCHED_RR.  When no policy is defined,
+              the SCHED_RR is used as the default.
+
+       -b, --batch
+              Set scheduling policy to SCHED_BATCH (Linux-specific,  supported
+              since 2.6.16).  The priority argument has to be set to zero.
+
+       -i, --idle
+              Set  scheduling  policy to SCHED_IDLE (Linux-specific, supported
+              since 2.6.23).  The priority argument has to be set to zero.
+
+       -d, --deadline
+              Set scheduling policy to  SCHED_DEADLINE  (Linux-specific,  sup‐
+              ported  since  3.14).   The  priority  argument has to be set to
+              zero.    See   also   --sched-runtime,   --sched-deadline    and
+              --sched-period.   The  relation  between the options required by
+              the kernel is runtime <= deadline <= period.  chrt copies period
+              to deadline if --sched-deadline is not specified and deadline to
+              runtime if --sched-runtime is not specified.  It means  that  at
+              least --sched-period has to be specified.  See sched(7) for more
+              details.
+
+NOTES
+       Only SCHED_FIFO, SCHED_OTHER and SCHED_RR are  part  of  POSIX  1003.1b
+       Process  Scheduling.  The other scheduling attributes may be ignored on
+       some systems.
+
+       Linux' default scheduling policy is SCHED_OTHER.
+
+SEE ALSO
+       nice(1), renice(1), taskset(1), sched(7)
+
+       See sched_setscheduler(2) for a description  of  the  Linux  scheduling
+       scheme.
+
+
+$ man sched_setscheduler
+
+       Currently, Linux supports the following "normal" (i.e.,  non-real-time)
+       scheduling policies as values that may be specified in policy:
+
+       SCHED_OTHER   the standard round-robin time-sharing policy;
+
+       SCHED_BATCH   for "batch" style execution of processes; and
+
+       SCHED_IDLE    for running very low priority background jobs.
+
+       Various "real-time" policies are also supported, for special time-crit‐
+       ical applications that need precise  control  over  the  way  in  which
+       runnable  threads  are selected for execution.  For the rules governing
+       when a process may use these policies,  see  sched(7).   The  real-time
+       policies that may be specified in policy are:
+
+       SCHED_FIFO    a first-in, first-out policy; and
+
+       SCHED_RR      a round-robin policy  => time slots are assigned to each process in equal portions and in circular order, handling all processes without priority (also known as cyclic executive).
+
+
+
+
+
+To check the attributes of a particular process
+~]# chrt -p 468
+pid 468's current scheduling policy: SCHED_FIFO
+pid 468's current scheduling priority: 85
+
+~]# chrt -p 476
+pid 476's current scheduling policy: SCHED_OTHER
+pid 476's current scheduling priority: 0
+
+
+
+
+To set the priority of a process
+
+set the process with PID 1000 to SCHED_FIFO, with a priority of 50:
+~]# chrt -f -p 50 1000
+
+
+To start a new application with a given policy and priority
+
+start /bin/my-app, with a policy of SCHED_FIFO and a priority of 36:
+~]# chrt -f 36 /bin/my-app
+
+
+22.3.4.2 Functions For Traditional Scheduling
+.............................................
+   The range of valid nice values depends on the kernel, but typically
+it runs from ‘-20’ to ‘20’.  A lower nice value corresponds to higher
+priority for the process.  These constants describe the range of
+priority values:
+
+‘PRIO_MIN’
+
+     The lowest valid nice value.
+
+‘PRIO_MAX’
+
+     The highest valid nice value.
