@@ -33,7 +33,7 @@ PROFILES
        
 
 
-# tuned-adm command: interact with tuned service and switch between different tuning profiles.
+tuned-adm (8)        - command line tool for switching between different tuning profiles
 
 # install tuned service
 
@@ -43,6 +43,37 @@ tuned-2.14.0-3.el8.noarch : A dynamic adaptive system tuning daemon
 Repo        : BaseOS-exercise
 Matched from:
 Provide    : tuned = 2.14.0-3.el8
+
+
+[lisa@localhost ~]$ yum search tune
+2021-05-13 23:53:50,721 [ERROR] yum:5071:MainThread @logutil.py:194 - [Errno 13] Permission denied: '/var/log/rhsm/rhsm.log' - Further logging output will be written to stderr
+Not root, Subscription Management repositories not updated
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 19 days, 1:30:20 ago on Sat 24 Apr 2021 10:23:32 PM MDT.
+========================= Name & Summary Matched: tune =========================
+tuned-gtk.noarch : GTK GUI for tuned
+tuned-profiles-atomic.noarch : Additional tuned profile(s) targeted to Atomic
+tuned-profiles-compat.noarch : Additional tuned profiles mainly for backward
+                             : compatibility with tuned 1.0
+tuned-profiles-cpu-partitioning.noarch : Additional tuned profile(s) optimized
+                                       : for CPU partitioning
+tuned-profiles-mssql.noarch : Additional tuned profile(s) for MS SQL Server
+tuned-profiles-oracle.noarch : Additional tuned profile(s) targeted to Oracle
+                             : loads
+tuned-utils.noarch : Various tuned utilities
+============================== Name Matched: tune ==============================
+tuned.noarch : A dynamic adaptive system tuning daemon
+tuned-utils-systemtap.noarch : Disk and net statistic monitoring systemtap
+                             : scripts
+============================ Summary Matched: tune =============================
+atlas.i686 : Automatically Tuned Linear Algebra Software
+atlas.x86_64 : Automatically Tuned Linear Algebra Software
+
+tuned.noarch:
+
+Noarch stands for no architecture. Actually, the term noarch means no particular architecture or if you will, all architectures. It references files, such as images, manuals or even applications that are universal across all platforms
 
 [root@localhost lisa]# rpm -q tuned
 tuned-2.14.0-3.el8_3.1.noarch

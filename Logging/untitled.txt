@@ -1,0 +1,19 @@
+Locate and interpret system log files and journals
+
+Log file could be from:
+
+1. direct write by the service, such as httpd
+2. rsyslog, an upgrade from syslog. Logs from this service are centralized
+3. journal. It collects messages from the kernel, the entire boot procedure and Systemd.
+
+journal log is not persistent. It can forward logs to rsyslog to keep logs between reboot.
+
+Audit service for SELinux.
+
+
+So you can locate the log files from:
+
+1. read rsyslog log from /var/log
+
+2. read journal log by journalctl (log file is binary)
+or systemctl status XXX. It shows the most recent log.
