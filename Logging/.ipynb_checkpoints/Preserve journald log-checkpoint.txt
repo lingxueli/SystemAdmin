@@ -152,13 +152,19 @@ DESCRIPTION
        journalctl may be used to query the contents of the systemd(1) journal
        as written by systemd-journald.service(8).
 
+
+
        -b [ID][±offset], --boot=[ID][±offset]
-           Show messages from a specific boot. This will add a match for
-           "_BOOT_ID=".
+           Show messages from a specific boot. This will add a match for "_BOOT_ID=".
 
-           The argument may be empty, in which case logs for the current boot
-           will be shown.
+           The argument may be empty, in which case logs for the current boot will be shown.
 
+           If the boot ID is omitted, a positive offset will look up the boots starting from the beginning of
+           the journal, and an equal-or-less-than zero offset will look up boots starting from the end of the
+           journal. Thus, 1 means the first boot found in the journal in chronological order, 2 the second and
+           so on; while -0 is the last boot, -1 the boot before last, and so on. An empty offset is equivalent
+           to specifying -0, except when the current boot is not the last boot (e.g. because --directory was
+           specified to look at logs from a different machine).
 
 
 $ journalctl -b

@@ -1,0 +1,332 @@
+Locate and interpret system log files and journals
+
+Log file could be from:
+
+1. direct write by the service, such as httpd writes log files to /var/log
+2. rsyslog, an upgrade from syslog. Logs from this service are centralized. It writes log files to /var/log
+3. journal. It collects messages from the kernel, the entire boot procedure and Systemd.
+
+journal log is not persistent. It can forward logs to rsyslog to keep logs between reboot.
+
+Audit service for SELinux.
+
+
+So you can locate the log files from:
+
+1. read rsyslog log from /var/log
+
+2. read journal log by journalctl (log file is binary)
+or systemctl status XXX. It shows the most recent log.
+
+
+
+Common log files:
+
+[root@localhost ~]# cd /var/log
+[root@localhost log]# ls -al
+total 37080
+drwxr-xr-x. 20 root   root                4096 May 16 14:38 .
+drwxr-xr-x. 22 root   root                4096 Jan 25 00:57 ..
+drwxr-xr-x.  2 root   root                4096 May 10 22:27 anaconda
+drwx------.  2 root   root                  23 Jan 23 00:07 audit
+-rw-------.  1 root   root               22058 May 14 22:28 boot.log
+-rw-------.  1 root   root               11176 Apr  3 18:50 boot.log-20210403
+-rw-------.  1 root   root               11176 Apr 18 13:06 boot.log-20210418
+-rw-------.  1 root   root               11176 Apr 25 09:13 boot.log-20210425
+-rw-------.  1 root   root               21988 May  2 17:27 boot.log-20210502
+-rw-------.  1 root   root               11176 May  3 11:09 boot.log-20210503
+-rw-------.  1 root   root               11176 May  9 16:39 boot.log-20210509
+-rw-------.  1 root   root               10994 May 10 09:23 boot.log-20210510
+-rw-rw----.  1 root   utmp                   0 May  2 17:27 btmp
+-rw-rw----.  1 root   utmp                   0 Apr  1 19:38 btmp-20210502
+drwxr-xr-x.  2 chrony chrony                 6 Nov 19  2019 chrony
+-rw-------.  1 root   root                7483 May 14 23:01 cron
+-rw-------.  1 root   root               16336 Apr 18 13:01 cron-20210418
+-rw-------.  1 root   root                6797 Apr 25 09:11 cron-20210425
+-rw-------.  1 root   root                8872 May  2 17:11 cron-20210502
+-rw-------.  1 root   root               17088 May  9 16:11 cron-20210509
+drwxr-xr-x.  2 lp     sys                  135 Feb 21 03:13 cups
+-rw-------.  1 root   root               11680 May 14 22:38 dnf.librepo.log
+-rw-------.  1 root   root               33616 Apr 18 11:22 dnf.librepo.log-20210418
+-rw-------.  1 root   root               27416 Apr 25 08:36 dnf.librepo.log-20210425
+-rw-------.  1 root   root               17551 May  2 16:38 dnf.librepo.log-20210502
+-rw-------.  1 root   root               28742 May  9 16:19 dnf.librepo.log-20210509
+-rw-r--r--.  1 root   root              432138 May 14 22:38 dnf.log
+-rw-r--r--.  1 root   root             1048539 Mar 29 00:23 dnf.log.1
+-rw-r--r--.  1 root   root               67808 May 14 22:38 dnf.rpm.log
+-rw-r-----.  1 root   root                9786 May 14 22:28 firewalld
+drwx--x--x.  2 root   gdm                    6 Sep 17  2020 gdm
+drwxr-xr-x.  2 root   root                   6 Nov  3  2020 glusterfs
+-rw-------.  1 root   root                 357 May 14 22:38 hawkey.log
+-rw-------.  1 root   root                1020 Apr 18 11:22 hawkey.log-20210418
+-rw-------.  1 root   root                1836 Apr 25 08:36 hawkey.log-20210425
+-rw-------.  1 root   root                 612 May  2 16:38 hawkey.log-20210502
+-rw-------.  1 root   root                 765 May  9 15:19 hawkey.log-20210509
+drwx------.  2 root   root                4096 Mar 29 15:23 httpd
+-rw-------.  1 root   root                7034 Mar 29 00:25 httpd-error.log
+drwxr-sr-x+  3 root   systemd-journal       46 Feb 22 15:35 journal
+-rw-rw-r--.  1 root   utmp              293752 May 14 22:33 lastlog
+drwx------.  3 root   root                  18 Jan 22 23:47 libvirt
+-rw-------.  1 root   root                   0 May  9 16:39 maillog
+-rw-------.  1 root   root                   0 Apr 11 11:29 maillog-20210418
+-rw-------.  1 root   root                   0 Apr 18 13:06 maillog-20210425
+-rw-------.  1 root   root                   0 Apr 25 09:13 maillog-20210502
+-rw-------.  1 root   root                   0 May  2 17:27 maillog-20210509
+-rw-------.  1 root   root             1601295 May 16 14:38 messages
+-rw-------.  1 root   root             1481130 Apr 18 13:04 messages-20210418
+-rw-------.  1 root   root              742724 Apr 25 09:11 messages-20210425
+-rw-------.  1 root   root             1438960 May  2 17:25 messages-20210502
+-rw-------.  1 root   root             2124737 May  9 16:37 messages-20210509
+-rw-------.  1 root   root            26651072 May 16 14:38 messages-debug
+drwxrwx---.  2 apache root                 127 May  9 16:39 php-fpm
+drwx------.  2 root   root                   6 Jan 22 23:38 private
+drwxr-xr-x.  2 root   root                   6 Feb 21 22:06 qemu-ga
+drwxr-xr-x.  2 root   root                4096 May  9 16:39 rhsm
+drwx------.  3 root   root                  17 Jan 22 23:39 samba
+-rw-------.  1 root   root                8400 May 16 14:38 secure
+-rw-------.  1 root   root                3847 Apr 18 11:20 secure-20210418
+-rw-------.  1 root   root                3576 Apr 24 22:43 secure-20210425
+-rw-------.  1 root   root                6678 Apr 30 23:15 secure-20210502
+-rw-------.  1 root   root                7032 May  9 16:36 secure-20210509
+drwx------.  2 root   root                   6 May 17  2019 speech-dispatcher
+-rw-------.  1 root   root                   0 May  9 16:39 spooler
+-rw-------.  1 root   root                   0 Apr 11 11:29 spooler-20210418
+-rw-------.  1 root   root                   0 Apr 18 13:06 spooler-20210425
+-rw-------.  1 root   root                   0 Apr 25 09:13 spooler-20210502
+-rw-------.  1 root   root                   0 May  2 17:27 spooler-20210509
+drwxr-x---.  2 sssd   sssd                4096 May 10 09:23 sssd
+drwxr-xr-x.  3 root   root                  21 Jan 22 23:47 swtpm
+drwxr-xr-x.  2 root   root                  23 Jan  4 09:24 tuned
+-rw-------.  1 root   root                 719 May 14 22:28 vmware-network.1.log
+-rw-------.  1 root   root                 719 May 13 22:29 vmware-network.2.log
+-rw-------.  1 root   root                 741 May 11 23:22 vmware-network.3.log
+-rw-------.  1 root   root                 719 May 11 23:19 vmware-network.4.log
+-rw-------.  1 root   root                 741 May 11 23:13 vmware-network.5.log
+-rw-------.  1 root   root                4309 May 11 23:11 vmware-network.6.log
+-rw-------.  1 root   root                 741 May 10 21:41 vmware-network.7.log
+-rw-------.  1 root   root               10134 May 10 21:40 vmware-network.8.log
+-rw-------.  1 root   root                 715 May  9 20:00 vmware-network.9.log
+-rw-------.  1 root   root               10134 May 16 14:38 vmware-network.log
+-rw-------.  1 root   root               59184 May 14 22:28 vmware-vgauthsvc.log.0
+-rw-------.  1 root   root              156712 May 16 14:38 vmware-vmsvc-root.log
+-rw-------.  1 root   root                7308 May 14 22:28 vmware-vmtoolsd-root.log
+-rw-rw-r--.  1 root   utmp               64896 May 14 22:32 wtmp
+-rw-r--r--.  1 root   root               22052 Jan 23 00:10 Xorg.9.log
+
+[root@localhost log]# ls -al | grep mes
+-rw-------.  1 root   root             1601659 May 16 14:38 messages   => the most common. Generic log file where most messages are written to
+
+
+[root@localhost log]# ls -al | grep secure    => authentication related/error messages
+-rw-------.  1 root   root                8400 May 16 14:38 secure
+-rw-------.  1 root   root                3847 Apr 18 11:20 secure-20210418
+-rw-------.  1 root   root                3576 Apr 24 22:43 secure-20210425
+-rw-------.  1 root   root                6678 Apr 30 23:15 secure-20210502
+-rw-------.  1 root   root                7032 May  9 16:36 secure-20210509
+
+[root@localhost log]# ls -al | grep boot   
+-rw-------.  1 root   root               22058 May 14 22:28 boot.log   => system startup related
+
+[root@localhost log]# ls -al | grep audit         => selinux writes to this file
+drwx------.  2 root   root                  23 Jan 23 00:07 audit
+
+
+[root@localhost log]# ls -al | grep mail     => mail related messages
+-rw-------.  1 root   root                   0 May  9 16:39 maillog
+
+
+[root@localhost log]# ls -al | grep samba    => direct write from samba service
+drwx------.  3 root   root                  17 Jan 22 23:39 samba
+
+[root@localhost log]# ls -al | grep cups     => print service CUPS
+drwxr-xr-x.  2 lp     sys                  135 Feb 21 03:13 cups
+
+CUPS is a modular printing system for Unix-like computer operating systems which allows a computer to act as a print server
+
+[root@localhost log]# ls -al | grep httpd
+drwx------.  2 root   root                4096 Mar 29 15:23 httpd
+-rw-------.  1 root   root                7034 Mar 29 00:25 httpd-error.log
+
+
+Understand the content of a log file:
+e.g. 
+$ tail -f /var/log/messages
+
+
+How to write to rsyslog
+$ logger -p kern.err hello
+
+LOGGER(1)                        User Commands                       LOGGER(1)
+
+NAME
+       logger - enter messages into the system log
+
+SYNOPSIS
+       logger [options] [message]
+
+DESCRIPTION
+       logger makes entries in the system log.
+
+
+       -p, --priority priority
+              Enter the message into the log with the specified priority.  The
+              priority may be specified numerically  or  as  a  facility.level
+              pair.   For example, -p local3.info logs the message as informa‐
+              tional in the local3 facility.  The default is user.notice.
+
+EXAMPLES
+       logger System rebooted
+       logger -p local0.notice -t HOSTIDM -f /dev/idmc
+       logger -n loghost.example.com System rebooted
+
+
+
+rsyslogd config file:
+$ less /etc/rsyslog.conf
+...
+Format: 
+facility.priority  destination
+
+# Log cron stuff
+cron.*                                                  /var/log/cron
+
+# Everybody gets emergency messages
+*.emerg                                                 :omusrmsg:*        -> writes to a rsyslog module - omusrmsg
+
+...
+
+
+
+rsyslogd (8)         - reliable and extended syslogd
+
+FILES
+       /etc/rsyslog.conf
+              Configuration file for rsyslogd.  See rsyslog.conf(5) for  exact
+              information.
+       /dev/log
+              The  Unix  domain socket to from where local syslog messages are
+              read.
+       /var/run/rsyslogd.pid
+              The file containing the process id of rsyslogd.
+       prefix/lib/rsyslog
+              Default directory for rsyslogd modules. The prefix is specified
+              during compilation (e.g. /usr/local).
+
+
+Understand rsyslogd config file /etc/rsyslog.conf
+
+	Modules					rsyslogd is modular, add enhanced supported feature here
+	GLOBAL DIRECTIVES		define global parameters
+	RULES					the most important part. It specifies what should be logged to which destination.
+
+
+
+Use these facilties for services:
+
+local0-7
+
+1. config the service to use the facility localx
+2. config rsyslog.conf to send the facility log to a file.
+
+
+Log rotate
+logrotate (8)        - rotates, compresses, and mails system logs
+[root@localhost ~]# cat /etc/logrotate.conf   
+# see "man logrotate" for details
+# rotate log files weekly
+weekly
+
+# keep 4 weeks worth of backlogs
+rotate 4
+
+...
+
+
+Journal
+1. where's the log file
+
+/run/log/journal/
+
+$ man 8 systemd-journald
+SYSTEMD-JOURNALD.SERVICE(8)                                  systemd-journald.service                                  SYSTEMD-JOURNALD.SERVICE(8)
+
+NAME
+       systemd-journald.service, systemd-journald.socket, systemd-journald - Journal service
+
+SYNOPSIS
+       systemd-journald.service
+
+       systemd-journald.socket
+
+       /usr/lib/systemd/systemd-journald
+
+DESCRIPTION
+       systemd-journald is a system service that collects and stores logging data. It creates and maintains structured, indexed journals based on
+       logging information that is received from a variety of sources:
+
+       ·   Kernel log messages, via kmsg
+
+       ·   Simple system log messages, via the libc syslog(3) call
+
+       ·   Structured system log messages via the native Journal API, see sd_journal_print(4)
+
+       ·   Standard output and standard error of system services
+
+       ·   Audit records, via the audit subsystem
+
+FILES
+       /etc/systemd/journald.conf
+           Configure systemd-journald behaviour. See journald.conf(5).
+
+       /run/log/journal/machine-id/*.journal, /run/log/journal/machine-id/*.journal~, /var/log/journal/machine-id/*.journal,
+       /var/log/journal/machine-id/*.journal~
+           systemd-journald writes entries to files in /run/log/journal/machine-id/ or /var/log/journal/machine-id/ with the ".journal" suffix. If the daemon is stopped uncleanly, or if the files are found to be corrupted, they are renamed using the ".journal~" suffix, and systemd-journald starts writing to a new file.  /run is used when /var/log/journal is not available, or when Storage=volatile is set in the journald.conf(5) configuration file.
+
+
+2. config journald behaviors
+/etc/systemd/journald.conf
+
+# change preference: Storage = auto
+
+$ cat /etc/systemd/journald.conf
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it
+#  under the terms of the GNU Lesser General Public License as published by
+#  the Free Software Foundation; either version 2.1 of the License, or
+#  (at your option) any later version.
+#
+# Entries in this file show the compile time defaults.
+# You can change settings by editing this file.
+# Defaults can be restored by simply deleting this file.
+#
+# See journald.conf(5) for details.
+
+[Journal]
+#Storage=auto
+
+
+JOURNALD.CONF(5)                                                   journald.conf                                                  JOURNALD.CONF(5)
+
+NAME
+       journald.conf, journald.conf.d - Journal service configuration files
+
+SYNOPSIS
+       /etc/systemd/journald.conf
+
+       /etc/systemd/journald.conf.d/*.conf
+
+       /run/systemd/journald.conf.d/*.conf
+
+       /usr/lib/systemd/journald.conf.d/*.conf
+
+OPTIONS
+       All options are configured in the "[Journal]" section:
+
+       Storage=
+           Controls where to store journal data. One of "volatile", "persistent", "auto" and "none". 
+           If "volatile", journal log data will be stored only in memory, i.e. below the /run/log/journal hierarchy (which is created if needed). 
+           If "persistent", data will be stored preferably on disk, i.e. below the /var/log/journal hierarchy (which is created if needed), with a fallback to /run/log/journal (which is created if needed), during early boot and if the disk is not writable.             "auto" is similar to "persistent" but the directory /var/log/journal is not created if needed, so that its existence controls where log data goes.  
+           "none" turns off all storage, all log data received will be dropped. Forwarding to other targets, such as the console, the kernel log buffer, or a syslog socket will still work however. Defaults to "auto".
+
+

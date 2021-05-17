@@ -177,6 +177,13 @@ SIGUSR1 and SIGUSR2 both have the default action Term -- the process is terminat
 
 # i.e. USR1 = SIGUSR1
 
+
+[root@localhost log]# ps aux | grep journal
+root         776  0.0  1.0 143668 20068 ?        Ss   13:55   0:02 /usr/lib/systemd/systemd-journald
+root        6819  0.0  0.0  12112  1052 pts/0    R+   17:51   0:00 grep --color=auto journal
+
+
+
 systemd journal is now persistent across reboots. To see the log msg since the last reboot:
 
 $ journalctl -b
