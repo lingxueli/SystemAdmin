@@ -1,0 +1,21 @@
+Thin provisioning:
+It uses as much space as needed by data. The volume automatically grows as more data is added to the file system.
+Because of that, it appears larger than the actual storage capacity. i.e. logical volume > physical volume.
+
+Create Stratis storage
+
+dependencies
+
+1. create Stratis pool. Add block devices as many as needed
+2. create Stratis XFS filesystem.
+Only XFS is allowed on top of Stratis.
+3. Mount Stratis storage with special option.
+
+test
+
+Manage Stratis Storage
+
+1. check block device
+2. check stratis pool
+3. check file system
+4. manage snapshot

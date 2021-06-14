@@ -1,0 +1,55 @@
+1. install container support
+2. podman, skopeo command
+3. registries conf file
+4. podman config and version
+5. use case scenario:
+
+5.1 search, examine and download, remove an image and execute the command in the container for named, namelss container
+
+[lisa@localhost ~]$ skopeo inspect registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+FATA[0000] Error parsing image name "registry.access.redhat.com/rhscl/mysql-57-rhel7": Invalid image name "registry.access.redhat.com/rhscl/mysql-57-rhel7", expected colon-separated transport:reference 
+
+# transport name: docker
+[lisa@localhost ~]$ skopeo inspect docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+{
+    "Name": "registry.access.redhat.com/rhscl/mysql-57-rhel7",
+    "RepoTags": [
+        "5.7-25",
+        "5.7-24",
+        "5.7-22",
+        "latest"
+    ],
+    "Created": "2019-10-10T12:16:24.957239Z",
+    "DockerVersion": "1.13.1",
+...}
+
+
+# if the container's already in used, but not running properly, restart the container.
+[lisa@localhost ~]$ podman run -ti --name rhel8-base-os ubi8
+[root@2b65f102fdb9 /]# cat /etc/redhat-release 
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+
+[root@2b65f102fdb9 /]# exit
+
+[lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
+Error: can only create exec sessions on running containers: container state improper
+
+[lisa@localhost ~]$ podman run --name rhel8-base-os ubi8
+Error: error creating container storage: the container name "rhel8-base-os" is already in use by "2b65f102fdb92f8a45ea0116cc6f5cce4e310547fe7d76cd8deaf2d1b77f13d9". You have to remove that container to be able to reuse that name.: that name is already in use
+
+[lisa@localhost ~]$ podman restart rhel8-base-os
+2b65f102fdb92f8a45ea0116cc6f5cce4e310547fe7d76cd8deaf2d1b77f13d9
+
+[lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+
+5.2 port mapping
+
+5.3 stop, restart container
+
+5.4 enviroment variables
+
+5.5 persistent storage
+
+5.6 run ccontainer as a systemd service for root and rootless container

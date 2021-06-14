@@ -1,0 +1,216 @@
+1. install container support
+
+
+[lisa@localhost ~]$ subscription-manager register
+[lisa@localhost ~]$ subscription-manager attach
+
+
+
+[lisa@localhost ~]$ subscription tab
+[lisa@localhost ~]$ subscription-manager 
+addons         environments   import         refresh        repos          unregister     
+attach         facts          list           register       role           unsubscribe    
+auto-attach    -h             orgs           release        service-level  usage          
+clean          --help         plugins        remove         status         version        
+config         identity       redeem         repo-override  subscribe      
+
+
+
+[lisa@localhost ~]$ sudo yum repolist
+
+
+$ man yum
+   Repolist Command
+       dnf [options] repolist [--enabled|--disabled|--all]
+              Depending on the exact command lists enabled, disabled or all known repositories. Lists all enabled
+              repositories by default. Provides more detailed information when -v option is used.
+
+       This command by default does not force a sync of expired metadata. See also Metadata Synchronization.
+
+FILES
+       Cache Files
+              /var/cache/dnf
+
+       Main Configuration
+              /etc/dnf/dnf.conf
+
+       Repository
+              /etc/yum.repos.d/
+
+[lisa@localhost ~]$ cd /etc/yum.repos.d
+[lisa@localhost yum.repos.d]$ ls -al
+total 72
+drwxr-xr-x.   2 root root 4096 Feb 13 18:36 .
+drwxr-xr-x. 146 root root 8192 Jun 13 10:47 ..
+-rw-r--r--.   1 root root  719 Nov  9  2020 CentOS-Linux-AppStream.repo
+-rw-r--r--.   1 root root  704 Nov  9  2020 CentOS-Linux-BaseOS.repo
+-rw-r--r--.   1 root root 1130 Nov  9  2020 CentOS-Linux-ContinuousRelease.repo
+-rw-r--r--.   1 root root  318 Nov  9  2020 CentOS-Linux-Debuginfo.repo
+-rw-r--r--.   1 root root  732 Nov  9  2020 CentOS-Linux-Devel.repo
+-rw-r--r--.   1 root root  704 Nov  9  2020 CentOS-Linux-Extras.repo
+-rw-r--r--.   1 root root  719 Nov  9  2020 CentOS-Linux-FastTrack.repo
+-rw-r--r--.   1 root root  740 Nov  9  2020 CentOS-Linux-HighAvailability.repo
+-rw-r--r--.   1 root root  693 Nov  9  2020 CentOS-Linux-Media.repo
+-rw-r--r--.   1 root root  706 Nov  9  2020 CentOS-Linux-Plus.repo
+-rw-r--r--.   1 root root  724 Nov  9  2020 CentOS-Linux-PowerTools.repo
+-rw-r--r--.   1 root root  898 Nov  9  2020 CentOS-Linux-Sources.repo
+[lisa@localhost yum.repos.d]$ cat CentOS-Linux-BaseOS.repo
+# CentOS-Linux-BaseOS.repo
+#
+# The mirrorlist system uses the connecting IP address of the client and the
+# update status of each mirror to pick current mirrors that are geographically
+# close to the client.  You should use this for CentOS updates unless you are
+# manually picking other mirrors.
+#
+# If the mirrorlist does not work for you, you can try the commented out
+# baseurl line instead.
+
+[baseos]
+name=CentOS Linux $releasever - BaseOS
+mirrorlist=http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=BaseOS&infra=$infra
+#baseurl=http://mirror.centos.org/$contentdir/$releasever/BaseOS/$basearch/os/
+gpgcheck=1
+enabled=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
+
+
+
+# gpg key is not included in exam. For internal repositories security risk is low.
+# gpg key is stored at /etc/pki/rpm-gpg
+
+
+[lisa@localhost ~]$ sudo yum module install container-tools
+[lisa@localhost ~]$ sudo yum module list container-tools:rhel8 installed
+
+
+# yum group: package group that serve a functionality
+
+[lisa@localhost yum.repos.d]$ yum group list
+Available Environment Groups:
+   Server
+   Minimal Install
+   Workstation
+   Virtualization Host
+   Custom Operating System
+Installed Environment Groups:
+   Server with GUI
+Installed Groups:
+   Container Management
+   Headless Management
+Available Groups:
+   .NET Core Development
+   RPM Development Tools
+   Development Tools
+   Graphical Administration Tools
+   Legacy UNIX Compatibility
+   Network Servers
+   Scientific Support
+   Security Tools
+   Smart Card Support
+   System Tools
+
+# subgroup in the group
+[lisa@localhost yum.repos.d]$ yum group info "Server with GUI"
+ Mandatory Groups:
+   Common NetworkManager submodules
+   Container Management
+   Core
+   Fonts
+   GNOME
+   Guest Desktop Agents
+   Hardware Monitoring Utilities
+   Hardware Support
+   Headless Management
+   Input Methods
+   Internet Browser
+   Multimedia
+   Printing Client
+   Server product core
+   Standard
+   base-x
+ Optional Groups:
+   Basic Web Server
+   Debugging Tools
+   FTP Server
+   File and Storage Server
+   Guest Agents
+   Infiniband Support
+   Mail Server
+   Network File System Client
+   Network Servers
+   Performance Tools
+   Remote Desktop Clients
+   Remote Management for Linux
+   Virtualization Client
+   Virtualization Hypervisor
+   Virtualization Tools
+   Windows File Server
+
+[lisa@localhost ~]$ sudo yum module install container-tools
+[lisa@localhost ~]$ sudo yum module list container-tools:rhel8 installed
+
+
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+[lisa@localhost ~]$ yum module list | grep container
+CentOS Linux 8 - AppStream
+Name                 Stream          Profiles                                 Summary                                                                                                                                                                     container-tools      rhel8 [d][e]    common [d] [i]                           Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and updated as frequently as every 12 weeks.
+container-tools      1.0             common [d]                               Stable versions of podman 1.0, buildah 1.5, skopeo 0.1, runc, conmon, CRIU, Udica, etc as well as dependencies such as container-selinux built and tested together, and supported for 24 months.                                 
+container-tools      2.0             common [d]                               Stable versions of podman 1.6, buildah 1.11, skopeo 0.1, runc, conmon, etc as well as dependencies such as container-selinux built and tested together, and supported as documented on the Application Stream lifecycle page.    
+container-tools      3.0             common [d]                               Stable versions of podman 3.0, buildah 1.19, skopeo 1.2, runc, conmon, etc as well as dependencies such as container-selinux built and tested together, and supported as documented on the Application Stream lifecycle page.    
+
+
+
+2. podman, skopeo command
+
+$ man podman
+$ man skopeo
+
+3. registries conf file
+
+$ man podman
+CONFIGURATION FILES
+
+
+       registries.conf (/etc/containers/registries.conf, $HOME/.config/containers/registries.conf)
+
+              registries.conf is the configuration file which specifies which container registries should be consulted when completing image names which do not include a registry or domain portion.
+
+              Non root users of Podman can create the `$HOME/.config/containers/registries.conf` file to be used instead of the system defaults.
+              
+              
+4. podman config and version
+
+5. use case scenario:
+
+5.1 search, examine and download, remove an image and execute the command in the container for named, namelss container
+
+
+[lisa@localhost ~]$ podman search mysql
+
+[lisa@localhost ~]$ skopeo inspect docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+[lisa@localhost ~]$ podman pull docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+[lisa@localhost ~]$ podman images
+REPOSITORY                                       TAG     IMAGE ID      CREATED        SIZE
+registry.access.redhat.com/ubi7                  latest  571ab834948d  3 months ago   216 MB
+registry.access.redhat.com/ubi8                  latest  4199acc83c6a  4 months ago   213 MB
+registry.access.redhat.com/rhscl/mysql-57-rhel7  latest  60726b33a00a  20 months ago  448 MB
+
+[lisa@localhost ~]$ podman inspect mysql-57-rhel7
+
+[lisa@localhost ~]$ podman rmi mysql-57-rhel7
+
+
+
+5.2 port mapping
+
+
+5.3 stop, restart container
+
+5.4 enviroment variables
+
+5.5 persistent storage
+
+5.6 run ccontainer as a systemd service for root and rootless container

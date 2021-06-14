@@ -70,7 +70,7 @@ touch: cannot touch 'edwin.txt': Permission denied
 [edwin@localhost sales]$ ls -ld /groups/sales/
 drwxr-sr-t. 2 alex sales 6 Jan 24 14:55 /groups/sales/
 
-# Add write/execute permission to directory for group owner
+# Add write + execute permission to directory for group owner
 [root@localhost /]# chmod g+w,g+x /groups/sales/
 [root@localhost /]# chmod g+w,g+x /groups/account
 [root@localhost /]# ls -al /groups/

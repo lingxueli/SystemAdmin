@@ -1,0 +1,17 @@
+1. install container support
+2. podman, skopeo command
+3. registries conf file
+4. podman config and version
+5. use case scenario:
+
+5.1 search, examine and download, remove an image and execute the command in the container for named, namelss container
+
+5.2 port mapping
+
+5.3 stop, restart container
+
+5.4 enviroment variables
+
+5.5 persistent storage
+
+5.6 run ccontainer as a systemd service for root and rootless container

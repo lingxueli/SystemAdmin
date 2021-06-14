@@ -1,0 +1,716 @@
+1. install container support
+
+# get the lastest version of the software: register the system, attach to a subscription
+
+[lisa@localhost ~]$ subscription-manager register
+You are attempting to run "subscription-manager" which requires administrative
+privileges, but more information is needed in order to do so.
+Authenticating as "root"
+Password: 
+Registering to: subscription.rhsm.redhat.com:443/subscription
+Username: xxx
+Password: 
+
+[lisa@localhost ~]$ subscription-manager attach
+You are attempting to run "subscription-manager" which requires administrative
+privileges, but more information is needed in order to do so.
+Authenticating as "root"
+Password: 
+
+# what're the repositories you have
+[lisa@localhost ~]$ sudo yum repolist
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+repo id                             repo name
+appstream                           CentOS Linux 8 - AppStream
+baseos                              CentOS Linux 8 - BaseOS
+extras                              CentOS Linux 8 - Extras
+
+# install and verify
+
+[lisa@localhost ~]$ sudo yum module install container-tools
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:06:36 ago on Sun 13 Jun 2021 10:39:27 AM MDT.
+Dependencies resolved.
+================================================================================
+ Package           Arch   Version                               Repo       Size
+================================================================================
+Upgrading:
+ buildah           x86_64 1.19.7-1.module_el8.4.0+781+acf4c33b  appstream 6.9 M
+ cockpit-podman    noarch 29-2.module_el8.4.0+781+acf4c33b      appstream 1.1 M
+ conmon            x86_64 2:2.0.26-1.module_el8.4.0+781+acf4c33b
+                                                                appstream  51 k
+ container-selinux noarch 2:2.158.0-1.module_el8.4.0+781+acf4c33b
+                                                                appstream  51 k
+ containernetworking-plugins
+                   x86_64 0.9.1-1.module_el8.4.0+781+acf4c33b   appstream  20 M
+ containers-common x86_64 1:1.2.2-8.module_el8.4.0+781+acf4c33b appstream  98 k
+ criu              x86_64 3.15-1.module_el8.4.0+641+6116a774    appstream 511 k
+ crun              x86_64 0.18-1.module_el8.4.0+781+acf4c33b    appstream 185 k
+ fuse-overlayfs    x86_64 1.4.0-2.module_el8.4.0+673+eabfc99d   appstream  72 k
+ libslirp          x86_64 4.3.1-1.module_el8.4.0+575+63b40ad7   appstream  69 k
+ podman            x86_64 3.0.1-6.module_el8.4.0+781+acf4c33b   appstream  11 M
+ podman-catatonit  x86_64 3.0.1-6.module_el8.4.0+781+acf4c33b   appstream 320 k
+ runc              x86_64 1.0.0-70.rc92.module_el8.4.0+673+eabfc99d
+                                                                appstream 3.1 M
+ skopeo            x86_64 1:1.2.2-8.module_el8.4.0+781+acf4c33b appstream 5.9 M
+ slirp4netns       x86_64 1.1.8-1.module_el8.4.0+641+6116a774   appstream  51 k
+ toolbox           noarch 0.0.8-1.module_el8.4.0+781+acf4c33b   appstream  16 k
+ udica             noarch 0.2.4-1.module_el8.4.0+641+6116a774   appstream  51 k
+
+Transaction Summary
+================================================================================
+Upgrade  17 Packages
+
+[lisa@localhost ~]$ sudo yum module list container-tools:rhel8 installed
+Updating Subscription Management repositories.
+Unable to read consumer identity
+
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+
+Last metadata expiration check: 0:12:46 ago on Sun 13 Jun 2021 10:39:27 AM MDT.
+CentOS Linux 8 - AppStream
+Name            Stream       Profiles Summary                                                                       
+container-tools rhel8 [d][e] common [ Most recent (rolling) versions of podman, buildah, skopeo, runc, conmon, runc,
+                             d] [i]    conmon, CRIU, Udica, etc as well as dependencies such as container-selinux bu
+                                      ilt and tested together, and updated as frequently as every 12 weeks.
+
+Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled
+
+
+
+2. podman, skopeo command
+
+$ man podman
+COMMANDS
+       ┌──────────────────────┬────────────────────────────────────────┐
+       │Command               │ Description                            │
+       ├──────────────────────┼────────────────────────────────────────┤
+       │podman-attach(1)      │ Attach to a running container.         │
+       ├──────────────────────┼────────────────────────────────────────┤
+       │podman-auto-update(1) │ Auto update containers according to    │
+       │                      │ their auto-update policy               │
+       ├──────────────────────┼────────────────────────────────────────┤
+       │podman-build(1)       │ Build a container image using a        │
+
+...
+
+$ man skopeo
+COMMANDS
+       ┌────────────────────────────┬────────────────────────────────────────┐
+       │Command                     │ Description                            │
+       ├────────────────────────────┼────────────────────────────────────────┤
+       │skopeo-copy(1)              │ Copy an image (manifest, filesystem    │
+       │                            │ layers, signatures) from one location  │
+       │                            │ to another.                            │
+       ├────────────────────────────┼────────────────────────────────────────┤
+       │skopeo-delete(1)            │ Mark image-name for deletion.          │
+       ├────────────────────────────┼────────────────────────────────────────┤
+       │skopeo-inspect(1)           │ Return low-level information about     │
+       │                            │ image-name in a registry.              │
+       ├────────────────────────────┼────────────────────────────────────────┤
+...
+
+3. registries conf file
+
+system wide:
+/etc/containers/registries.conf
+per-user:
+$HOME/.config/containers/registries.conf
+
+[lisa@localhost ~]$ sudo cat /etc/containers/registries.conf
+# For more information on this configuration file, see containers-registries.conf(5).
+#
+# There are multiple versions of the configuration syntax available, where the
+# second iteration is backwards compatible to the first one. Mixing up both
+# formats will result in an runtime error.
+#
+# The initial configuration format looks like this:
+#
+# NOTE: RISK OF USING UNQUALIFIED IMAGE NAMES
+# Red Hat recommends always using fully qualified image names including the registry server (full dns name),
+# namespace, image name, and tag (ex. registry.redhat.io/ubi8/ubu:latest). When using short names, there is
+# always an inherent risk that the image being pulled could be spoofed. For example, a user wants to.
+# pull an image named `foobar` from a registry and expects it to come from myregistry.com. If myregistry.com
+# is not first in the search list, an attacker could place a different `foobar` image at a registry earlier
+# in the search list. The user would accidentally pull and run the attacker's image and code rather than the
+# intended content. Red Hat recommends only adding registries which are completely trusted, i.e. registries
+# which don't allow unknown or anonymous users to create accounts with arbitrary names. This will prevent
+# an image from being spoofed, squatted or otherwise made insecure.  If it is necessary to use one of these
+# registries, it should be added at the end of the list.
+#
+# It is recommended to use fully-qualified images for pulling as the
+# destination registry is unambiguous. Pulling by digest
+# (i.e., quay.io/repository/name@digest) further eliminates the ambiguity of
+# tags.
+
+# The following registries are a set of secure defaults provided by Red Hat.
+# Each of these registries provides container images curated, patched
+# and maintained by Red Hat and its partners
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io']
+
+# To ensure compatibility with docker we've included docker.io in the default search list. However Red Hat
+# does not curate, patch or maintain container images from the docker.io registry.
+[registries.search]
+registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io']
+
+# The following registries entry can be used for convenience but includes
+# container images built by the community. This set of content comes with all
+# of the risks of any user generated content including security and performance
+# issues. To use this list first comment out the default list, then uncomment
+# the following list
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io', 'quay.io']
+
+# Registries that do not use TLS when pulling images or uses self-signed
+# certificates.
+[registries.insecure]
+registries = []
+
+# Blocked Registries, blocks the `docker daemon` from pulling from the blocked registry.  If you specify
+# "*", then the docker daemon will only be allowed to pull from registries listed above in the search
+# registries.  Blocked Registries is deprecated because other container runtimes and tools will not use it.
+# It is recommended that you use the trust policy file /etc/containers/policy.json to control which
+# registries you want to allow users to pull and push from.  policy.json gives greater flexibility, and
+# supports all container runtimes and tools including the docker daemon, cri-o, buildah ...
+# The atomic CLI `atomic trust` can be used to easily configure the policy.json file.
+[registries.block]
+registries = []
+
+...
+
+
+4. podman config and version
+
+It pulls info from other system commands:
+such as uname -r for kernel info, /proc/meminfo for memory info
+
+[lisa@localhost ~]$ podman info
+host:
+  arch: amd64
+  buildahVersion: 1.19.8
+  cgroupManager: cgroupfs
+  cgroupVersion: v1
+  conmon:
+    package: conmon-2.0.26-1.module_el8.4.0+781+acf4c33b.x86_64
+    path: /usr/bin/conmon
+    version: 'conmon version 2.0.26, commit: 76c72c12c83408e6ddaaa7bcd25e96ca20bf9348'
+  cpus: 2
+  distribution:
+    distribution: '"centos"'
+    version: "8"
+  kernel: 4.18.0-240.15.1.el8_3.x86_64
+  linkmode: dynamic
+  memFree: 69566464
+  memTotal: 1879097344
+  security:
+    rootless: true
+    seccompEnabled: true
+    selinuxEnabled: true
+  slirp4netns:
+    executable: /usr/bin/slirp4netns
+    package: slirp4netns-1.1.8-1.module_el8.4.0+641+6116a774.x86_64
+    version: |-
+      slirp4netns version 1.1.8
+      commit: d361001f495417b880f20329121e3aa431a8f90f
+      libslirp: 4.3.1
+      SLIRP_CONFIG_VERSION_MAX: 3
+      libseccomp: 2.4.3
+  swapFree: 1732505600
+  swapTotal: 2147479552
+  uptime: 2h 34m 55.95s (Approximately 0.08 days)
+registries:
+  search:
+  - registry.access.redhat.com
+  - registry.redhat.io
+  - docker.io
+  - quay.io
+store:
+  configFile: /home/lisa/.config/containers/storage.conf
+  imageStore:
+    number: 2
+version:
+  APIVersion: 3.0.0
+  Built: 1621527766
+  BuiltTime: Thu May 20 10:22:46 2021
+  GitCommit: ""
+  GoVersion: go1.16.1
+  OsArch: linux/amd64
+  Version: 3.0.2-dev
+
+
+[lisa@localhost ~]$ sudo podman info
+[sudo] password for lisa: 
+host:
+  arch: amd64
+  buildahVersion: 1.19.8
+  cgroupManager: systemd
+  cgroupVersion: v1
+  conmon:
+    package: conmon-2.0.26-1.module_el8.4.0+781+acf4c33b.x86_64
+    path: /usr/bin/conmon
+    version: 'conmon version 2.0.26, commit: 76c72c12c83408e6ddaaa7bcd25e96ca20bf9348'
+  cpus: 2
+  distribution:
+    distribution: '"centos"'
+    version: "8"
+  eventLogger: file
+  hostname: localhost.localdomain
+  kernel: 4.18.0-240.15.1.el8_3.x86_64
+  linkmode: dynamic
+  memFree: 65204224
+  memTotal: 1879097344
+  security:
+    rootless: false
+    seccompEnabled: true
+    selinuxEnabled: true
+  slirp4netns:
+    executable: ""
+    package: ""
+    version: ""
+  swapFree: 1732243456
+  swapTotal: 2147479552
+  uptime: 2h 51m 9.61s (Approximately 0.08 days)
+registries:
+  search:
+  - registry.access.redhat.com
+  - registry.redhat.io
+  - docker.io
+store:
+  configFile: /etc/containers/storage.conf
+  imageStore:
+    number: 3
+version:
+  APIVersion: 3.0.0
+  Built: 1621527766
+  BuiltTime: Thu May 20 10:22:46 2021
+  GitCommit: ""
+  GoVersion: go1.16.1
+  OsArch: linux/amd64
+  Version: 3.0.2-dev
+
+
+5. use case scenario:
+
+5.1 search, examine and download, remove an image and execute the command in the container for named, namelss container
+
+# download the image
+
+
+# search based on keyword
+# inspect, download, verify
+# inspect after download
+# remove, verify
+
+[lisa@localhost ~]$ podman search mysql
+INDEX       NAME                                                        DESCRIPTION                                      STARS   OFFICIAL  AUTOMATED
+redhat.com  registry.access.redhat.com/rhscl/mysql-57-rhel7             Docker image for running MySQL 5.7 server. T...  0                 
+
+[lisa@localhost ~]$ skopeo inspect docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+{
+    "Name": "registry.access.redhat.com/rhscl/mysql-57-rhel7",
+    "RepoTags": [
+        "5.7-25",
+        "5.7-24",
+        "5.7-22",
+        "latest"
+    ],
+    "Created": "2019-10-10T12:16:24.957239Z",
+    "DockerVersion": "1.13.1",
+...}
+
+
+[lisa@localhost ~]$ podman pull docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+Trying to pull docker://registry.access.redhat.com/rhscl/mysql-57-rhel7...
+Getting image source signatures
+Copying blob f1e961fe4c51 done  
+...
+
+[lisa@localhost ~]$ podman images
+REPOSITORY                                       TAG     IMAGE ID      CREATED        SIZE
+registry.access.redhat.com/ubi7                  latest  571ab834948d  3 months ago   216 MB
+registry.access.redhat.com/ubi8                  latest  4199acc83c6a  4 months ago   213 MB
+registry.access.redhat.com/rhscl/mysql-57-rhel7  latest  60726b33a00a  20 months ago  448 MB
+
+[lisa@localhost ~]$ podman inspect mysql-57-rhel7
+[
+    {
+        "Id": "60726b33a00a2c3be60e25c3270a34a9b147db86602f05a71988a1c92a70cebc",
+        "Digest": "sha256:88d5bc2fbdf703c0b0e072751af2cd54fb527649433f38feb359489b252ec905",
+        "RepoTags": [
+            "registry.access.redhat.com/rhscl/mysql-57-rhel7:latest"
+        ],
+        "RepoDigests": [
+            "registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:88d5bc2fbdf703c0b0e072751af2cd54fb527649433f38feb359489b252ec905",
+            "registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe"
+        ],
+
+
+[lisa@localhost ~]$ podman rmi mysql-57-rhel7
+Untagged: registry.access.redhat.com/rhscl/mysql-57-rhel7:latest
+Deleted: 60726b33a00a2c3be60e25c3270a34a9b147db86602f05a71988a1c92a70cebc
+
+
+[lisa@localhost ~]$ podman images
+REPOSITORY                       TAG     IMAGE ID      CREATED       SIZE
+registry.access.redhat.com/ubi7  latest  571ab834948d  3 months ago  216 MB
+registry.access.redhat.com/ubi8  latest  4199acc83c6a  4 months ago  213 MB
+
+
+# named container
+
+# download and run the container
+# it will search in the repos and download the first match: ubi8(redhat 8 image)
+[lisa@localhost ~]$ podman run -ti --name rhel8-base-os ubi8
+[root@2b65f102fdb9 /]# 
+
+[root@2b65f102fdb9 /]# cat /etc/redhat-release 
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+
+[root@2b65f102fdb9 /]# exit
+
+# run a command inside the container from the host
+[lisa@localhost ~]$ podman exec rhel8-base-os cat /etc/redhat-release
+Red Hat Enterprise Linux release 8.3 (Ootpa)
+
+# reattach to the container terminal session
+[lisa@localhost ~]$ podman attach rhel8-base-os 
+[root@2b65f102fdb9 /]# pwd
+[root@2b65f102fdb9 /]# exit
+
+# remove container
+[lisa@localhost ~]$ podman rm rhel8-base-os
+
+
+# nameless container
+
+# download and run the container, execute the command, remove the container as soon as the command finishes
+
+[lisa@localhost ~]$ podman run --rm ubi7 ls
+bin
+boot
+dev
+etc
+home
+lib
+lib64
+media
+mnt
+opt
+proc
+root
+run
+sbin
+srv
+sys
+tmp
+usr
+var
+
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+
+5.2 port mapping
+
+
+[lisa@localhost ~]$ podman search httpd
+INDEX       NAME                                                                         DESCRIPTION                                      STARS   OFFICIAL  AUTOMATED
+redhat.com  registry.access.redhat.com/rhscl/httpd-24-rhel7                              Apache HTTP 2.4 Server                           0                 
+[lisa@localhost ~]$ podman login registry.access.redhat.com
+
+
+[lisa@localhost ~]$ podman pull registry.access.redhat.com/rhscl/httpd-24-rhel7
+[lisa@localhost ~]$ podman images
+
+[lisa@localhost ~]$ podman run -dp 10000:8000 --name rhel7-port-map httpd-24-rhel7
+
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE           COMMAND               CREATED         STATUS             PORTS                    NAMES
+bb6a96f607f5  httpd-24-rhel7  /usr/bin/run-http...  18 seconds ago  Up 18 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+[lisa@localhost ~]$ podman port rhel7-port-map 
+8000/tcp -> 0.0.0.0:10000
+
+5.3 stop, restart container
+
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE           COMMAND               CREATED         STATUS             PORTS                    NAMES
+bb6a96f607f5  httpd-24-rhel7  /usr/bin/run-http...  18 seconds ago  Up 18 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+[lisa@localhost ~]$ podman stop rhel7-port-map 
+
+[lisa@localhost ~]$ podman ps
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+[lisa@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE           COMMAND               CREATED             STATUS                    PORTS                    NAMES
+bb6a96f607f5  httpd-24-rhel7  /usr/bin/run-http...  About a minute ago  Exited (0) 7 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+[lisa@localhost ~]$ podman start rhel7-port-map 
+rhel7-port-map
+[lisa@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE           COMMAND               CREATED        STATUS            PORTS                    NAMES
+bb6a96f607f5  httpd-24-rhel7  /usr/bin/run-http...  2 minutes ago  Up 4 seconds ago  0.0.0.0:10000->8000/tcp  rhel7-port-map
+[lisa@localhost ~]$ podman stop rhel7-port-map 
+[lisa@localhost ~]$ podman rm rhel7-port-map 
+[lisa@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+5.4 enviroment variables
+
+[lisa@localhost ~]$ podman run -it -e HISTSIZE -e SECRET="secret123" --name rhel8-env-vars ubi8
+[root@b1c0803239d2 /]# echo $HISTSIZE $SECRET
+1000 secret123
+[root@b1c0803239d2 /]# exit
+exit
+[lisa@localhost ~]$ echo $HISTSIZE
+1000
+[lisa@localhost ~]$ podman stop rhel8-env-vars
+[lisa@localhost ~]$ podman rm rhel8-env-vars
+[lisa@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+5.5 persistent storage
+
+
+[lisa@localhost ~]$ sudo mkdir /host_data
+[lisa@localhost ~]$ sudo chmod 777 /host_data
+[lisa@localhost ~]$ ls -dl /host_data
+drwxrwxrwx. 2 root root 6 Jun 13 22:49 /host_data
+
+[lisa@localhost ~]$ sudo podman run --name rhel7-persistent-data -v /host_data:/container_data:Z -it ubi7
+[root@d65fa570a9e1 /]# ls -dlZ /container_data/
+drwxrwxrwx. root root system_u:object_r:container_file_t:s0:c382,c972 /container_data/
+
+
+[root@d65fa570a9e1 /]# echo &quot;This is persistent storage&quot; &gt; /container_data/testfile
+[root@d65fa570a9e1 /]# ls -lZ /container_data/
+-rw-r--r--. root root system_u:object_r:container_file_t:s0:c382,c972 testfile
+[root@d65fa570a9e1 /]# exit
+exit
+[lisa@localhost ~]$ ls -lZ /host_data/
+total 4
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c382,c972 27 Jun 13 22:52 testfile
+[lisa@localhost ~]$ sudo podman stop rhel7-persistent-data
+d65fa570a9e1eec491315a69f72f793624357cccdb82a8cbc5c9c66473b8d659
+[lisa@localhost ~]$ sudo podman rm rhel7-persistent-data
+d65fa570a9e1eec491315a69f72f793624357cccdb82a8cbc5c9c66473b8d659
+[lisa@localhost ~]$ sudo podman run -it --name rhel8-persistent-data -v /host_data:/container_data2:Z ubi8
+
+[root@9899466e3a76 /]# ls -ldZ /container_data2/
+drwxrwxrwx. 2 root root system_u:object_r:container_file_t:s0:c572,c851 22 Jun 14 04:52 /container_data2/
+[root@9899466e3a76 /]# ls -lZ /container_data2/
+total 4
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c572,c851 27 Jun 14 04:52 testfile
+[root@9899466e3a76 /]# cat /container_data2/testfile 
+This is persistent storage
+
+[root@9899466e3a76 /]# echo "This is persistent storage2" > /container_data2/testfile2
+[root@9899466e3a76 /]# ls -lZ /container_data2/
+total 8
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c572,c851 27 Jun 14 04:52 testfile
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c572,c851 28 Jun 14 04:56 testfile2
+[root@9899466e3a76 /]# exit
+exit
+[lisa@localhost ~]$ ls -lZ /host_data/
+total 8
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c572,c851 27 Jun 13 22:52 testfile
+-rw-r--r--. 1 root root system_u:object_r:container_file_t:s0:c572,c851 28 Jun 13 22:56 testfile2
+[lisa@localhost ~]$ sudo podman stop rhel8-persistent-data
+[lisa@localhost ~]$ sudo podman rm rhel8-persistent-data
+[lisa@localhost ~]$ ls -l /host_data/
+total 8
+-rw-r--r--. 1 root root 27 Jun 13 22:52 testfile
+-rw-r--r--. 1 root root 28 Jun 13 22:56 testfile2
+
+
+
+5.6 run container as a systemd service for root and rootless container
+
+# root container
+[lisa@localhost ~]$ sudo podman run -dt --name root-container ubi8
+1b0cbbb9a0e226de252b5fae521a8d3d9ed668dfa2d3f71c65df3d65089a807a
+
+[lisa@localhost ~]$ sudo podman ps
+CONTAINER ID  IMAGE                                   COMMAND    CREATED        STATUS            PORTS   NAMES
+1b0cbbb9a0e2  registry.access.redhat.com/ubi8:latest  /bin/bash  8 seconds ago  Up 8 seconds ago          root-container
+
+[lisa@localhost ~]$ sudo podman generate systemd --new --name root-container | sudo tee /etc/systemd/system/root-container.service
+# container-root-container.service
+# autogenerated by Podman 3.0.2-dev
+# Sun Jun 13 23:02:44 MDT 2021
+
+[Unit]
+Description=Podman container-root-container.service
+Documentation=man:podman-generate-systemd(1)
+Wants=network.target
+After=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+TimeoutStopSec=70
+ExecStartPre=/bin/rm -f %t/container-root-container.pid %t/container-root-container.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-root-container.pid --cidfile %t/container-root-container.ctr-id --cgroups=no-conmon --replace -dt --name root-container ubi8
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-root-container.ctr-id -t 10
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-root-container.ctr-id
+PIDFile=%t/container-root-container.pid
+Type=forking
+
+[Install]
+WantedBy=multi-user.target default.target
+[lisa@localhost ~]$ 
+
+[lisa@localhost ~]$ sudo podman stop root-container
+[lisa@localhost ~]$ sudo podman rm root-container
+
+[lisa@localhost ~]$ sudo systemctl daemon-reload
+[lisa@localhost ~]$ sudo systemctl enable --now root-container
+[lisa@localhost ~]$ sudo systemctl status root-container.service 
+● root-container.service - Podman container-root-container.service
+   Loaded: loaded (/etc/systemd/system/root-container.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sun 2021-06-13 23:05:43 MDT; 15s ago
+     Docs: man:podman-generate-systemd(1)
+  Process: 52046 ExecStart=/usr/bin/podman run --conmon-pidfile /run/container-root-container.pid --cidfile /run/co>
+  Process: 52045 ExecStartPre=/bin/rm -f /run/container-root-container.pid /run/container-root-container.ctr-id (co>
+ Main PID: 52126 (conmon)
+    Tasks: 2 (limit: 11099)
+   Memory: 2.9M
+   CGroup: /system.slice/root-container.service
+           └─52126 /usr/bin/conmon --api-version 1 -c 08322e0380342c0b6dbcb55ff90694bd8ff8a33d659dc06c3bcc2dd453a97>
+
+Jun 13 23:05:42 localhost.localdomain systemd[1]: Starting Podman container-root-container.service...
+Jun 13 23:05:43 localhost.localdomain podman[52046]: 08322e0380342c0b6dbcb55ff90694bd8ff8a33d659dc06c3bcc2dd453a97c>
+Jun 13 23:05:43 localhost.localdomain systemd[1]: Started Podman container-root-container.service.
+
+
+[lisa@localhost ~]$ sudo podman ps
+CONTAINER ID  IMAGE                                   COMMAND    CREATED         STATUS             PORTS   NAMES
+08322e038034  registry.access.redhat.com/ubi8:latest  /bin/bash  49 seconds ago  Up 49 seconds ago          root-container
+
+[lisa@localhost ~]$ sudo systemctl restart root-container.service 
+[lisa@localhost ~]$ sudo systemctl status root-container.service 
+● root-container.service - Podman container-root-container.service
+   Loaded: loaded (/etc/systemd/system/root-container.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sun 2021-06-13 23:06:52 MDT; 4s ago
+     Docs: man:podman-generate-systemd(1)
+  Process: 52382 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile /run/container-root-container.ctr-id (code=e>
+  Process: 52262 ExecStop=/usr/bin/podman stop --ignore --cidfile /run/container-root-container.ctr-id -t 10 (code=>
+  Process: 52436 ExecStart=/usr/bin/podman run --conmon-pidfile /run/container-root-container.pid --cidfile /run/co>
+  Process: 52433 ExecStartPre=/bin/rm -f /run/container-root-container.pid /run/container-root-container.ctr-id (co>
+ Main PID: 52517 (conmon)
+    Tasks: 2 (limit: 11099)
+   Memory: 3.0M
+   CGroup: /system.slice/root-container.service
+           └─52517 /usr/bin/conmon --api-version 1 -c 15614c39885e587a9bbc89dcf5e5917dc4cdf02b289c7aede671d63e72550>
+
+Jun 13 23:06:51 localhost.localdomain systemd[1]: root-container.service: Succeeded.
+Jun 13 23:06:51 localhost.localdomain systemd[1]: Stopped Podman container-root-container.service.
+Jun 13 23:06:51 localhost.localdomain systemd[1]: Starting Podman container-root-container.service...
+Jun 13 23:06:52 localhost.localdomain podman[52436]: 15614c39885e587a9bbc89dcf5e5917dc4cdf02b289c7aede671d63e725501>
+Jun 13 23:06:52 localhost.localdomain systemd[1]: Started Podman container-root-container.service.
+[lisa@localhost ~]$ sudo podman ps
+CONTAINER ID  IMAGE                                   COMMAND    CREATED         STATUS             PORTS   NAMES
+15614c39885e  registry.access.redhat.com/ubi8:latest  /bin/bash  11 seconds ago  Up 11 seconds ago          root-container
+
+
+
+# rootless container, user lingering
+[lisa@localhost ~]$ sudo useradd conuser1
+[lisa@localhost ~]$ echo conuser1 | sudo passwd --stdin conuser1
+[conuser1@localhost ~]$ mkdir ~/.config/systemd/user -p
+[conuser1@localhost ~]$ podman run -dt --name rootless-container ubi8
+[conuser1@localhost ~]$ podman ps
+CONTAINER ID  IMAGE                                   COMMAND    CREATED        STATUS            PORTS   NAMES
+fee40f14bcc4  registry.access.redhat.com/ubi8:latest  /bin/bash  7 minutes ago  Up 7 minutes ago          rootless-container
+[conuser1@localhost ~]$ podman generate systemd --new --name rootless-container > ~/.config/systemd/user/rootless-container.service
+[conuser1@localhost ~]$ cat ~/.config/systemd/user/rootless-container.service 
+# container-rootless-container.service
+# autogenerated by Podman 2.2.1
+# Sat Mar 20 20:51:49 MDT 2021
+
+[Unit]
+Description=Podman container-rootless-container.service
+Documentation=man:podman-generate-systemd(1)
+Wants=network.target
+After=network-online.target
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n
+Restart=on-failure
+ExecStartPre=/bin/rm -f %t/container-rootless-container.pid %t/container-rootless-container.ctr-id
+ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-rootless-container.pid --cidfile %t/container-rootless-container.ctr-id --cgroups=no-conmon -d --replace -dt --name rootless-container ubi8
+ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-rootless-container.ctr-id -t 10
+ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-rootless-container.ctr-id
+PIDFile=%t/container-rootless-container.pid
+KillMode=none
+Type=forking
+
+[Install]
+WantedBy=multi-user.target default.target
+
+# stop and delete the source container
+[conuser1@localhost ~]$ podman stop rootless-container
+
+[conuser1@localhost ~]$ podman rm rootless-container
+
+[conuser1@localhost ~]$ podman ps -a
+CONTAINER ID  IMAGE   COMMAND  CREATED  STATUS  PORTS   NAMES
+
+
+[conuser1@localhost ~]$ systemctl --user daemon-reload
+
+[conuser1@localhost ~]$ systemctl --user enable --now root-container.service
+[conuser1@localhost ~]$ systemctl --user status rootless-container
+● rootless-container.service - Podman container-rootless-container.service
+   Loaded: loaded (/home/conuser1/.config/systemd/user/rootless-container.servi>
+   Active: active (running) since Sat 2021-03-20 21:25:20 MDT; 1min 33s ago
+     Docs: man:podman-generate-systemd(1)
+  Process: 2600 ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile /run/user>
+  Process: 2662 ExecStart=/usr/bin/podman run --conmon-pidfile /run/user/1005/c>
+  Process: 2660 ExecStartPre=/bin/rm -f /run/user/1005/container-rootless-conta>
+ Main PID: 2717 (conmon)
+   CGroup: /user.slice/user-1005.slice/user@1005.service/rootless-container.ser>
+           ├─2712 /usr/bin/slirp4netns --disable-host-loopback --mtu 65520 --en>
+           ├─2714 /usr/bin/fuse-overlayfs -o lowerdir=/home/conuser1/.local/sha>
+           ├─2717 /usr/bin/conmon --api-version 1 -c 14aef47654f182480f5cb08775>
+           └─14aef47654f182480f5cb0877584b44fbf72f6cd435969fc5d37c80cb1019039
+             └─2751 /bin/bash
+
+Mar 20 21:25:17 localhost.localdomain systemd[2452]: rootless-container.service>
+Mar 20 21:25:17 localhost.localdomain systemd[2452]: rootless-container.service>
+Mar 20 21:25:17 localhost.localdomain systemd[2452]: Stopped Podman container-r>
+Mar 20 21:25:17 localhost.localdomain systemd[2452]: Starting Podman container->
+Mar 20 21:25:20 localhost.localdomain podman[2662]: 14aef47654f182480f5cb087758>
+Mar 20 21:25:20 localhost.localdomain systemd[2452]: Started Podman container-r>
+
+
+[conuser1@localhost ~]$ podman ps
+CONTAINER ID  IMAGE                                   COMMAND    CREATED             STATUS                 PORTS   NAMES
+14aef47654f1  registry.access.redhat.com/ubi8:latest  /bin/bash  About a minute ago  Up About a minute ago          rootless-container
+
+
+# enable user lingering
+
+[conuser1@localhost ~]$ loginctl enable-linger
+[conuser1@localhost ~]$ loginctl show-user conuser1
+UID=1005
+GID=1008
+Name=conuser1
+Timestamp=Sat 2021-03-20 21:25:15 MDT
+TimestampMonotonic=47539848
+RuntimePath=/run/user/1005
+Service=user@1005.service
+Slice=user-1005.slice
+Display=2
+State=active
+Sessions=2
+IdleHint=no
+IdleSinceHint=0
+IdleSinceHintMonotonic=0
+Linger=yes      ### user lingering is enabled

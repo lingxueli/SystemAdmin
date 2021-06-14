@@ -1,0 +1,35 @@
+1. install container support
+2. podman, skopeo command
+3. registries conf file
+4. podman config and version
+5. use case scenario:
+
+5.1 search, examine and download, remove an image and execute the command in the container for named, namelss container
+
+[lisa@localhost ~]$ skopeo inspect registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+FATA[0000] Error parsing image name "registry.access.redhat.com/rhscl/mysql-57-rhel7": Invalid image name "registry.access.redhat.com/rhscl/mysql-57-rhel7", expected colon-separated transport:reference 
+
+# transport name: docker
+[lisa@localhost ~]$ skopeo inspect docker://registry.access.redhat.com/rhscl/mysql-57-rhel7
+{
+    "Name": "registry.access.redhat.com/rhscl/mysql-57-rhel7",
+    "RepoTags": [
+        "5.7-25",
+        "5.7-24",
+        "5.7-22",
+        "latest"
+    ],
+    "Created": "2019-10-10T12:16:24.957239Z",
+    "DockerVersion": "1.13.1",
+...}
+
+5.2 port mapping
+
+5.3 stop, restart container
+
+5.4 enviroment variables
+
+5.5 persistent storage
+
+5.6 run ccontainer as a systemd service for root and rootless container
