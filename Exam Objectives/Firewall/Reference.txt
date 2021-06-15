@@ -1,0 +1,181 @@
+Configure firewall settings using firewall-cmd/firewalld
+[lisa@localhost ~]$ man -k firewall
+firewall-cmd (1)     - firewalld command line client
+firewall-offline-cmd (1) - firewalld offline command line client
+firewalld (1)        - Dynamic Firewall Manager
+firewalld.conf (5)   - firewalld configuration file
+firewalld.dbus (5)   - firewalld D-Bus interface description
+firewalld.direct (5) - firewalld direct configuration file
+firewalld.helper (5) - firewalld helper configuration files
+firewalld.icmptype (5) - firewalld icmptype configuration files
+firewalld.ipset (5)  - firewalld ipset configuration files
+firewalld.lockdown-whitelist (5) - firewalld lockdown whitelist configuration...
+firewalld.richlanguage (5) - Rich Language Documentation
+firewalld.service (5) - firewalld service configuration files
+firewalld.zone (5)   - firewalld zone configuration files
+firewalld.zones (5)  - firewalld zones
+firewalld_selinux (8) - Security Enhanced Linux Policy for the firewalld proc...
+firewallgui_selinux (8) - Security Enhanced Linux Policy for the firewallgui ...
+
+
+
+[lisa@localhost ~]$ firewall-cmd --get-
+--get-active-zones        --get-icmptypes           --get-short
+--get-default-zone        --get-ipset-types         --get-zone-of-interface=
+--get-description         --get-log-denied          --get-zones
+--get-helpers             --get-services            
+
+
+[lisa@localhost ~]$ firewall-cmd --list-
+--list-all                          --list-lockdown-whitelist-users
+--list-all-zones                    --list-ports
+--list-forward-ports                --list-protocols
+--list-icmp-blocks                  --list-rich-rules
+--list-interfaces                   --list-services
+--list-lockdown-whitelist-commands  --list-source-ports
+--list-lockdown-whitelist-contexts  --list-sources
+--list-lockdown-whitelist-uids      
+
+
+
+FIREWALL-CMD(1)                  firewall-cmd                  FIREWALL-CMD(1)
+
+NAME
+       firewall-cmd - firewalld command line client
+
+SYNOPSIS
+       firewall-cmd [OPTIONS...]
+
+DESCRIPTION
+       firewall-cmd is the command line client of the firewalld daemon. It
+       provides interface to manage runtime and permanent configuration.
+
+       The runtime configuration in firewalld is separated from the permanent
+       configuration. This means that things can get changed in the runtime or
+       permanent configuration.
+       
+   Status Options
+
+       --reload
+           Reload firewall rules and keep state information. Current permanent
+           configuration will become new runtime configuration, i.e. all
+           runtime only changes done until reload are lost with reload if they
+           have not been also in permanent configuration.
+
+           Note: Runtime changes applied via the direct interface are not
+           affected and will therefore stay in place until firewalld daemon is
+           restarted completely.
+
+
+   Permanent Options
+       --permanent
+           The permanent option --permanent can be used to set options
+           permanently. These changes are not effective immediately, only
+           after service restart/reload or system reboot. Without the
+           --permanent option, a change will only be part of the runtime
+           configuration.
+
+           If you want to make a change in runtime and permanent
+           configuration, use the same call with and without the --permanent
+           option.
+
+           The --permanent option can be optionally added to all options
+           further down where it is supported.
+
+
+   Zone Options
+       --get-default-zone
+           Print default zone for connections and interfaces.
+
+       --set-default-zone=zone
+           Set default zone for connections and interfaces where no zone has
+           been selected. Setting the default zone changes the zone for the
+           connections or interfaces, that are using the default zone.
+
+           This is a runtime and permanent change.
+
+       [--permanent] --get-zones
+           Print predefined zones as a space separated list.
+
+       [--permanent] --get-services
+           Print predefined services as a space separated list.
+
+   Options to Adapt and Query Zones
+       Options in this section affect only one particular zone. If used with
+       --zone=zone option, they affect the zone zone. If the option is
+       omitted, they affect default zone (see --get-default-zone).
+
+       [--permanent] [--zone=zone] --list-all
+           List everything added for or enabled in zone. If zone is omitted,
+           default zone will be used.
+
+       [--permanent] [--zone=zone] --list-services
+           List services added for zone as a space separated list. If zone is
+           omitted, default zone will be used.
+
+       [--permanent] [--zone=zone] --add-service=service [--timeout=timeval]
+           Add a service for zone. If zone is omitted, default zone will be
+           used. This option can be specified multiple times. If a timeout is
+           supplied, the rule will be active for the specified amount of time
+           and will be removed automatically afterwards.  timeval is either a
+           number (of seconds) or number followed by one of characters s
+           (seconds), m (minutes), h (hours), for example 20m or 1h.
+           The service is one of the firewalld provided services. To get a
+           list of the supported services, use firewall-cmd --get-services.
+
+           The --timeout option is not combinable with the --permanent option.
+
+       [--permanent] [--zone=zone] --remove-service=service
+           Remove a service from zone. This option can be specified multiple
+           times. If zone is omitted, default zone will be used.
+
+       [--permanent] [--zone=zone] --add-port=portid[-portid]/protocol
+       [--timeout=timeval]
+           Add the port for zone. If zone is omitted, default zone will be
+           used. This option can be specified multiple times. If a timeout is
+           supplied, the rule will be active for the specified amount of time
+           and will be removed automatically afterwards.  timeval is either a
+           number (of seconds) or number followed by one of characters s
+           (seconds), m (minutes), h (hours), for example 20m or 1h.
+
+           The port can either be a single port number or a port range
+           portid-portid. The protocol can either be tcp, udp, sctp or dccp.
+
+           The --timeout option is not combinable with the --permanent option.
+
+       [--permanent] [--zone=zone] --remove-port=portid[-portid]/protocol
+           Remove the port from zone. If zone is omitted, default zone will be
+           used. This option can be specified multiple times.
+           
+           
+$ man firewalld
+CONCEPTS
+       firewalld has a D-Bus interface for firewall configuration of services
+       and applications. It also has a command line client for the user.
+       Services or applications already using D-Bus can request changes to the
+       firewall with the D-Bus interface directly. For more information on the
+       firewalld D-Bus interface, please have a look at firewalld.dbus(5).
+
+       firewalld provides support for zones, predefined services and ICMP
+       types and has a separation of runtime and permanent configuration
+       options. Permanent configuration is loaded from XML files in
+       /usr/lib/firewalld (--default-config) or /etc/firewalld
+       (--system-config) (see the section called “DIRECTORIES”).
+
+
+
+DIRECTORIES
+       firewalld supports two configuration directories:
+
+   Default/Fallback configuration in /usr/lib/firewalld (--default-config)
+       This directory contains the default and fallback configuration provided
+       by firewalld for icmptypes, services and zones. The files provided with
+       the firewalld package should not get changed and the changes are gone
+       with an update of the firewalld package. Additional icmptypes, services
+       and zones can be provided with packages or by creating files.
+
+   System configuration settings in /etc/firewalld (--system-config)
+       The system or user configuration stored here is either created by the
+       system administrator or by customization with the configuration
+       interface of firewalld or by hand. The files will overload the default
+       configuration files.

@@ -1,0 +1,1 @@
+Configure firewall settings using firewall-cmd/firewalld

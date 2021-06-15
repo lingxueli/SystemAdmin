@@ -1,0 +1,210 @@
+Configure firewall settings using firewall-cmd/firewalld
+
+[lisa@localhost ~]$ firewall-cmd --get-default-zone
+public
+[lisa@localhost ~]$ firewall-cmd --get-zones
+block dmz drop external home internal libvirt nm-shared public trusted work
+
+[lisa@localhost ~]$ firewall-cmd --get-services
+RH-Satellite-6 amanda-client amanda-k5-client amqp amqps apcupsd audit bacula bacula-client bb bgp bitcoin bitcoin-rpc bitcoin-testnet bitcoin-testnet-rpc bittorrent-lsd ceph ceph-mon cfengine cockpit condor-collector ctdb dhcp dhcpv6 dhcpv6-client distcc dns dns-over-tls docker-registry docker-swarm dropbox-lansync elasticsearch etcd-client etcd-server finger freeipa-4 freeipa-ldap freeipa-ldaps freeipa-replication freeipa-trust ftp ganglia-client ganglia-master git grafana gre high-availability http https imap imaps ipp ipp-client ipsec irc ircs iscsi-target isns jenkins kadmin kdeconnect kerberos kibana klogin kpasswd kprop kshell kube-apiserver ldap ldaps libvirt libvirt-tls lightning-network llmnr managesieve matrix mdns memcache minidlna mongodb mosh mountd mqtt mqtt-tls ms-wbt mssql murmur mysql nfs nfs3 nmea-0183 nrpe ntp nut openvpn ovirt-imageio ovirt-storageconsole ovirt-vmconsole plex pmcd pmproxy pmwebapi pmwebapis pop3 pop3s postgresql privoxy prometheus proxy-dhcp ptp pulseaudio puppetmaster quassel radius rdp redis redis-sentinel rpc-bind rsh rsyncd rtsp salt-master samba samba-client samba-dc sane sip sips slp smtp smtp-submission smtps snmp snmptrap spideroak-lansync spotify-sync squid ssdp ssh steam-streaming svdrp svn syncthing syncthing-gui synergy syslog syslog-tls telnet tentacle tftp tftp-client tile38 tinc tor-socks transmission-client upnp-client vdsm vnc-server wbem-http wbem-https wsman wsmans xdmcp xmpp-bosh xmpp-client xmpp-local xmpp-server zabbix-agent zabbix-server
+
+
+[lisa@localhost ~]$ firewall-cmd --list-services
+cockpit dhcpv6-client ssh
+
+
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+[lisa@localhost ~]$ firewall-cmd --list-all --zone=public
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+# in-memory config
+[lisa@localhost ~]$ firewall-cmd --add-service=vnc-server
+Warning: ALREADY_ENABLED: 'vnc-server' already in 'public'
+success
+
+# in-memory config
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh vnc-server
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+[lisa@localhost ~]$ systemctl restart firewalld
+
+# in-memory config is no longer listed
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+# on disk config
+[lisa@localhost ~]$ firewall-cmd --add-service=vnc-server --permanent
+success
+
+# on disk config is not listed yet
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+[lisa@localhost ~]$ firewall-cmd --reload
+success
+
+# on disk config is reloaded into the runtime config
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh vnc-server
+  ports: 
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+
+# on-disk config
+[lisa@localhost ~]$ firewall-cmd --add-port=2022/tcp --permanent
+success
+[lisa@localhost ~]$ firewall-cmd --reload
+success
+[lisa@localhost ~]$ firewall-cmd --list-all
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: ens33
+  sources: 
+  services: cockpit dhcpv6-client ssh vnc-server
+  ports: 2022/tcp
+  protocols: 
+  masquerade: no
+  forward-ports: 
+  source-ports: 
+  icmp-blocks: 
+  rich rules: 
+  
+  
+  
+# firewall configuration file
+       firewalld provides support for zones, predefined services and ICMP
+       types and has a separation of runtime and permanent configuration
+       options. Permanent configuration is loaded from XML files in
+       /usr/lib/firewalld (--default-config) or /etc/firewalld
+       (--system-config) (see the section called “DIRECTORIES”).
+
+
+
+DIRECTORIES
+       firewalld supports two configuration directories:
+
+   Default/Fallback configuration in /usr/lib/firewalld (--default-config)
+       This directory contains the default and fallback configuration provided
+       by firewalld for icmptypes, services and zones. The files provided with
+       the firewalld package should not get changed and the changes are gone
+       with an update of the firewalld package. Additional icmptypes, services
+       and zones can be provided with packages or by creating files.
+
+   System configuration settings in /etc/firewalld (--system-config)
+       The system or user configuration stored here is either created by the
+       system administrator or by customization with the configuration
+       interface of firewalld or by hand. The files will overload the default
+       configuration files.
+
+
+[lisa@localhost ~]$ cd /usr/lib/firewalld
+[lisa@localhost firewalld]$ ls -al
+total 20
+drwxr-xr-x.  7 root root   81 Jan 22 23:32 .
+dr-xr-xr-x. 38 root root 4096 Feb 14 10:46 ..
+drwxr-xr-x.  2 root root  224 Jan 22 23:50 helpers
+drwxr-xr-x.  2 root root 4096 Jan 22 23:50 icmptypes
+drwxr-xr-x.  2 root root   20 Jan 22 23:50 ipsets
+drwxr-xr-x.  2 root root 8192 Jan 22 23:50 services
+drwxr-xr-x.  2 root root  203 Feb 14 10:53 zones
+[lisa@localhost firewalld]$ cd zones
+[lisa@localhost zones]$ ls -al
+total 44
+drwxr-xr-x. 2 root root 203 Feb 14 10:53 .
+drwxr-xr-x. 7 root root  81 Jan 22 23:32 ..
+-rw-r--r--. 1 root root 299 Aug 11  2020 block.xml
+-rw-r--r--. 1 root root 293 Aug 11  2020 dmz.xml
+-rw-r--r--. 1 root root 291 Aug 11  2020 drop.xml
+-rw-r--r--. 1 root root 304 Aug 11  2020 external.xml
+-rw-r--r--. 1 root root 397 Aug 11  2020 home.xml
+-rw-r--r--. 1 root root 412 Aug 11  2020 internal.xml
+-rw-r--r--. 1 root root 809 Nov 26  2019 libvirt.xml
+-rw-r--r--. 1 root root 729 Jan  5 08:45 nm-shared.xml
+-rw-r--r--. 1 root root 343 Aug 11  2020 public.xml
+-rw-r--r--. 1 root root 162 Aug 11  2020 trusted.xml
+-rw-r--r--. 1 root root 339 Aug 11  2020 work.xml
+[lisa@localhost zones]$ cd ..
+[lisa@localhost firewalld]$ cd services/
+[lisa@localhost services]$ ls -al
+total 688
+drwxr-xr-x. 2 root root 8192 Jan 22 23:50 .
+drwxr-xr-x. 7 root root   81 Jan 22 23:32 ..
+-rw-r--r--. 1 root root  399 Aug 11  2020 amanda-client.xml
+-rw-r--r--. 1 root root  427 Aug 11  2020 amanda-k5-client.xml
+-rw-r--r--. 1 root root  283 Aug 11  2020 amqps.xml
+-rw-r--r--. 1 root root  273 Aug 11  2020 amqp.xml
+-rw-r--r--. 1 root root  285 Aug 11  2020 apcupsd.xml
+-rw-r--r--. 1 root root  301 Aug 11  2020 audit.xml
+-rw-r--r--. 1 root root  320 Aug 11  2020 bacula-client.xml
